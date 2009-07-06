@@ -1,3 +1,12 @@
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.ListSelectionModel;
+import javax.swing.tree.TreeSelectionModel;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -30,27 +39,70 @@ public class InputPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        skladCombo = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
+        clientCombo = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         jFormattedTextField1 = new javax.swing.JFormattedTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTree1 = new javax.swing.JTree(new GroupTreeModel());
+        groupTree = new javax.swing.JTree(new GroupTreeModel());
+        jScrollPane2 = new javax.swing.JScrollPane();
+        modelList=new DefaultListModel();
+        nameList = new javax.swing.JList(modelList);
+        jScrollPane3 = new javax.swing.JScrollPane();
+        model = new naklTableModel((String)clientCombo.getSelectedItem(), (String)skladCombo.getSelectedItem(), 0, false);
+        model.setEditable(true);
+        naklTable = new javax.swing.JTable(model);
+
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jLabel1.setText("Склад");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        skladCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skladComboActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Поставщик");
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel3.setText("Дата");
 
         jFormattedTextField1.setText("jFormattedTextField1");
 
-        jScrollPane1.setViewportView(jTree1);
+        groupTree.setRootVisible(false);
+        groupTree.setShowsRootHandles(true);
+        groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        groupTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                groupTreeValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(groupTree);
+
+        nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        nameList.setVisibleRowCount(22);
+        nameList.setFixedCellWidth(300);
+        nameList.setFixedCellHeight(16);
+        nameList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                nameListMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(nameList);
+
+        naklTable.setAutoCreateColumnsFromModel(false);
+        naklTable.getColumnModel().getColumn(0).setMaxWidth(30);
+        naklTable.getColumnModel().getColumn(1).setMaxWidth(455);
+        naklTable.getColumnModel().getColumn(2).setMaxWidth(50);
+        naklTable.getColumnModel().getColumn(3).setMaxWidth(71);
+        naklTable.getColumnModel().getColumn(4).setMaxWidth(96);
+        naklTable.getColumnModel().getColumn(5).setMaxWidth(58);
+        jScrollPane3.setViewportView(naklTable);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -59,20 +111,24 @@ public class InputPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox2, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, 167, Short.MAX_VALUE))
+                            .addComponent(clientCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(skladCombo, 0, 167, Short.MAX_VALUE))
                         .addGap(182, 182, 182)
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
                         .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(525, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -80,29 +136,98 @@ public class InputPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(clientCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void groupTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_groupTreeValueChanged
+  	int index;
+	index=((DataNode)evt.getPath().getLastPathComponent()).getIndex();
+	initList(index);
+    }//GEN-LAST:event_groupTreeValueChanged
+
+    private void skladComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladComboActionPerformed
+        setSklad((String)skladCombo.getSelectedItem());        // TODO add your handling code here:
+    }//GEN-LAST:event_skladComboActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        initCombo();
+    }//GEN-LAST:event_formComponentShown
+
+    private void nameListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
+        if (evt.getClickCount()==2){
+            model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+        }
+    }//GEN-LAST:event_nameListMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JComboBox clientCombo;
+    private javax.swing.JTree groupTree;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTree jTree1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable naklTable;
+    private javax.swing.JList nameList;
+    private javax.swing.JComboBox skladCombo;
     // End of variables declaration//GEN-END:variables
+    private DefaultListModel modelList;
+    private String Sklad;
+    private naklTableModel model;
 
+    public void setSklad(String Sklad) {
+        this.Sklad = Sklad;
+    }
+
+    private void initList(int aIndex){
+	modelList.clear();
+	String Query="select trim(name) from (Select distinct tovar.name from kart inner join tovar on kart.id_tovar=tovar.id_tovar where (kart.id_group="+aIndex+") and (kart.id_skl=(Select id_skl from sklad where name='"+Sklad+"')) order by tovar.name)";
+	ResultSet rs=DataSet.QueryExec(Query,true);
+	try {
+        	while (rs.next())
+		modelList.addElement(rs.getString(1));
+		rs.close();
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+    }
+    private void initCombo(){
+        skladCombo.removeAllItems();
+        ResultSet rs = DataSet.QueryExec("select trim(name) from sklad order by trim(name)", false);
+        try{
+            while (rs.next())
+        skladCombo.addItem(rs.getString(1));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        skladCombo.setSelectedIndex(0);
+        setSklad((String)skladCombo.getSelectedItem());
+        rs = DataSet.QueryExec("select trim(name) from client order by trim(name)", false);
+        clientCombo.removeAllItems();
+        try{
+            while (rs.next())
+            clientCombo.addItem(rs.getString(1));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        clientCombo.setSelectedIndex(0);
+
+    }
 }

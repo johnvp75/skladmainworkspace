@@ -53,6 +53,12 @@ public class InputPanel extends javax.swing.JPanel {
         model = new naklTableModel((String)clientCombo.getSelectedItem(), (String)skladCombo.getSelectedItem(), 0, false);
         model.setEditable(true);
         naklTable = new javax.swing.JTable(model);
+        findButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        regButton = new javax.swing.JButton();
+        printButton = new javax.swing.JButton();
+        viewButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -93,6 +99,11 @@ public class InputPanel extends javax.swing.JPanel {
                 nameListMouseClicked(evt);
             }
         });
+        nameList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                nameListKeyPressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(nameList);
 
         naklTable.setAutoCreateColumnsFromModel(false);
@@ -102,7 +113,35 @@ public class InputPanel extends javax.swing.JPanel {
         naklTable.getColumnModel().getColumn(3).setMaxWidth(71);
         naklTable.getColumnModel().getColumn(4).setMaxWidth(96);
         naklTable.getColumnModel().getColumn(5).setMaxWidth(58);
+        naklTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        naklTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                naklTableKeyPressed(evt);
+            }
+        });
         jScrollPane3.setViewportView(naklTable);
+
+        findButton.setText("Поиск по коду");
+        findButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                findButtonActionPerformed(evt);
+            }
+        });
+
+        saveButton.setText("Сохранить");
+
+        regButton.setText("Зарегистрировать");
+
+        printButton.setText("Напечатать");
+
+        viewButton.setText("Просмотреть");
+
+        jButton1.setText("Прайс-лист");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -111,24 +150,35 @@ public class InputPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(40, 40, 40)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(126, 126, 126)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                            .addComponent(printButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                            .addComponent(viewButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                            .addComponent(saveButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
+                            .addComponent(regButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(findButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
+                        .addGap(49, 49, 49))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(clientCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(skladCombo, 0, 167, Short.MAX_VALUE))
-                        .addGap(182, 182, 182)
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 824, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(clientCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(skladCombo, 0, 167, Short.MAX_VALUE))
+                                .addGap(182, 182, 182)
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jFormattedTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(166, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -146,10 +196,23 @@ public class InputPanel extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(findButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(regButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(printButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(viewButton, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addGap(37, 37, 37)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 342, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(101, 101, 101))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -169,14 +232,54 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void nameListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
         if (evt.getClickCount()==2){
-            model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+            int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+            naklTable.requestFocus();
+//            naklTable.getColumnModel().getColumn(2).
+            naklTable.editCellAt(row-1, 2);
+
         }
     }//GEN-LAST:event_nameListMouseClicked
+
+    private void findButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_findButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    @SuppressWarnings("static-access")
+    private void naklTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_naklTableKeyPressed
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            if(naklTable.getSelectedColumn()==2){
+                naklTable.editCellAt(naklTable.getSelectedRow(), 3);
+                return;
+            }
+            if(naklTable.getSelectedColumn()==3){
+                naklTable.editCellAt(naklTable.getSelectedRow(), 5);
+                return;
+            }
+            if(naklTable.getSelectedColumn()==5)
+                nameList.requestFocus();
+        }
+
+
+    }//GEN-LAST:event_naklTableKeyPressed
+
+    private void nameListKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameListKeyPressed
+        if(evt.getKeyCode()==evt.VK_ENTER){
+            int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+            naklTable.requestFocus();
+            naklTable.editCellAt(row-1, 2);
+        }
+    }//GEN-LAST:event_nameListKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox clientCombo;
+    private javax.swing.JButton findButton;
     private javax.swing.JTree groupTree;
+    private javax.swing.JButton jButton1;
     private javax.swing.JFormattedTextField jFormattedTextField1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -186,7 +289,11 @@ public class InputPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable naklTable;
     private javax.swing.JList nameList;
+    private javax.swing.JButton printButton;
+    private javax.swing.JButton regButton;
+    private javax.swing.JButton saveButton;
     private javax.swing.JComboBox skladCombo;
+    private javax.swing.JButton viewButton;
     // End of variables declaration//GEN-END:variables
     private DefaultListModel modelList;
     private String Sklad;

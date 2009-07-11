@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -236,6 +237,7 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.requestFocus();
 //            naklTable.getColumnModel().getColumn(2).
             naklTable.editCellAt(row-1, 2);
+            ((JTextField)naklTable.getEditorComponent()).selectAll();
 
         }
     }//GEN-LAST:event_nameListMouseClicked
@@ -251,15 +253,23 @@ public class InputPanel extends javax.swing.JPanel {
     @SuppressWarnings("static-access")
     private void naklTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_naklTableKeyPressed
         if(evt.getKeyCode()==evt.VK_ENTER){
-            if(naklTable.getSelectedColumn()==2){
-                naklTable.editCellAt(naklTable.getSelectedRow(), 3);
+            if(naklTable.getEditingColumn()==2){
+                naklTable.editCellAt(naklTable.getEditingRow(), 3);
+//                naklTable.setEditingColumn(3);
+                evt.setKeyCode(evt.VK_UNDEFINED);
+                ((JTextField)naklTable.getEditorComponent()).selectAll();
+
                 return;
             }
-            if(naklTable.getSelectedColumn()==3){
-                naklTable.editCellAt(naklTable.getSelectedRow(), 5);
+            if(naklTable.getEditingColumn()==3){
+                naklTable.editCellAt(naklTable.getEditingRow(), 5);
+                evt.setKeyCode(evt.VK_UNDEFINED);
+                ((JTextField)naklTable.getEditorComponent()).selectAll();
+
                 return;
             }
-            if(naklTable.getSelectedColumn()==5)
+            if(naklTable.getEditingColumn()==5)
+                evt.setKeyCode(evt.VK_UNDEFINED);
                 nameList.requestFocus();
         }
 
@@ -271,6 +281,7 @@ public class InputPanel extends javax.swing.JPanel {
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
             naklTable.editCellAt(row-1, 2);
+            ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
     }//GEN-LAST:event_nameListKeyPressed
 

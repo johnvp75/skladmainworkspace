@@ -3,6 +3,7 @@ import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.UIManager;
 
 /*
  * To change this template, choose Tools | Templates
@@ -24,7 +25,14 @@ public class MainFrame extends javax.swing.JFrame {
 
     /** Creates new form MainFrame */
     public MainFrame() {
+        try{
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        }
+        catch (Exception e) {
+                e.printStackTrace();
+        }
         initComponents();
+
     }
 
     /** This method is called from within the constructor to

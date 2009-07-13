@@ -1,3 +1,7 @@
+
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -43,8 +47,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
         generateButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         cancellButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Ввод нового товара");
         setModal(true);
         setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -55,20 +61,29 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Наименование:");
 
+        nameTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameTextFieldActionPerformed(evt);
+            }
+        });
+
         jLabel2.setText("Кол-во в упаковке:");
 
         countTextField.setText("1");
 
-        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 12));
         jLabel3.setText("Редактирование штрих-кодов");
 
         jLabel4.setText("Штрих-код:");
 
-        barcodeList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
+        barcodeTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barcodeTextFieldActionPerformed(evt);
+            }
         });
+
+        barcodeList.setModel(new DataListModel());
+        barcodeList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(barcodeList);
 
         generateButton.setText("Генерировать");
@@ -76,6 +91,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
         okButton.setText("Добавить");
 
         cancellButton.setText("Отмена");
+
+        deleteButton.setText("Удалить");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -89,10 +106,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(countTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(324, Short.MAX_VALUE))
-                    .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)))
+                    .addComponent(countTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
@@ -113,7 +129,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
                             .addGap(182, 182, 182)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(26, 26, 26)
-                .addComponent(generateButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(generateButton)
+                    .addComponent(deleteButton))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -136,12 +154,17 @@ public class NewTovarDialog extends javax.swing.JDialog {
                     .addComponent(jLabel4)
                     .addComponent(barcodeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(generateButton))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(okButton)
-                    .addComponent(cancellButton))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(okButton)
+                            .addComponent(cancellButton)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(deleteButton)))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -149,8 +172,30 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        
+        ((DataListModel)barcodeList.getModel()).removeAll();
+        nameTextField.setText("");
+        countTextField.setText("1");
+        barcodeTextField.setText("");
     }//GEN-LAST:event_formComponentShown
+
+    private void nameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
+        ResultSet rs=DataSet.QueryExec("Select count(*) frome tovar where trim(name)='"+nameTextField.getText().trim()+"'", false);
+        try {
+            rs.next();
+            if (rs.getInt(1)>0){
+                JOptionPane.showInternalMessageDialog(this, "Такое наименование в базе существует! \n Будьте внимательней!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            }else
+                countTextField.requestFocus();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_nameTextFieldActionPerformed
+
+    private void barcodeTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barcodeTextFieldActionPerformed
+        if (((DataListModel)barcodeList.getModel()).pos(barcodeTextField.getText())==-1){
+            ((DataListModel)barcodeList.getModel()).add(barcodeTextField.getText());
+        }
+    }//GEN-LAST:event_barcodeTextFieldActionPerformed
 
     /**
     * @param args the command line arguments
@@ -174,6 +219,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private javax.swing.JTextField barcodeTextField;
     private javax.swing.JButton cancellButton;
     private javax.swing.JTextField countTextField;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JButton generateButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

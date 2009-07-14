@@ -180,37 +180,37 @@ public class InputPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 319, GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE)
-                        .addGap(126, 126, 126)
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
-                            .addComponent(findButton, GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
-                        .addGap(49, 49, 49))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 824, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(printButton, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(saveButton, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(regButton, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                            .addComponent(jButton1, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                            .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(skladCombo, 0, 167, Short.MAX_VALUE))
-                        .addGap(182, 182, 182)
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(427, Short.MAX_VALUE))))
+                            .addComponent(jButton1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(printButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(regButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(saveButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                            .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                    .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))
+                                .addGap(95, 95, 95)
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 319, GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE)))
+                        .addGap(58, 58, 58)
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(NewTovarButton))))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -221,25 +221,22 @@ public class InputPanel extends javax.swing.JPanel {
                     .addComponent(skladCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(clientCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
+                    .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(findButton)
+                        .addGap(29, 29, 29)
+                        .addComponent(NewTovarButton))
+                    .addGroup(Alignment.LEADING, layout.createParallelGroup(Alignment.TRAILING, false)
+                        .addComponent(jScrollPane2, Alignment.LEADING)
+                        .addComponent(jScrollPane1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 279, GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(findButton, GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(NewTovarButton)
-                        .addGap(213, 213, 213)))
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 342, GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
+                        .addPreferredGap(ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(saveButton)
                         .addGap(18, 18, 18)
                         .addComponent(regButton)
@@ -248,8 +245,11 @@ public class InputPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(viewButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1)))
-                .addGap(101, 101, 101))
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
+                .addGap(47, 47, 47))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -322,7 +322,9 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nameListKeyPressed
 
     private void NewTovarButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_NewTovarButtonActionPerformed
-        JDialog dialog = new NewTovarDialog(null,true);
+        if (dialog==null)
+            dialog = new NewTovarDialog(null,true);
+        dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setVisible(true);
     }//GEN-LAST:event_NewTovarButtonActionPerformed
 
@@ -351,6 +353,7 @@ public class InputPanel extends javax.swing.JPanel {
     private DefaultListModel modelList;
     private String Sklad;
     private naklTableModel model;
+    private NewTovarDialog dialog;
 
     public void setSklad(String Sklad) {
         this.Sklad = Sklad;
@@ -379,7 +382,7 @@ public class InputPanel extends javax.swing.JPanel {
         }
         skladCombo.setSelectedIndex(0);
         setSklad((String)skladCombo.getSelectedItem());
-        rs = DataSet.QueryExec("select trim(name) from client order by trim(name)", false);
+        rs = DataSet.QueryExec("select trim(name) from client where type=0 order by trim(name)", false);
         clientCombo.removeAllItems();
         try{
             while (rs.next())

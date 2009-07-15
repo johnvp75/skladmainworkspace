@@ -139,13 +139,18 @@ public class MainFrame extends javax.swing.JFrame {
         if (dialog==null)
             dialog= new ManagerChooser();
         dialog.setRul(";1;");
-        if (dialog.showDialog(null, "Вход в систему"))
+        if (dialog.showDialog(null, "Вход в систему")){
+            setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
+            inputPanel1.setManager(dialog.GetManager());
             inputPanel1.setVisible(true);
+        }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        if (inputPanel1.isVisible())
+        if (inputPanel1.isVisible()){
             inputPanel1.setVisible(false);
+            setTitle("Программа автоматизации склада.");
+        }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**

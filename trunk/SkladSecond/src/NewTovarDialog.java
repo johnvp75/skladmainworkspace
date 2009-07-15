@@ -7,7 +7,10 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -92,6 +95,16 @@ public class NewTovarDialog extends javax.swing.JDialog {
         jLabel2.setText("Кол-во в упаковке:");
 
         countTextField.setText("1");
+        countTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                countTextFieldActionPerformed(evt);
+            }
+        });
+        countTextField.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent evt) {
+                countTextFieldKeyTyped(evt);
+            }
+        });
 
         jLabel3.setFont(new Font("Times New Roman", 1, 12));
         jLabel3.setText("Редактирование штрих-кодов");
@@ -208,6 +221,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         nameTextField.setText("");
         countTextField.setText("1");
         barcodeTextField.setText("");
+        setOk(false);
     }//GEN-LAST:event_formComponentShown
 
     private void nameTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
@@ -243,8 +257,42 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_nameTextFieldFocusLost
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
+        ResultSet rs=DataSet.QueryExec("Select max(id_tovar) from tovar", false);
+        try{
+            //установить точку отката
+            rs.next();
+            int id=rs.getInt(1)+1;
+            DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
+            DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
+            rs.next();
+            int skl=rs.getInt(1);
+            for (int i=0;i<((DataListModel1)barcodeList.getModel()).getSize();i++)
+                DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel1)barcodeList.getModel()).getElementAt(i)+"')");
+            setOk(true);
+            setVisible(false);
+        }catch(SQLException e){
+            JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+            //Откат к точке
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_okButtonActionPerformed
+
+    private void countTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_countTextFieldKeyTyped
+        char[] symb = null;
+        symb[0]=evt.getKeyChar();
+        String str=new String(symb);
+        if (evt.getKeyCode()==evt.VK_ENTER)
+            return;
+
+        if (!(new String(symb)).contains("0..9"))
+            evt.setKeyCode(evt.VK_UNDEFINED);
+    }//GEN-LAST:event_countTextFieldKeyTyped
+
+    private void countTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_countTextFieldActionPerformed
+        countTextField.requestFocus();
+    }//GEN-LAST:event_countTextFieldActionPerformed
 
     /**
     * @param args the command line arguments
@@ -281,6 +329,15 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private JButton okButton;
     // End of variables declaration//GEN-END:variables
     private String Sklad;
+    private boolean ok = false;
+
+    public boolean isOk() {
+        return ok;
+    }
+
+    public void setOk(boolean ok) {
+        this.ok = ok;
+    }
 
     public String getSklad() {
         return Sklad;
@@ -302,5 +359,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
             e.printStackTrace();
             return false;
         }
+    }
+    public String getTovar(){
+        return nameTextField.getText();
     }
 }

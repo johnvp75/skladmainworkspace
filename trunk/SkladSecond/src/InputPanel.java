@@ -1,4 +1,6 @@
 
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -9,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -18,6 +21,7 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -81,6 +85,14 @@ public class InputPanel extends javax.swing.JPanel {
         viewButton = new JButton();
         jButton1 = new JButton();
         NewTovarButton = new JButton();
+        jLabel4 = new JLabel();
+        discTextField = new JTextField();
+        jLabel5 = new JLabel();
+        valCombo = new JComboBox();
+        jLabel6 = new JLabel();
+        noteTextField = new JTextField();
+        itogowo = new JLabel();
+        itogo = new JLabel();
 
         addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent evt) {
@@ -141,6 +153,19 @@ public class InputPanel extends javax.swing.JPanel {
                 naklTableKeyPressed(evt);
             }
         });
+        model.addTableModelListener(new TableModelListener(){
+            public void tableChanged(TableModelEvent event){
+                itogo.setText("Итого (учитывая скидку): "+model.summ());
+                itogowo.setText("Итого (без скидку): "+model.summvo());
+                setChanged(true);
+                if (model.getRowCount()==0){
+                    skladCombo.setEnabled(true);
+                }
+                else{
+                    skladCombo.setEnabled(false);
+                }
+            }
+        });
         jScrollPane3.setViewportView(naklTable);
 
         findButton.setText("Поиск по коду");
@@ -151,8 +176,18 @@ public class InputPanel extends javax.swing.JPanel {
         });
 
         saveButton.setText("Сохранить");
+        saveButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         regButton.setText("Зарегистрировать");
+        regButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                regButtonActionPerformed(evt);
+            }
+        });
 
         printButton.setText("Напечатать");
 
@@ -172,6 +207,36 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabel4.setText("Скидка");
+
+        discTextField.setText("0");
+        discTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                discTextFieldActionPerformed(evt);
+            }
+        });
+        discTextField.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent evt) {
+                discTextFieldKeyTyped(evt);
+            }
+        });
+
+        jLabel5.setText("Валюта:");
+
+        valCombo.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel6.setText("Примечание:");
+
+        noteTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                noteTextFieldActionPerformed(evt);
+            }
+        });
+
+        itogowo.setText("Сумма без скидки: 0,00");
+
+        itogo.setText("Сумма со скидкой: 0,00");
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -187,29 +252,49 @@ public class InputPanel extends javax.swing.JPanel {
                             .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(printButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(regButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                            .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel1))
-                                .addPreferredGap(ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                    .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))
-                                .addGap(95, 95, 95)
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                            .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
+                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addPreferredGap(ComponentPlacement.RELATED)
+                            .addComponent(noteTextField))
+                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
                                 .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 319, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE)))
-                        .addGap(58, 58, 58)
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                            .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-                            .addComponent(NewTovarButton))))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel1))
+                                    .addPreferredGap(ComponentPlacement.RELATED)
+                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                        .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))))
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(77, 77, 77)
+                                    .addComponent(jLabel3)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(14, 14, 14)
+                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                            .addComponent(jLabel5)
+                                            .addPreferredGap(ComponentPlacement.RELATED)
+                                            .addComponent(valCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
+                            .addGap(50, 50, 50)
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(NewTovarButton))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(itogowo, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(discTextField, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(itogo, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -224,19 +309,27 @@ public class InputPanel extends javax.swing.JPanel {
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(clientCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(clientCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5)
+                    .addComponent(valCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addGroup(Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                        .addPreferredGap(ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(findButton)
                         .addGap(29, 29, 29)
                         .addComponent(NewTovarButton))
-                    .addGroup(Alignment.LEADING, layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addComponent(jScrollPane2, Alignment.LEADING)
-                        .addComponent(jScrollPane1, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)))
+                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 279, GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(noteTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                        .addPreferredGap(ComponentPlacement.RELATED, 13, GroupLayout.PREFERRED_SIZE)
                         .addComponent(saveButton)
                         .addGap(18, 18, 18)
                         .addComponent(regButton)
@@ -246,10 +339,13 @@ public class InputPanel extends javax.swing.JPanel {
                         .addComponent(viewButton)
                         .addGap(18, 18, 18)
                         .addComponent(jButton1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE)))
-                .addGap(47, 47, 47))
+                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(itogowo)
+                    .addComponent(jLabel4)
+                    .addComponent(discTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(itogo)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -265,6 +361,12 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         initCombo();
+        discTextField.setText("0");
+        model.setIndDiscount(0);
+        noteTextField.setText("");
+        setNote("");
+        setChanged(false);
+        setId_doc(0);
     }//GEN-LAST:event_formComponentShown
 
     private void nameListMouseClicked(MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
@@ -320,40 +422,184 @@ public class InputPanel extends javax.swing.JPanel {
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
     }//GEN-LAST:event_nameListKeyPressed
+    private int id_doc;
+
+    public int getId_doc() {
+        return id_doc;
+    }
+
+    public void setId_doc(int id_doc) {
+        this.id_doc = id_doc;
+    }
+    private boolean changed = false;
+
+    public boolean isChanged() {
+        return changed;
+    }
+
+    public void setChanged(boolean changed) {
+        this.changed = changed;
+    }
 
     private void NewTovarButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_NewTovarButtonActionPerformed
         if (dialog==null)
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setVisible(true);
+        if (dialog.isOk()){
+            DataSet.UpdateQuery("insert into kart (id_tovar, id_group, id_skl) select (select id_tovar from tovar where name='"+dialog.getTovar()+"'), "+((DataNode)groupTree.getLastSelectedPathComponent()).getIndex()+", id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'");
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+            nameList.setSelectedValue(dialog.getTovar(), true);
+            int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+            naklTable.requestFocus();
+            naklTable.editCellAt(row-1, 2);
+            ((JTextField)naklTable.getEditorComponent()).selectAll();
+        }
     }//GEN-LAST:event_NewTovarButtonActionPerformed
+
+    private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        for (int i=0; i<model.getRowCount(); i++){
+	if(((Integer)model.getValueAt(i, 2)).intValue()==0){
+		model.removeRow(i);
+		i--;
+		}
+	}
+        if (model.getRowCount()==0){
+            JOptionPane.showMessageDialog(this, "Пустую накладную сохранить нельзя","Пустая накладная",JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        try{
+            //точка отката
+            String SQL;
+            ResultSet rs1;
+            SQL="lock table document in exclusive mode";
+            setId_doc(1);
+            DataSet.UpdateQuery(SQL);
+            rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
+            if (rs1.next())
+                setId_doc(rs1.getInt(1)+1);
+            SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 0 as id_type_doc,"+getId_doc()+" as id_doc"+
+		", (select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"') as id_client" +
+		", (select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"') as id_skl"+
+		", (select id_val from val where name='"+(String)valCombo.getSelectedItem()+"') as id_val" +
+		", "+model.summ()+" as sum ,'"+getNote()+"' as note, "+model.getIndDiscount()+" as disc, " +
+		" id_manager from manager where name='"+getManager()+"'";
+            DataSet.UpdateQuery(SQL);
+            for (int i=0;i<model.getRowCount();i++){
+                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, (select "+model.getValueAt(i,2)+") from tovar where name='"+model.getValueAt(i, 1)+"')"+
+                    " as kol, (select "+model.getValueAt(i,3)+") from tovar where name='"+model.getValueAt(i, 1)+"')"+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
+                model.getValueAt(i, 1)+"'";
+                DataSet.UpdateQuery(SQL);
+            }
+            setChanged(false);
+            DataSet.commit();
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+            //Откат к точке
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+    private String Note;
+
+    public String getNote() {
+        return Note;
+    }
+
+    public void setNote(String Note) {
+        this.Note = Note;
+    }
+
+    private void discTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_discTextFieldKeyTyped
+        char[] symb = null;
+        symb[0]=evt.getKeyChar();
+        String str=new String(symb);
+        if (evt.getKeyCode()==evt.VK_ENTER)
+            return;
+        if (!(new String(symb)).contains("0..9"))
+            evt.setKeyCode(evt.VK_UNDEFINED);
+    }//GEN-LAST:event_discTextFieldKeyTyped
+
+    private void discTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_discTextFieldActionPerformed
+        model.setIndDiscount(new Integer(discTextField.getText()));
+    }//GEN-LAST:event_discTextFieldActionPerformed
+
+    private void noteTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_noteTextFieldActionPerformed
+        setNote(noteTextField.getText());
+    }//GEN-LAST:event_noteTextFieldActionPerformed
+
+    private void regButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_regButtonActionPerformed
+        if (getId_doc()==0 || isChanged()){
+            JOptionPane.showMessageDialog(this, "Несохраненный документ зарегистрировать нельзя! \n Сохраните документ и повторите операцию", "Ошибка проведения", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        try{
+            ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=0) ", false);
+            rs.next();
+            int numb=rs.getInt(1)+1;
+            DataSet.UpdateQuery("update document set numb="+numb+", day=sysdate where id_doc="+getId_doc());
+            DataSet.commit();
+            model.removeAll();
+            setVisible(false);
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Зарегистрировать не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+            DataSet.rollback();
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_regButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton NewTovarButton;
     private JComboBox clientCombo;
+    private JTextField discTextField;
     private JButton findButton;
     private JTree groupTree;
+    private JLabel itogo;
+    private JLabel itogowo;
     private JButton jButton1;
     private JFormattedTextField jFormattedTextField1;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
     private JScrollPane jScrollPane3;
     private JTable naklTable;
     private JList nameList;
+    private JTextField noteTextField;
     private JButton printButton;
     private JButton regButton;
     private JButton saveButton;
     private JComboBox skladCombo;
+    private JComboBox valCombo;
     private JButton viewButton;
     // End of variables declaration//GEN-END:variables
     private DefaultListModel modelList;
     private String Sklad;
     private naklTableModel model;
     private NewTovarDialog dialog;
+    private String Manager;
+
+    /**
+     * Get the value of Manager
+     *
+     * @return the value of Manager
+     */
+    public String getManager() {
+        return Manager;
+    }
+
+    /**
+     * Set the value of Manager
+     *
+     * @param Manager new value of Manager
+     */
+    public void setManager(String Manager) {
+        this.Manager = Manager;
+    }
 
     public void setSklad(String Sklad) {
         this.Sklad = Sklad;
@@ -391,6 +637,17 @@ public class InputPanel extends javax.swing.JPanel {
             e.printStackTrace();
         }
         clientCombo.setSelectedIndex(0);
+        rs = DataSet.QueryExec("select trim(name) from val", false);
+        valCombo.removeAllItems();
+        try{
+            while (rs.next())
+            valCombo.addItem(rs.getString(1));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        valCombo.setSelectedIndex(0);
+
 
     }
+
 }

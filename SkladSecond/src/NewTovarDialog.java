@@ -11,6 +11,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -131,6 +133,11 @@ public class NewTovarDialog extends javax.swing.JDialog {
         });
 
         cancellButton.setText("Отмена");
+        cancellButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                cancellButtonActionPerformed(evt);
+            }
+        });
 
         deleteButton.setText("Удалить");
         deleteButton.addActionListener(new ActionListener() {
@@ -230,9 +237,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
     private void barcodeTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_barcodeTextFieldActionPerformed
-        ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
+        
         try
         {
+            ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
             rs.next();
             if (rs.getInt(1)>0)
                 if (JOptionPane.showConfirmDialog(this, "Такой штрих-код имееться в базе для этого склада, ввести повторный?", "Повторный штрих-код", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
@@ -258,41 +266,51 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        ResultSet rs=DataSet.QueryExec("Select max(id_tovar) from tovar", false);
+        
         try{
-            //установить точку отката
+            ResultSet rs=DataSet.QueryExec("Select max(id_tovar) from tovar", false);
             rs.next();
             int id=rs.getInt(1)+1;
+            DataSet.UpdateQuery("savepoint point1");
             DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
-            DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
+            rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
             rs.next();
             int skl=rs.getInt(1);
             for (int i=0;i<((DataListModel1)barcodeList.getModel()).getSize();i++)
                 DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel1)barcodeList.getModel()).getElementAt(i)+"')");
             setOk(true);
             setVisible(false);
-        }catch(SQLException e){
+        }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
-            //Откат к точке
+            try {
+                DataSet.UpdateQuery("rollback to point1");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
 
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void countTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_countTextFieldKeyTyped
-        char[] symb = null;
+        char[] symb = new char[1];
         symb[0]=evt.getKeyChar();
         String str=new String(symb);
         if (evt.getKeyCode()==evt.VK_ENTER)
             return;
 
-        if (!(new String(symb)).contains("0..9"))
-            evt.setKeyCode(evt.VK_UNDEFINED);
+        if (!(new String(symb)).matches("[0-9]"))
+            evt.setKeyChar(evt.CHAR_UNDEFINED);
     }//GEN-LAST:event_countTextFieldKeyTyped
 
     private void countTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_countTextFieldActionPerformed
         countTextField.requestFocus();
     }//GEN-LAST:event_countTextFieldActionPerformed
+
+    private void cancellButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancellButtonActionPerformed
+        setOk(false);
+        setVisible(false);
+    }//GEN-LAST:event_cancellButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -347,8 +365,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private boolean checkTovar(){
-        ResultSet rs=DataSet.QueryExec("Select count(*) from tovar where upper(trim(name))='"+nameTextField.getText().trim().toUpperCase()+"'", false);
+        
         try {
+            ResultSet rs=DataSet.QueryExec("Select count(*) from tovar where upper(trim(name))='"+nameTextField.getText().trim().toUpperCase()+"'", false);
             rs.next();
             if (rs.getInt(1)>0){
                 JOptionPane.showMessageDialog(this, "Такое наименование в базе существует! \n Будьте внимательней!", "Ошибка!", JOptionPane.ERROR_MESSAGE);

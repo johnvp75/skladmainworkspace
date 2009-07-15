@@ -1,4 +1,6 @@
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
@@ -11,6 +13,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -190,8 +197,18 @@ public class InputPanel extends javax.swing.JPanel {
         });
 
         printButton.setText("Напечатать");
+        printButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                printButtonActionPerformed(evt);
+            }
+        });
 
         viewButton.setText("Просмотреть");
+        viewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                viewButtonActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("Прайс-лист");
         jButton1.addActionListener(new ActionListener() {
@@ -447,7 +464,16 @@ public class InputPanel extends javax.swing.JPanel {
         dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setVisible(true);
         if (dialog.isOk()){
-            DataSet.UpdateQuery("insert into kart (id_tovar, id_group, id_skl) select (select id_tovar from tovar where name='"+dialog.getTovar()+"'), "+((DataNode)groupTree.getLastSelectedPathComponent()).getIndex()+", id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'");
+            try {
+                DataSet.UpdateQuery("insert into kart (id_tovar, id_group, id_nom,id_skl) select (select id_tovar from tovar where name='" + dialog.getTovar() + "'), " + ((DataNode) groupTree.getLastSelectedPathComponent()).getIndex() + ", (select max(id_nom)+1 from kart), id_skl from sklad where name='" + skladCombo.getSelectedItem() + "'");
+            } catch (SQLException ex) {
+                try {
+                    DataSet.UpdateQuery("rollback to point1");
+                } catch (SQLException ex1) {
+                    ex.printStackTrace();
+                }
+                ex.printStackTrace();
+            }
             initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
             nameList.setSelectedValue(dialog.getTovar(), true);
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
@@ -469,7 +495,7 @@ public class InputPanel extends javax.swing.JPanel {
             return;
         }
         try{
-            //точка отката
+            DataSet.UpdateQuery("savepoint point2");
             String SQL;
             ResultSet rs1;
             SQL="lock table document in exclusive mode";
@@ -478,7 +504,7 @@ public class InputPanel extends javax.swing.JPanel {
             rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
             if (rs1.next())
                 setId_doc(rs1.getInt(1)+1);
-            SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 0 as id_type_doc,"+getId_doc()+" as id_doc"+
+            SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 1 as id_type_doc,"+getId_doc()+" as id_doc"+
 		", (select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"') as id_client" +
 		", (select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"') as id_skl"+
 		", (select id_val from val where name='"+(String)valCombo.getSelectedItem()+"') as id_val" +
@@ -486,8 +512,7 @@ public class InputPanel extends javax.swing.JPanel {
 		" id_manager from manager where name='"+getManager()+"'";
             DataSet.UpdateQuery(SQL);
             for (int i=0;i<model.getRowCount();i++){
-                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, (select "+model.getValueAt(i,2)+") from tovar where name='"+model.getValueAt(i, 1)+"')"+
-                    " as kol, (select "+model.getValueAt(i,3)+") from tovar where name='"+model.getValueAt(i, 1)+"')"+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
+                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol, "+model.getValueAt(i,3)+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
                 model.getValueAt(i, 1)+"'";
                 DataSet.UpdateQuery(SQL);
             }
@@ -495,7 +520,11 @@ public class InputPanel extends javax.swing.JPanel {
             DataSet.commit();
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
-            //Откат к точке
+            try{
+                DataSet.UpdateQuery("rollback to point2");
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
     }//GEN-LAST:event_saveButtonActionPerformed
@@ -542,10 +571,30 @@ public class InputPanel extends javax.swing.JPanel {
             setVisible(false);
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Зарегистрировать не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
-            DataSet.rollback();
+            try {
+                DataSet.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }
     }//GEN-LAST:event_regButtonActionPerformed
+
+    private void printButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        if (getId_doc()==0 || isChanged()){
+            JOptionPane.showMessageDialog(this, "Несохраненный документ напечатать нельзя! \n Сохраните документ и повторите операцию", "Ошибка печати", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Print_view(true);
+    }//GEN-LAST:event_printButtonActionPerformed
+
+    private void viewButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_viewButtonActionPerformed
+        if (getId_doc()==0 || isChanged()){
+            JOptionPane.showMessageDialog(this, "Несохраненный документ просмотреть нельзя! \n Сохраните документ и повторите операцию", "Ошибка просмотра", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Print_view(false);
+    }//GEN-LAST:event_viewButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -608,40 +657,44 @@ public class InputPanel extends javax.swing.JPanel {
     private void initList(int aIndex){
 	modelList.clear();
 	String Query="select trim(name) from (Select distinct tovar.name from kart inner join tovar on kart.id_tovar=tovar.id_tovar where (kart.id_group="+aIndex+") and (kart.id_skl=(Select id_skl from sklad where name='"+Sklad+"')) order by tovar.name)";
-	ResultSet rs=DataSet.QueryExec(Query,true);
+	
 	try {
+                ResultSet rs=DataSet.QueryExec(Query,false);
         	while (rs.next())
 		modelList.addElement(rs.getString(1));
 		rs.close();
-	} catch (SQLException e) {
+	} catch (Exception e) {
 		e.printStackTrace();
 	}
     }
     private void initCombo(){
         skladCombo.removeAllItems();
-        ResultSet rs = DataSet.QueryExec("select trim(name) from sklad order by trim(name)", false);
+        ResultSet rs;
         try{
+            rs = DataSet.QueryExec("select trim(name) from sklad order by trim(name)", false);
             while (rs.next())
-        skladCombo.addItem(rs.getString(1));
+                skladCombo.addItem(rs.getString(1));
         }catch(Exception e){
             e.printStackTrace();
         }
         skladCombo.setSelectedIndex(0);
         setSklad((String)skladCombo.getSelectedItem());
-        rs = DataSet.QueryExec("select trim(name) from client where type=0 order by trim(name)", false);
+        
         clientCombo.removeAllItems();
         try{
+            rs = DataSet.QueryExec("select trim(name) from client where type=0 order by trim(name)", false);
             while (rs.next())
             clientCombo.addItem(rs.getString(1));
         }catch(Exception e){
             e.printStackTrace();
         }
         clientCombo.setSelectedIndex(0);
-        rs = DataSet.QueryExec("select trim(name) from val", false);
+        
         valCombo.removeAllItems();
         try{
+            rs = DataSet.QueryExec("select trim(name) from val", false);
             while (rs.next())
-            valCombo.addItem(rs.getString(1));
+                valCombo.addItem(rs.getString(1));
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -649,5 +702,74 @@ public class InputPanel extends javax.swing.JPanel {
 
 
     }
-
+    private String Month(int aValue){
+	switch (aValue+1){
+	case 1:return "января";
+	case 2:return "февраля";
+	case 3:return "марта";
+	case 4:return "апреля";
+	case 5:return "мая";
+	case 6:return "июня";
+	case 7:return "июля";
+	case 8:return "августа";
+	case 9:return "сентября";
+	case 10:return "октября";
+	case 11:return "ноября";
+	case 12:return "декабря";
+	default: return "";
+	}
+    }
+    private void Print_view(boolean print){
+        Vector<Vector<String>> OutData = new Vector<Vector<String>>(0);
+        NumberFormat formatter = new DecimalFormat ( "0.00" ) ;
+        try{
+            ResultSet rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, sum(lines.kol*cost*(1-disc/100)) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+getId_doc()+" group by tovar.name, cost, disc order by tovar.name", false);
+            for (int i=0; i<OutData.size();i++)
+            OutData.get(i).clear();
+            OutData.clear();
+            int j=0;
+            while (rs.next()){
+                Vector<String> Row=new Vector<String>(0);
+                j++;
+		Row.add(j+"");
+		Row.add(rs.getString(1));
+		Row.add(rs.getString(2));
+		Row.add(rs.getString(3));
+		Row.add(formatter.format(rs.getDouble(4)));
+		Row.add(rs.getString(5));
+		Row.add(formatter.format(rs.getDouble(6)));
+		OutData.add(Row);
+            }
+            rs=DataSet.QueryExec("select sum, trim(note), disc, trim(val.name), trim(manager.name), trim(sklad.name), numb, trim(client.name) from (((document inner join val on document.id_val=val.id_val) inner join manager on document.id_manager=manager.id_manager) inner join " +
+                "sklad on document.id_skl=sklad.id_skl) inner join client on document.id_client=client.id_client where id_doc="+getId_doc(), false);
+            rs.next();
+            String numb="";
+            if (!(rs.getString(7)==null))
+                numb=rs.getString(7);
+            GregorianCalendar now=new GregorianCalendar();
+            int size=OutData.size();
+            OutputOO.OpenDoc("nakl_pr.ots",print);
+            OutputOO.InsertOne("\""+now.get(Calendar.DAY_OF_MONTH)+"\" "+Month(now.get(Calendar.MONTH))+" "+now.get(Calendar.YEAR)+"г.", 10, true, 4,1);
+            OutputOO.InsertOne("Накладная №"+numb, 16, true, 1, 2);
+            OutputOO.InsertOne("Поставщик: "+rs.getString(8),11, true, 1,4);
+            OutputOO.InsertOne(rs.getString(2),8,false,1,6);
+            OutputOO.InsertOne("Склад: "+rs.getString(6),7,false,6,7);
+            OutputOO.InsertOne("Валюта: "+rs.getString(4),7,false,1,7);
+            OutputOO.InsertOne("ИТОГО:",10,false,4,9+size);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)/(1-rs.getDouble(3)/100)),10,false,6,9+size);
+            OutputOO.InsertOne("Скидка",10,false,2,9+size+1);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(3))+"%",10,false,4,9+size+1);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)*(1/(1-rs.getDouble(3)/100)-1)),10,false,6,9+size+1);
+            OutputOO.InsertOne("Итого со скидкой",10,false,2,9+size+2);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)),10,true,6,9+size+2);
+            OutputOO.InsertOne("Документ оформил: "+rs.getString(5),8,false,2,9+size+4);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        OutputOO.Insert(1, 9, OutData);
+        if (print){
+            OutputOO.print(2);
+            OutputOO.CloseDoc();
+        }
+    }
 }

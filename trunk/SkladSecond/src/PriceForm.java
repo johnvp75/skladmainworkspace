@@ -1,3 +1,8 @@
+
+import java.sql.ResultSet;
+import java.util.Vector;
+import javax.swing.JCheckBox;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -31,54 +36,62 @@ public class PriceForm extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
+        priceCombo = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
+        okrCombo = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jCheckBox1 = new javax.swing.JCheckBox();
+        priceTable = new javax.swing.JTable();
+        nacTextField = new javax.swing.JTextField();
+        koefTextField = new javax.swing.JTextField();
+        runButton = new javax.swing.JButton();
+        saveButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        inkCheckBox = new javax.swing.JCheckBox();
+        nacCheckBox = new javax.swing.JCheckBox();
+        koefCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jLabel1.setText("Прайс");
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        jLabel2.setText("Округление");
-
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "До 1", "До 0,1", "До 0,01" }));
-        jComboBox2.setSelectedIndex(1);
-
-        jTable1.setModel(new PriceTableDataModel());
-        jScrollPane1.setViewportView(jTable1);
-
-        jRadioButton1.setText("Наценка %");
-
-        jRadioButton2.setText("Коэффициент");
-
-        jTextField1.setText("jTextField1");
-
-        jTextField2.setText("jTextField2");
-
-        jButton1.setText("Расчитать");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
             }
         });
 
-        jButton2.setText("Сохранить");
+        jLabel1.setText("Прайс");
 
-        jButton3.setText("Закрыть");
+        jLabel2.setText("Округление");
 
-        jCheckBox1.setText("В большую сторону");
+        okrCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "До 1", "До 0,1", "До 0,01" }));
+        okrCombo.setSelectedIndex(1);
+
+        priceTable.setModel(new PriceTableDataModel());
+        jScrollPane1.setViewportView(priceTable);
+
+        nacTextField.setText("0");
+
+        koefTextField.setText("1");
+
+        runButton.setText("Расчитать");
+        runButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                runButtonActionPerformed(evt);
+            }
+        });
+
+        saveButton.setText("Сохранить");
+
+        closeButton.setText("Закрыть");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        inkCheckBox.setText("В большую сторону");
+
+        nacCheckBox.setText("Наценка %");
+
+        koefCheckBox.setText("Коеффициент");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -90,30 +103,30 @@ public class PriceForm extends javax.swing.JDialog {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(39, 39, 39)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)))
+                            .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel2)
                                 .addGap(18, 18, 18)
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jCheckBox1))
+                                .addComponent(inkCheckBox))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jRadioButton1)
-                                    .addComponent(jRadioButton2))
-                                .addGap(33, 33, 33)
+                                    .addComponent(nacCheckBox)
+                                    .addComponent(koefCheckBox))
+                                .addGap(47, 47, 47)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))))
+                                    .addComponent(koefTextField)
+                                    .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -122,26 +135,26 @@ public class PriceForm extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1))
+                    .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(inkCheckBox))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nacTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nacCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(koefTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(koefCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(runButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(saveButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3))
+                        .addComponent(closeButton))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(37, 37, 37))
         );
@@ -149,14 +162,54 @@ public class PriceForm extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_runButtonActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        priceCombo.removeAllItems();
+        try{
+            ResultSet rs=DataSet.QueryExec("Select trim(name) from type_price order by name",false);
+            while (rs.next())
+                priceCombo.addItem(rs.getString(1));
+            rs=DataSet.QueryExec("select trim(name) from type_price where id_price=(select id_price from sklad where name='"+getSklad()+"')", false);
+            rs.next();
+            priceCombo.setSelectedItem(rs.getString(1));
+            for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+                rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+getSklad()+"'))", false);
+                if (rs.next()){
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new Double(rs.getDouble(1)), i, 3);
+                    boolean b=false;
+                    if (rs.getInt(3)==1)
+                        b=true;
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new JCheckBox("",b), i, 4);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new Integer(rs.getInt(2)), i, 5);
+                }
+            }
+            inkCheckBox.setSelected(false);
+            koefCheckBox.setSelected(false);
+            koefTextField.setText("1");
+            nacCheckBox.setSelected(false);
+            nacTextField.setText("0");
+            okrCombo.setSelectedIndex(1);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_formComponentShown
+
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        ((PriceTableDataModel)priceTable.getModel()).removeAll();
+        setVisible(false);
+    }//GEN-LAST:event_closeButtonActionPerformed
+    public void dialogShown(Vector<String> nazv, Vector<Double> cost){
+        for (int i=0; i<nazv.size();i++)
+            ((PriceTableDataModel)priceTable.getModel()).add(nazv.get(i), cost.get(i), 0.0, false, 0);
+        setVisible(true);
+    }
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+/*    public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 PriceForm dialog = new PriceForm(new javax.swing.JFrame(), true);
@@ -169,22 +222,31 @@ public class PriceForm extends javax.swing.JDialog {
             }
         });
     }
-
+*/
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
+    private javax.swing.JButton closeButton;
+    private javax.swing.JCheckBox inkCheckBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JCheckBox koefCheckBox;
+    private javax.swing.JTextField koefTextField;
+    private javax.swing.JCheckBox nacCheckBox;
+    private javax.swing.JTextField nacTextField;
+    private javax.swing.JComboBox okrCombo;
+    private javax.swing.JComboBox priceCombo;
+    private javax.swing.JTable priceTable;
+    private javax.swing.JButton runButton;
+    private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
+    private String Sklad;
+
+    public String getSklad() {
+        return Sklad;
+    }
+
+    public void setSklad(String Sklad) {
+        this.Sklad = Sklad;
+    }
 
 }

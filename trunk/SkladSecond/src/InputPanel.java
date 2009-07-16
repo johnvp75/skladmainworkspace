@@ -1,4 +1,6 @@
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.event.TableModelEvent;
@@ -100,6 +102,8 @@ public class InputPanel extends javax.swing.JPanel {
         noteTextField = new JTextField();
         itogowo = new JLabel();
         itogo = new JLabel();
+        jLabel7 = new JLabel();
+        koefTextField = new JTextField();
 
         addComponentListener(new ComponentAdapter() {
             public void componentShown(ComponentEvent evt) {
@@ -232,6 +236,11 @@ public class InputPanel extends javax.swing.JPanel {
                 discTextFieldActionPerformed(evt);
             }
         });
+        discTextField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent evt) {
+                discTextFieldFocusLost(evt);
+            }
+        });
         discTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent evt) {
                 discTextFieldKeyTyped(evt);
@@ -253,6 +262,15 @@ public class InputPanel extends javax.swing.JPanel {
         itogowo.setText("Сумма без скидки: 0,00");
 
         itogo.setText("Сумма со скидкой: 0,00");
+
+        jLabel7.setText("Коєффициент");
+
+        koefTextField.setText("1");
+        koefTextField.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent evt) {
+                koefTextFieldKeyTyped(evt);
+            }
+        });
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
@@ -311,7 +329,11 @@ public class InputPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(discTextField, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(itogo, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(itogo, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(koefTextField, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -362,7 +384,9 @@ public class InputPanel extends javax.swing.JPanel {
                     .addComponent(itogowo)
                     .addComponent(jLabel4)
                     .addComponent(discTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(itogo)))
+                    .addComponent(itogo)
+                    .addComponent(jLabel7)
+                    .addComponent(koefTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -381,6 +405,8 @@ public class InputPanel extends javax.swing.JPanel {
         discTextField.setText("0");
         model.setIndDiscount(0);
         noteTextField.setText("");
+        koefTextField.setText("1");
+        setKoef(1.0);
         setNote("");
         setChanged(false);
         setId_doc(0);
@@ -512,12 +538,13 @@ public class InputPanel extends javax.swing.JPanel {
 		" id_manager from manager where name='"+getManager()+"'";
             DataSet.UpdateQuery(SQL);
             for (int i=0;i<model.getRowCount();i++){
-                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol, "+model.getValueAt(i,3)+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
+                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol, "+model.getValueAt(i,3)+"*"+getKoef()+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
                 model.getValueAt(i, 1)+"'";
                 DataSet.UpdateQuery(SQL);
             }
             setChanged(false);
             DataSet.commit();
+            JOptionPane.showMessageDialog(this, "Документ записан", "Запись", JOptionPane.PLAIN_MESSAGE);
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
             try{
@@ -539,13 +566,15 @@ public class InputPanel extends javax.swing.JPanel {
     }
 
     private void discTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_discTextFieldKeyTyped
-        char[] symb = null;
+        if (evt.getKeyChar()=='-')
+            if (discTextField.getText().length()==0)
+                return;
+            else
+                evt.setKeyChar(evt.CHAR_UNDEFINED);
+        char[] symb = new char[1];
         symb[0]=evt.getKeyChar();
-        String str=new String(symb);
-        if (evt.getKeyCode()==evt.VK_ENTER)
-            return;
-        if (!(new String(symb)).contains("0..9"))
-            evt.setKeyCode(evt.VK_UNDEFINED);
+        if (!(new String(symb)).matches("[0-9]"))
+            evt.setKeyChar(evt.CHAR_UNDEFINED);
     }//GEN-LAST:event_discTextFieldKeyTyped
 
     private void discTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_discTextFieldActionPerformed
@@ -565,6 +594,29 @@ public class InputPanel extends javax.swing.JPanel {
             ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=0) ", false);
             rs.next();
             int numb=rs.getInt(1)+1;
+            DataSet.QueryExec("select for update * from document where id_doc="+getId_doc(), false);
+            DataSet.QueryExec("select for update * from kart where cost is NULL", false);
+//            double k=1.0;
+            for (int i=0; i<model.getRowCount();i++){
+                rs=DataSet.QueryExec("Select id_nom from kart where (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')) and (cost is NULL)", false);
+                if (rs.next()){
+                    int id_nom=rs.getInt(1);
+                    DataSet.UpdateQuery("update kart set cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+", day=sysdata, val=(select id_val from val where name='"+valCombo.getSelectedItem()+"') where id_nom="+id_nom );
+                }else{
+                    rs=DataSet.QueryExec("select count(*) from kart where (cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+") and (val=(select id_val from val where name='"+valCombo.getSelectedItem()+"')) and (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))",false);
+                    rs.next();
+                    if (rs.getInt(1)==0){
+                        DataSet.UpdateQuery("insert into kart (id_tovar, id_skl, id_group, id_nom, cost, day, val) select " +
+                                "(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"') as id_tovar," +
+                                "(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') as id_skl," +
+                                + ((DataNode) groupTree.getLastSelectedPathComponent()).getIndex() + " as id_group," +
+                                "(select max(id_nom)+1 from kart) as id_nom," +
+                                ""+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+" as cost," +
+                                "sysdata as day," +
+                                "id_val from val where name='"+valCombo.getSelectedItem()+"'");
+                    }
+                }
+            }
             DataSet.UpdateQuery("update document set numb="+numb+", day=sysdate where id_doc="+getId_doc());
             DataSet.commit();
             model.removeAll();
@@ -596,6 +648,17 @@ public class InputPanel extends javax.swing.JPanel {
         Print_view(false);
     }//GEN-LAST:event_viewButtonActionPerformed
 
+    private void koefTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_koefTextFieldKeyTyped
+        char[] symb = new char[1];
+        symb[0]=evt.getKeyChar();
+        if (!(new String(symb)).matches("[0-9.]"))
+            evt.setKeyChar(evt.CHAR_UNDEFINED);
+    }//GEN-LAST:event_koefTextFieldKeyTyped
+
+    private void discTextFieldFocusLost(FocusEvent evt) {//GEN-FIRST:event_discTextFieldFocusLost
+        model.setIndDiscount(new Integer(discTextField.getText()));
+    }//GEN-LAST:event_discTextFieldFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton NewTovarButton;
@@ -613,9 +676,11 @@ public class InputPanel extends javax.swing.JPanel {
     private JLabel jLabel4;
     private JLabel jLabel5;
     private JLabel jLabel6;
+    private JLabel jLabel7;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
     private JScrollPane jScrollPane3;
+    private JTextField koefTextField;
     private JTable naklTable;
     private JList nameList;
     private JTextField noteTextField;
@@ -631,6 +696,15 @@ public class InputPanel extends javax.swing.JPanel {
     private naklTableModel model;
     private NewTovarDialog dialog;
     private String Manager;
+    private double koef = 1.0;
+
+    public double getKoef() {
+        return koef;
+    }
+
+    public void setKoef(double koef) {
+        this.koef = koef;
+    }
 
     /**
      * Get the value of Manager
@@ -723,7 +797,7 @@ public class InputPanel extends javax.swing.JPanel {
         Vector<Vector<String>> OutData = new Vector<Vector<String>>(0);
         NumberFormat formatter = new DecimalFormat ( "0.00" ) ;
         try{
-            ResultSet rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, sum(lines.kol*cost*(1-disc/100)) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+getId_doc()+" group by tovar.name, cost, disc order by tovar.name", false);
+            ResultSet rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, sum(lines.kol*cost*(1-disc/100)) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+getId_doc()+" group by tovar.name, cost, lines.kol, disc order by tovar.name", false);
             for (int i=0; i<OutData.size();i++)
             OutData.get(i).clear();
             OutData.clear();
@@ -734,10 +808,9 @@ public class InputPanel extends javax.swing.JPanel {
 		Row.add(j+"");
 		Row.add(rs.getString(1));
 		Row.add(rs.getString(2));
-		Row.add(rs.getString(3));
-		Row.add(formatter.format(rs.getDouble(4)));
-		Row.add(rs.getString(5));
-		Row.add(formatter.format(rs.getDouble(6)));
+		Row.add(formatter.format(rs.getDouble(3)));
+		Row.add(rs.getString(4));
+		Row.add(formatter.format(rs.getDouble(5)));
 		OutData.add(Row);
             }
             rs=DataSet.QueryExec("select sum, trim(note), disc, trim(val.name), trim(manager.name), trim(sklad.name), numb, trim(client.name) from (((document inner join val on document.id_val=val.id_val) inner join manager on document.id_manager=manager.id_manager) inner join " +
@@ -763,13 +836,14 @@ public class InputPanel extends javax.swing.JPanel {
             OutputOO.InsertOne("Итого со скидкой",10,false,2,9+size+2);
             OutputOO.InsertOne(formatter.format(rs.getDouble(1)),10,true,6,9+size+2);
             OutputOO.InsertOne("Документ оформил: "+rs.getString(5),8,false,2,9+size+4);
+            OutputOO.Insert(1, 9, OutData);
+            if (print){
+                OutputOO.print(1);
+                OutputOO.CloseDoc();
+        }
+
         }catch(Exception e){
             e.printStackTrace();
-        }
-        OutputOO.Insert(1, 9, OutData);
-        if (print){
-            OutputOO.print(2);
-            OutputOO.CloseDoc();
         }
     }
 }

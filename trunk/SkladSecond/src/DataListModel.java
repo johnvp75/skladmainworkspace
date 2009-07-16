@@ -19,9 +19,9 @@ import javax.swing.AbstractListModel;
  *
  * @author Р–РµРєР°
  */
-public class DataListModel1 extends AbstractListModel{
+public class DataListModel extends AbstractListModel{
     private Vector<String> data;
-    public DataListModel1(){
+    public DataListModel(){
         data = new Vector<String>(0);
     }
     public Object getElementAt(int pos){

@@ -119,7 +119,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
             }
         });
 
-        barcodeList.setModel(new DataListModel1());
+        barcodeList.setModel(new DataListModel());
         barcodeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(barcodeList);
 
@@ -224,7 +224,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        ((DataListModel1)barcodeList.getModel()).removeAll();
+        ((DataListModel)barcodeList.getModel()).removeAll();
         nameTextField.setText("");
         countTextField.setText("1");
         barcodeTextField.setText("");
@@ -249,14 +249,14 @@ public class NewTovarDialog extends javax.swing.JDialog {
         catch(Exception e){
             e.printStackTrace();
         }
-        if (((DataListModel1)barcodeList.getModel()).pos(barcodeTextField.getText())==-1){
-            ((DataListModel1)barcodeList.getModel()).add(barcodeTextField.getText());
+        if (((DataListModel)barcodeList.getModel()).pos(barcodeTextField.getText())==-1){
+            ((DataListModel)barcodeList.getModel()).add(barcodeTextField.getText());
         }
         barcodeTextField.setText("");
     }//GEN-LAST:event_barcodeTextFieldActionPerformed
 
     private void deleteButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        ((DataListModel1)barcodeList.getModel()).remove(barcodeList.getSelectedIndex());
+        ((DataListModel)barcodeList.getModel()).remove(barcodeList.getSelectedIndex());
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void nameTextFieldFocusLost(FocusEvent evt) {//GEN-FIRST:event_nameTextFieldFocusLost
@@ -276,8 +276,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
             rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
             rs.next();
             int skl=rs.getInt(1);
-            for (int i=0;i<((DataListModel1)barcodeList.getModel()).getSize();i++)
-                DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel1)barcodeList.getModel()).getElementAt(i)+"')");
+            for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
+                DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
             setOk(true);
             setVisible(false);
         }catch(Exception e){

@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -92,7 +93,7 @@ public class InputPanel extends javax.swing.JPanel {
         regButton = new JButton();
         printButton = new JButton();
         viewButton = new JButton();
-        jButton1 = new JButton();
+        priceButton = new JButton();
         NewTovarButton = new JButton();
         jLabel4 = new JLabel();
         discTextField = new JTextField();
@@ -214,10 +215,10 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("Прайс-лист");
-        jButton1.addActionListener(new ActionListener() {
+        priceButton.setText("Прайс-лист");
+        priceButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                priceButtonActionPerformed(evt);
             }
         });
 
@@ -266,6 +267,11 @@ public class InputPanel extends javax.swing.JPanel {
         jLabel7.setText("Коєффициент");
 
         koefTextField.setText("1");
+        koefTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                koefTextFieldActionPerformed(evt);
+            }
+        });
         koefTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent evt) {
                 koefTextFieldKeyTyped(evt);
@@ -283,7 +289,7 @@ public class InputPanel extends javax.swing.JPanel {
                         .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 824, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                            .addComponent(jButton1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(priceButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(printButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(regButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -377,7 +383,7 @@ public class InputPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(viewButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1))
+                        .addComponent(priceButton))
                     .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
@@ -417,7 +423,7 @@ public class InputPanel extends javax.swing.JPanel {
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
 //            naklTable.getColumnModel().getColumn(2).
-            naklTable.editCellAt(row-1, 2);
+            naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
 
         }
@@ -427,9 +433,28 @@ public class InputPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_findButtonActionPerformed
 
-    private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void priceButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_priceButtonActionPerformed
+        if (priceDialog==null)
+            priceDialog=new PriceForm(null, true);
+        Vector<String> nazv=new Vector<String>(0);
+        Vector<Double> cost=new Vector<Double>(0);
+        double curs=1.0;
+        try {
+            ResultSet rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from val where name='" + valCombo.getSelectedItem() + "')", false);
+            rs.next();
+            curs=rs.getDouble(1);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        
+        for (int i=0; i<model.getRowCount();i++){
+            nazv.addElement((String)model.getValueAt(i, 1));
+            cost.addElement((Double)model.getValueAt(i, 3)*(1-(new Integer(model.getIndDiscount())).doubleValue()/100)*(1-((Integer)model.getValueAt(i, 5)).doubleValue()/100)*getKoef()*curs);
+        }
+        priceDialog.setSklad((String)skladCombo.getSelectedItem());
+        priceDialog.dialogShown(nazv, cost);
+    }//GEN-LAST:event_priceButtonActionPerformed
 
     @SuppressWarnings("static-access")
     private void naklTableKeyPressed(KeyEvent evt) {//GEN-FIRST:event_naklTableKeyPressed
@@ -461,7 +486,7 @@ public class InputPanel extends javax.swing.JPanel {
         if(evt.getKeyCode()==evt.VK_ENTER){
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
-            naklTable.editCellAt(row-1, 2);
+            naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
     }//GEN-LAST:event_nameListKeyPressed
@@ -579,10 +604,12 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void discTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_discTextFieldActionPerformed
         model.setIndDiscount(new Integer(discTextField.getText()));
+        koefTextField.requestFocus();
     }//GEN-LAST:event_discTextFieldActionPerformed
 
     private void noteTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_noteTextFieldActionPerformed
         setNote(noteTextField.getText());
+        discTextField.requestFocus();
     }//GEN-LAST:event_noteTextFieldActionPerformed
 
     private void regButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_regButtonActionPerformed
@@ -659,6 +686,11 @@ public class InputPanel extends javax.swing.JPanel {
         model.setIndDiscount(new Integer(discTextField.getText()));
     }//GEN-LAST:event_discTextFieldFocusLost
 
+    private void koefTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_koefTextFieldActionPerformed
+        setKoef(new Double(koefTextField.getText()));
+        nameList.requestFocus();
+    }//GEN-LAST:event_koefTextFieldActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton NewTovarButton;
@@ -668,7 +700,6 @@ public class InputPanel extends javax.swing.JPanel {
     private JTree groupTree;
     private JLabel itogo;
     private JLabel itogowo;
-    private JButton jButton1;
     private JFormattedTextField jFormattedTextField1;
     private JLabel jLabel1;
     private JLabel jLabel2;
@@ -684,6 +715,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JTable naklTable;
     private JList nameList;
     private JTextField noteTextField;
+    private JButton priceButton;
     private JButton printButton;
     private JButton regButton;
     private JButton saveButton;
@@ -697,7 +729,7 @@ public class InputPanel extends javax.swing.JPanel {
     private NewTovarDialog dialog;
     private String Manager;
     private double koef = 1.0;
-
+    private PriceForm priceDialog=null;
     public double getKoef() {
         return koef;
     }

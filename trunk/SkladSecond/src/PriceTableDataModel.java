@@ -1,6 +1,8 @@
 
+import java.lang.Boolean;
+import java.lang.Object;
 import java.util.Vector;
-import javax.swing.JCheckBox;
+//import javax.swing.Boolean;
 import javax.swing.table.AbstractTableModel;
 
 /*
@@ -14,29 +16,29 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PriceTableDataModel extends AbstractTableModel{
 
-    private Vector<JCheckBox> CheckCol;
+    private Vector<Boolean> CheckCol;
     private Vector<String> Nazv;
     private Vector<Double> Cost;
     private Vector<Double> PriceCost;
-    private Vector<JCheckBox> Akcia;
+    private Vector<Boolean> Akcia;
     private Vector<Integer> Discount;
 
     public PriceTableDataModel() {
-        CheckCol=new Vector<JCheckBox>(0);
+        CheckCol=new Vector<Boolean>(0);
         Nazv=new Vector<String>(0);
         Cost=new Vector<Double>(0);
         PriceCost=new Vector<Double>(0);
-        Akcia=new Vector<JCheckBox>(0);
+        Akcia=new Vector<Boolean>(0);
         Discount=new Vector<Integer>(0);
     }
 
-    private JCheckBox getCheckCol(int pos) {
+    private Boolean getCheckCol(int pos) {
         return CheckCol.get(pos);
     }
-    private void setCheckCol(JCheckBox CheckBox, int pos) {
+    private void setCheckCol(Boolean CheckBox, int pos) {
         CheckCol.setElementAt(CheckBox, pos);
     }
-    private void addCheckCol(JCheckBox CheckBox){
+    private void addCheckCol(Boolean CheckBox){
         CheckCol.add(CheckBox);
     }
     private void removeCheckCol(int pos){
@@ -82,13 +84,13 @@ public class PriceTableDataModel extends AbstractTableModel{
         PriceCost.removeElementAt(pos);
     }
 
-    private JCheckBox getAkcia(int pos) {
+    private Boolean getAkcia(int pos) {
         return Akcia.get(pos);
     }
-    private void setAkcia(JCheckBox CheckBox, int pos) {
+    private void setAkcia(Boolean CheckBox, int pos) {
         Akcia.setElementAt(CheckBox, pos);
     }
-    private void addAkcia(JCheckBox CheckBox){
+    private void addAkcia(Boolean CheckBox){
         Akcia.add(CheckBox);
     }
     private void removeAkcia(int pos){
@@ -109,11 +111,11 @@ public class PriceTableDataModel extends AbstractTableModel{
     }
 
     public void add(String aNazv, double aCost, double aPriceCost, boolean isAkcia, int aDisc){
-        addCheckCol(new JCheckBox("",false));
+        addCheckCol(false);
         addNazv(aNazv);
         addCost(new Double(aCost));
         addPriceCost(new Double(aPriceCost));
-        addAkcia(new JCheckBox("",isAkcia));
+        addAkcia(isAkcia);
         addDiscount(new Integer(aDisc));
         fireTableDataChanged();
     }
@@ -179,7 +181,7 @@ public class PriceTableDataModel extends AbstractTableModel{
     public void setValueAt(Object Value, int row, int col){
 	switch (col){
             case 0:
-                setCheckCol((JCheckBox)Value, row);
+                setCheckCol((Boolean)Value, row);
 		return;
             case 1:
                 setNazv((String)Value, row);
@@ -191,7 +193,7 @@ public class PriceTableDataModel extends AbstractTableModel{
                 setPriceCost((Double)Value, row);
 		return;
             case 4:
-                setAkcia((JCheckBox)Value, row);
+                setAkcia((Boolean)Value, row);
 		return;
             case 5:
                 setDiscount((Integer)Value, row);
@@ -201,5 +203,22 @@ public class PriceTableDataModel extends AbstractTableModel{
     public int size(){
         return Nazv.size();
     }
+/*    public Class getColumnClass(int col){
+	switch (col){
+            case 0:
+		return Boolean;
+            case 1:
+                return Object;
+            case 2:
+                return Object;
+            case 3:
+                return Object;
+            case 4:
+		return Boolean;
+            case 5:
+                return Object;
+        }
 
+    }
+*/
 }

@@ -3,6 +3,8 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.event.ActionEvent;
@@ -40,6 +42,7 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 /*
@@ -73,6 +76,10 @@ public class InputPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        treePopup = new JPopupMenu();
+        AddGroup = new JMenuItem();
+        AddSubGroup = new JMenuItem();
+        RenameGroup = new JMenuItem();
         jLabel1 = new JLabel();
         skladCombo = new JComboBox();
         jLabel2 = new JLabel();
@@ -106,7 +113,34 @@ public class InputPanel extends javax.swing.JPanel {
         jLabel7 = new JLabel();
         koefTextField = new JTextField();
 
+        AddGroup.setText("Добавить группу");
+        AddGroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                AddGroupActionPerformed(evt);
+            }
+        });
+        treePopup.add(AddGroup);
+
+        AddSubGroup.setText("Добавить подгруппу");
+        AddSubGroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                AddSubGroupActionPerformed(evt);
+            }
+        });
+        treePopup.add(AddSubGroup);
+
+        RenameGroup.setText("Переименовать");
+        RenameGroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                RenameGroupActionPerformed(evt);
+            }
+        });
+        treePopup.add(RenameGroup);
+
         addComponentListener(new ComponentAdapter() {
+            public void componentHidden(ComponentEvent evt) {
+                formComponentHidden(evt);
+            }
             public void componentShown(ComponentEvent evt) {
                 formComponentShown(evt);
             }
@@ -129,6 +163,7 @@ public class InputPanel extends javax.swing.JPanel {
         groupTree.setRootVisible(false);
         groupTree.setShowsRootHandles(true);
         groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        groupTree.setComponentPopupMenu(treePopup);
         groupTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent evt) {
                 groupTreeValueChanged(evt);
@@ -430,10 +465,51 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nameListMouseClicked
 
     private void findButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_findButtonActionPerformed
-        // TODO add your handling code here:
+        try{
+            String nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
+            ResultSet rs=DataSet.QueryExec("select id_group from kart where id_tovar=(select id_tovar from tovar where name ='"+nazv+"') and " +
+                    "id_skl=(select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"')", false);
+            rs.next();
+            int group=rs.getInt(1);
+            rs=DataSet.QueryExec("select trim(name) from groupid where id_group="+group, false);
+            rs.next();
+            String name=rs.getString(1);
+            Object[] path = new Object[50];
+            path[0]=new DataNode(name,group);
+            int i=1;
+            rs=DataSet.QueryExec("select id_group, trim(name) from groupid where id_group=(select parent_group from groupid where id_group="+group+")", false);
+            while (rs.next()){
+                group=rs.getInt(1);
+                name=rs.getString(2);
+                path[i]=new DataNode(name,group);
+                i++;
+                rs=DataSet.QueryExec("select id_group, trim(name) from groupid where id_group=(select parent_group from groupid where id_group="+group+")", false);
+            }
+            Object[] path1 = new Object[i+1] ;
+//            path1[0]=new DataNode("Все группы",-2);
+            path1[0]=groupTree.getModel().getRoot();
+            for (int j=i; j>0; j--){
+                path1[i-j+1]=path[j-1];
+            }
+            TreePath tPath=new TreePath(path1);
+//            groupTree.expandPath(tPath);
+            groupTree.scrollPathToVisible(tPath);
+            groupTree.setSelectionPath(tPath);
+//            nameList.setSelectedIndex(modelList.indexOf(nazv));
+            nameList.setSelectedValue(nazv, true);
+            nameList.requestFocus();
+//            nameList.sc
+            
+//            groupTree.treeDidChange();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_findButtonActionPerformed
 
     private void priceButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_priceButtonActionPerformed
+        if (isChanged())
+            return;
         if (priceDialog==null)
             priceDialog=new PriceForm(null, true);
         Vector<String> nazv=new Vector<String>(0);
@@ -441,8 +517,8 @@ public class InputPanel extends javax.swing.JPanel {
         double curs=1.0;
         try {
             ResultSet rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from val where name='" + valCombo.getSelectedItem() + "')", false);
-            rs.next();
-            curs=rs.getDouble(1);
+            if (rs.next())
+                curs=rs.getDouble(1);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -563,7 +639,8 @@ public class InputPanel extends javax.swing.JPanel {
 		" id_manager from manager where name='"+getManager()+"'";
             DataSet.UpdateQuery(SQL);
             for (int i=0;i<model.getRowCount();i++){
-                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol, "+model.getValueAt(i,3)+"*"+getKoef()+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
+                SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol," +
+                        " "+model.getValueAt(i,3)+"*"+getKoef()+" as cost, "+model.getValueAt(i, 5)+" as disc, id_tovar from tovar where name='"+
                 model.getValueAt(i, 1)+"'";
                 DataSet.UpdateQuery(SQL);
             }
@@ -691,9 +768,74 @@ public class InputPanel extends javax.swing.JPanel {
         nameList.requestFocus();
     }//GEN-LAST:event_koefTextFieldActionPerformed
 
+    private void formComponentHidden(ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
+        model.removeAll();
+    }//GEN-LAST:event_formComponentHidden
+
+    private void AddGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddGroupActionPerformed
+        String nazv=JOptionPane.showInputDialog(this, "Введите название новой группы");
+        if (nazv.trim().length()==0)
+            return;
+        try{
+            ResultSet rs=DataSet.QueryExec("select count (*) from groupid where upper(name)='"+nazv.trim().toUpperCase()+"' and parent_group is NULL", false);
+            rs.next();
+            if (rs.getInt(1)>0){
+                JOptionPane.showMessageDialog(this, "Такая группа существует", "Новая группа",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            DataSet.UpdateQuery("insert into groupid (name, id_group) select '"+nazv.trim()+"', max(id_group)+1 from groupid");
+            ((GroupTreeModel)groupTree.getModel()).setRoot();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_AddGroupActionPerformed
+
+    private void AddSubGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddSubGroupActionPerformed
+        String nazv=JOptionPane.showInputDialog(this, "Введите название новой подгруппы");
+        if (nazv.trim().length()==0 || groupTree.getLastSelectedPathComponent()==null)
+            return;
+
+        try{
+            ResultSet rs=DataSet.QueryExec("select count (*) from groupid where upper(name)='"+nazv.trim().toUpperCase()+"' and parent_group="+((DataNode)groupTree.getLastSelectedPathComponent()).getIndex(), false);
+            rs.next();
+            if (rs.getInt(1)>0){
+                JOptionPane.showMessageDialog(this, "В данной группе такая подгруппа существует", "Новая группа",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            DataSet.UpdateQuery("insert into groupid (name, parent_group, id_group) select '"+nazv.trim()+"', "+((DataNode)groupTree.getLastSelectedPathComponent()).getIndex()+", max(id_group)+1 from groupid");
+            ((GroupTreeModel)groupTree.getModel()).setRoot();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AddSubGroupActionPerformed
+
+    private void RenameGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_RenameGroupActionPerformed
+        String nazv=JOptionPane.showInputDialog(this, "Введите новое название группы");
+        if (nazv.trim().length()==0 || groupTree.getLastSelectedPathComponent()==null)
+            return;
+
+        try{
+            ResultSet rs=DataSet.QueryExec("select count (*) from groupid where upper(name)='"+nazv.trim().toUpperCase()+"' and parent_group="+((DataNode)groupTree.getLeadSelectionPath().getParentPath().getLastPathComponent()).getIndex(), false);
+            rs.next();
+            if (rs.getInt(1)>0){
+                JOptionPane.showMessageDialog(this, "В данной группе такая подгруппа существует", "Новая группа",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            DataSet.UpdateQuery("update groupid set name='"+nazv.trim()+"' where id_group="+((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+            ((GroupTreeModel)groupTree.getModel()).setRoot();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_RenameGroupActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JMenuItem AddGroup;
+    private JMenuItem AddSubGroup;
     private JButton NewTovarButton;
+    private JMenuItem RenameGroup;
     private JComboBox clientCombo;
     private JTextField discTextField;
     private JButton findButton;
@@ -720,6 +862,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JButton regButton;
     private JButton saveButton;
     private JComboBox skladCombo;
+    private JPopupMenu treePopup;
     private JComboBox valCombo;
     private JButton viewButton;
     // End of variables declaration//GEN-END:variables

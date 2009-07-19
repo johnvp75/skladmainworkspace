@@ -1,6 +1,13 @@
 
+import java.awt.event.ActionListener;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 
 /*
@@ -52,6 +59,9 @@ public class PriceForm extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                formComponentHidden(evt);
+            }
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
             }
@@ -63,8 +73,18 @@ public class PriceForm extends javax.swing.JDialog {
 
         okrCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "До 1", "До 0,1", "До 0,01" }));
         okrCombo.setSelectedIndex(1);
+        okrCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                okrComboActionPerformed(evt);
+            }
+        });
 
         priceTable.setModel(new PriceTableDataModel());
+        priceTable.setCellSelectionEnabled(true);
+        priceTable.getTableHeader().setResizingAllowed(false);
+        priceTable.getTableHeader().setReorderingAllowed(false);
+        //priceTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
+        priceTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         jScrollPane1.setViewportView(priceTable);
 
         nacTextField.setText("0");
@@ -79,6 +99,11 @@ public class PriceForm extends javax.swing.JDialog {
         });
 
         saveButton.setText("Сохранить");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         closeButton.setText("Закрыть");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -163,12 +188,39 @@ public class PriceForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
-        // TODO add your handling code here:
+        for (int i=0;i<priceTable.getModel().getRowCount();i++){
+            if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
+                priceTable.getModel().setValueAt(cen(i), i, 3);
+            }
+        }
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        ActionListener listener = new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                try{
+                    for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+                        ResultSet rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+getSklad()+"'))", false);
+                        if (rs.next()){
+                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(1), i, 3);
+                            boolean b=false;
+                            if (rs.getInt(3)==1)
+                                b=true;
+                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 4);
+                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 5);
+                        }
+                    }
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                
+            }
+        };
+        priceCombo.removeActionListener(listener);
         priceCombo.removeAllItems();
         try{
+
             ResultSet rs=DataSet.QueryExec("Select trim(name) from type_price order by name",false);
             while (rs.next())
                 priceCombo.addItem(rs.getString(1));
@@ -178,12 +230,12 @@ public class PriceForm extends javax.swing.JDialog {
             for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
                 rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+getSklad()+"'))", false);
                 if (rs.next()){
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new Double(rs.getDouble(1)), i, 3);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(1), i, 3);
                     boolean b=false;
                     if (rs.getInt(3)==1)
                         b=true;
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new JCheckBox("",b), i, 4);
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(new Integer(rs.getInt(2)), i, 5);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 4);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 5);
                 }
             }
             inkCheckBox.setSelected(false);
@@ -195,13 +247,53 @@ public class PriceForm extends javax.swing.JDialog {
         }catch(Exception e){
             e.printStackTrace();
         }
+        priceCombo.addActionListener(listener);
     }//GEN-LAST:event_formComponentShown
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         setVisible(false);
     }//GEN-LAST:event_closeButtonActionPerformed
+
+    private void okrComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okrComboActionPerformed
+        
+    }//GEN-LAST:event_okrComboActionPerformed
+
+    private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
+//        ((PriceTableDataModel)priceTable.getModel()).removeAll();
+    }//GEN-LAST:event_formComponentHidden
+
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        try{
+            ResultSet rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
+            rs.next();
+            int skl=rs.getInt(1);
+            rs=DataSet.QueryExec("Select id_price from type_price where name='"+priceCombo.getSelectedItem()+"'", false);
+            rs.next();
+            int price=rs.getInt(1);
+            for (int i=0; i<priceTable.getModel().getRowCount();i++){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
+                        if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 3)+", akciya="+priceTable.getModel().getValueAt(i, 5)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 4)).booleanValue()?"1":"0")+
+                                " where id_tovar=(select id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"') and id_skl="+skl+" and id_price="+price)==0)
+                            DataSet.UpdateQuery("insert into price (cost, akciya, isakcia, id_skl, id_price, id_tovar) select " +
+                                ""+priceTable.getModel().getValueAt(i, 3)+
+                                ", "+priceTable.getModel().getValueAt(i, 5)+", " +
+                                ""+((Boolean)priceTable.getModel().getValueAt(i, 4)?"1":"0")+", " +skl+", "+price+", "+
+                                "id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"'");
+                }
+            }
+            DataSet.commit();
+        }catch(Exception e){
+            try {
+                DataSet.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
+        ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
             ((PriceTableDataModel)priceTable.getModel()).add(nazv.get(i), cost.get(i), 0.0, false, 0);
         setVisible(true);
@@ -248,5 +340,15 @@ public class PriceForm extends javax.swing.JDialog {
     public void setSklad(String Sklad) {
         this.Sklad = Sklad;
     }
-
+    private String cen(int row){
+        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1);
+        String str="0.";
+        for (int i=0;i<okrCombo.getSelectedIndex();i++)
+            str=str+"0";
+        NumberFormat formatter = new DecimalFormat ( str ) ;
+        //ret=(ret*Math.pow(10, 2-okrCombo.getSelectedIndex())+0.5)/Math.pow(10, 2-okrCombo.getSelectedIndex());
+        if (inkCheckBox.isSelected())
+            ret=ret+(0.5/Math.pow(10, okrCombo.getSelectedIndex())-0.1/Math.pow(10, okrCombo.getSelectedIndex()+1));
+        return formatter.format(ret);
+    }
 }

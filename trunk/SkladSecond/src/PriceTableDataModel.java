@@ -1,5 +1,5 @@
 
-import java.lang.Boolean;
+import java.lang.Class;
 import java.lang.Object;
 import java.util.Vector;
 //import javax.swing.Boolean;
@@ -139,11 +139,11 @@ public class PriceTableDataModel extends AbstractTableModel{
     }
     public Object getValueAt(int row, int col){
         switch (col){
-            case 0: return getCheckCol(row);
+            case 0: return (Boolean)getCheckCol(row);
             case 1: return getNazv(row);
             case 2: return getCost(row);
             case 3: return getPriceCost(row);
-            case 4: return getAkcia(row);
+            case 4: return (getAkcia(row)).booleanValue();
             case 5: return getDiscount(row);
             default: return null;
         }
@@ -182,43 +182,50 @@ public class PriceTableDataModel extends AbstractTableModel{
 	switch (col){
             case 0:
                 setCheckCol((Boolean)Value, row);
+                fireTableDataChanged();
 		return;
             case 1:
                 setNazv((String)Value, row);
-		return;
+                fireTableDataChanged();
+                return;
             case 2:
                 setCost((Double)Value, row);
-		return;
+                fireTableDataChanged();
+                return;
             case 3:
-                setPriceCost((Double)Value, row);
-		return;
+                setPriceCost(new Double((String)Value), row);
+                fireTableDataChanged();
+                return;
             case 4:
                 setAkcia((Boolean)Value, row);
-		return;
+                fireTableDataChanged();
+                return;
             case 5:
-                setDiscount((Integer)Value, row);
-		return;
+                setDiscount(new Integer((String)Value), row);
+                fireTableDataChanged();
+                return;
 	}
     }
     public int size(){
         return Nazv.size();
     }
-/*    public Class getColumnClass(int col){
-	switch (col){
+    public Class getColumnClass(int col){
+/*        switch (col){
             case 0:
-		return Boolean;
+		return (Object)java.lang.Boolean ;
             case 1:
-                return Object;
+                return Class.forName("Object");
             case 2:
-                return Object;
+                return Class.forName("Object");
             case 3:
-                return Object;
+                return Class.forName("Object");
             case 4:
-		return Boolean;
+		return Class.forName("Boolean");
             case 5:
-                return Object;
+                return Class.forName("Object");
         }
-
-    }
 */
+        return (col == 0 || col==4) ? Boolean.class : super.getColumnClass(col);
+    }
+
 }

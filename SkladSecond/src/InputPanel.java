@@ -716,7 +716,7 @@ public class InputPanel extends javax.swing.JPanel {
                                 + ((DataNode) groupTree.getLastSelectedPathComponent()).getIndex() + " as id_group," +
                                 "(select max(id_nom)+1 from kart) as id_nom," +
                                 ""+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+" as cost," +
-                                "sysdata as day," +
+                                "sysdate as day," +
                                 "id_val from val where name='"+valCombo.getSelectedItem()+"'");
                     }
                 }

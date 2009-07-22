@@ -605,7 +605,7 @@ public class InputPanel extends javax.swing.JPanel {
             nameList.setSelectedValue(dialog.getTovar(), true);
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
-            naklTable.editCellAt(row-1, 2);
+            naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
     }//GEN-LAST:event_NewTovarButtonActionPerformed
@@ -698,14 +698,14 @@ public class InputPanel extends javax.swing.JPanel {
             ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=0) ", false);
             rs.next();
             int numb=rs.getInt(1)+1;
-            DataSet.QueryExec("select for update * from document where id_doc="+getId_doc(), false);
-            DataSet.QueryExec("select for update * from kart where cost is NULL", false);
+            DataSet.QueryExec("select * from document where id_doc="+getId_doc()+" for update", false);
+            DataSet.QueryExec("select * from kart where cost is NULL for update ", false);
 //            double k=1.0;
             for (int i=0; i<model.getRowCount();i++){
                 rs=DataSet.QueryExec("Select id_nom from kart where (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')) and (cost is NULL)", false);
                 if (rs.next()){
                     int id_nom=rs.getInt(1);
-                    DataSet.UpdateQuery("update kart set cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+", day=sysdata, val=(select id_val from val where name='"+valCombo.getSelectedItem()+"') where id_nom="+id_nom );
+                    DataSet.UpdateQuery("update kart set cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+", day=sysdate, val=(select id_val from val where name='"+valCombo.getSelectedItem()+"') where id_nom="+id_nom );
                 }else{
                     rs=DataSet.QueryExec("select count(*) from kart where (cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+") and (val=(select id_val from val where name='"+valCombo.getSelectedItem()+"')) and (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))",false);
                     rs.next();

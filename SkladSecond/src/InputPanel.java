@@ -626,17 +626,29 @@ public class InputPanel extends javax.swing.JPanel {
             String SQL;
             ResultSet rs1;
             SQL="lock table document in exclusive mode";
-            setId_doc(1);
-            DataSet.UpdateQuery(SQL);
-            rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
-            if (rs1.next())
-                setId_doc(rs1.getInt(1)+1);
-            SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 1 as id_type_doc,"+getId_doc()+" as id_doc"+
-		", (select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"') as id_client" +
-		", (select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"') as id_skl"+
-		", (select id_val from val where name='"+(String)valCombo.getSelectedItem()+"') as id_val" +
-		", "+model.summ()+" as sum ,'"+getNote()+"' as note, "+model.getIndDiscount()+" as disc, " +
-		" id_manager from manager where name='"+getManager()+"'";
+            if (getId_doc()==0){
+                setId_doc(1);
+                DataSet.UpdateQuery(SQL);
+                rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
+                if (rs1.next())
+                    setId_doc(rs1.getInt(1)+1);
+                SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 1 as id_type_doc,"+getId_doc()+" as id_doc"+
+                    ", (select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"') as id_client" +
+                    ", (select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"') as id_skl"+
+                    ", (select id_val from val where name='"+(String)valCombo.getSelectedItem()+"') as id_val" +
+                    ", "+model.summ()+" as sum ,'"+getNote()+"' as note, "+model.getIndDiscount()+" as disc, " +
+                    " id_manager from manager where name='"+getManager()+"'";
+            }else{
+                SQL="update document set id_type_doc=1 "+
+                    ", id_client=(select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"')" +
+                    ", id_skl=(select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"')"+
+                    ", id_val=(select id_val from val where name='"+(String)valCombo.getSelectedItem()+"')" +
+                    ", sum="+model.summ()+" ,note='"+getNote()+"', disc="+model.getIndDiscount()+", " +
+                    " id_manager=( select id_manager from manager where name='"+getManager()+"') where id_doc="+getId_doc();
+                DataSet.UpdateQuery(SQL);
+                SQL="delete from lines where id_doc="+getId_doc();
+            }
+
             DataSet.UpdateQuery(SQL);
             for (int i=0;i<model.getRowCount();i++){
                 SQL="insert into lines (id_doc,kol,cost,disc,id_tovar) select "+getId_doc()+" as id_doc, "+model.getValueAt(i,2)+" as kol," +
@@ -724,6 +736,8 @@ public class InputPanel extends javax.swing.JPanel {
             DataSet.UpdateQuery("update document set numb="+numb+", day=sysdate where id_doc="+getId_doc());
             DataSet.commit();
             model.removeAll();
+            setChanged(false);
+            setId_doc(0);
             setVisible(false);
         }catch(Exception e){
             JOptionPane.showMessageDialog(this, "Зарегистрировать не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
@@ -770,6 +784,8 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void formComponentHidden(ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
         model.removeAll();
+        setChanged(false);
+        setId_doc(0);
     }//GEN-LAST:event_formComponentHidden
 
     private void AddGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddGroupActionPerformed

@@ -465,6 +465,9 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nameListMouseClicked
 
     private void findButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_findButtonActionPerformed
+        find();
+    }//GEN-LAST:event_findButtonActionPerformed
+    private void find(){
         try{
             String nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
             ResultSet rs=DataSet.QueryExec("select id_group from kart where id_tovar=(select id_tovar from tovar where name ='"+nazv+"') and " +
@@ -499,14 +502,13 @@ public class InputPanel extends javax.swing.JPanel {
             nameList.setSelectedValue(nazv, true);
             nameList.requestFocus();
 //            nameList.sc
-            
+
 //            groupTree.treeDidChange();
         }
         catch(Exception e){
             e.printStackTrace();
         }
-    }//GEN-LAST:event_findButtonActionPerformed
-
+    }
     private void priceButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_priceButtonActionPerformed
         if (isChanged())
             return;
@@ -565,6 +567,10 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
+        if(evt.getKeyCode()==evt.VK_F5)
+            newTovar();
+        if(evt.getKeyCode()==evt.VK_F3)
+            find();
     }//GEN-LAST:event_nameListKeyPressed
     private int id_doc;
 
@@ -586,7 +592,11 @@ public class InputPanel extends javax.swing.JPanel {
     }
 
     private void NewTovarButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_NewTovarButtonActionPerformed
-        if (dialog==null)
+        newTovar();
+    }//GEN-LAST:event_NewTovarButtonActionPerformed
+
+    private void newTovar(){
+               if (dialog==null)
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setVisible(true);
@@ -608,8 +618,7 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
-    }//GEN-LAST:event_NewTovarButtonActionPerformed
-
+    }
     private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         for (int i=0; i<model.getRowCount(); i++){
 	if(((Integer)model.getValueAt(i, 2)).intValue()==0){

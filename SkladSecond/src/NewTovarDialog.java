@@ -124,6 +124,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(barcodeList);
 
         generateButton.setText("Генерировать");
+        generateButton.setFocusable(false);
 
         okButton.setText("Добавить");
         okButton.addActionListener(new ActionListener() {
@@ -140,6 +141,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         });
 
         deleteButton.setText("Удалить");
+        deleteButton.setFocusable(false);
         deleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 deleteButtonActionPerformed(evt);
@@ -229,6 +231,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         countTextField.setText("1");
         barcodeTextField.setText("");
         setOk(false);
+        nameTextField.requestFocus();
     }//GEN-LAST:event_formComponentShown
 
     private void nameTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
@@ -304,7 +307,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_countTextFieldKeyTyped
 
     private void countTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_countTextFieldActionPerformed
-        countTextField.requestFocus();
+        barcodeTextField.requestFocus();
     }//GEN-LAST:event_countTextFieldActionPerformed
 
     private void cancellButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_cancellButtonActionPerformed

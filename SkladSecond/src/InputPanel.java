@@ -512,7 +512,7 @@ public class InputPanel extends javax.swing.JPanel {
     private void priceButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_priceButtonActionPerformed
         if (isChanged())
             return;
-        if (priceDialog==null)
+//        if (priceDialog==null)
             priceDialog=new PriceForm(null, true);
         Vector<String> nazv=new Vector<String>(0);
         Vector<Double> cost=new Vector<Double>(0);

@@ -69,6 +69,12 @@ public class PriceForm extends javax.swing.JDialog {
 
         jLabel1.setText("Прайс");
 
+        priceCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                priceComboActionPerformed(evt);
+            }
+        });
+
         jLabel2.setText("Округление");
 
         okrCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "До 1", "До 0,1", "До 0,01" }));
@@ -190,7 +196,7 @@ public class PriceForm extends javax.swing.JDialog {
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         for (int i=0;i<priceTable.getModel().getRowCount();i++){
             if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
-                priceTable.getModel().setValueAt(cen(i), i, 3);
+                priceTable.getModel().setValueAt(cen(i), i, 4);
             }
         }
     }//GEN-LAST:event_runButtonActionPerformed
@@ -206,8 +212,8 @@ public class PriceForm extends javax.swing.JDialog {
                             boolean b=false;
                             if (rs.getInt(3)==1)
                                 b=true;
-                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 4);
-                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 5);
+                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 5);
+                            ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 6);
                         }
                     }
 
@@ -234,8 +240,8 @@ public class PriceForm extends javax.swing.JDialog {
                     boolean b=false;
                     if (rs.getInt(3)==1)
                         b=true;
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 4);
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 5);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 5);
+                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 6);
                 }
             }
             inkCheckBox.setSelected(false);
@@ -273,12 +279,12 @@ public class PriceForm extends javax.swing.JDialog {
             int price=rs.getInt(1);
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
                 if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
-                        if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 3)+", akciya="+priceTable.getModel().getValueAt(i, 5)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 4)).booleanValue()?"1":"0")+
+                        if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 4)+", akciya="+priceTable.getModel().getValueAt(i, 6)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 5)).booleanValue()?"1":"0")+
                                 " where id_tovar=(select id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"') and id_skl="+skl+" and id_price="+price)==0)
                             DataSet.UpdateQuery("insert into price (cost, akciya, isakcia, id_skl, id_price, id_tovar) select " +
-                                ""+priceTable.getModel().getValueAt(i, 3)+
-                                ", "+priceTable.getModel().getValueAt(i, 5)+", " +
-                                ""+((Boolean)priceTable.getModel().getValueAt(i, 4)?"1":"0")+", " +skl+", "+price+", "+
+                                ""+priceTable.getModel().getValueAt(i, 4)+
+                                ", "+priceTable.getModel().getValueAt(i, 6)+", " +
+                                ""+((Boolean)priceTable.getModel().getValueAt(i, 5)?"1":"0")+", " +skl+", "+price+", "+
                                 "id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"'");
                 }
             }
@@ -292,10 +298,14 @@ public class PriceForm extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void priceComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_priceComboActionPerformed
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
-            ((PriceTableDataModel)priceTable.getModel()).add(nazv.get(i), cost.get(i), 0.0, false, 0);
+            ((PriceTableDataModel)priceTable.getModel()).add(nazv.get(i), cost.get(i), 0.0, 0.0, false, 0);
         setVisible(true);
     }
     /**

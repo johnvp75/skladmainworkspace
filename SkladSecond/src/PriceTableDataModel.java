@@ -20,6 +20,7 @@ public class PriceTableDataModel extends AbstractTableModel{
     private Vector<String> Nazv;
     private Vector<Double> Cost;
     private Vector<Double> PriceCost;
+    private Vector<Double> NewCost;
     private Vector<Boolean> Akcia;
     private Vector<Integer> Discount;
 
@@ -28,6 +29,7 @@ public class PriceTableDataModel extends AbstractTableModel{
         Nazv=new Vector<String>(0);
         Cost=new Vector<Double>(0);
         PriceCost=new Vector<Double>(0);
+        NewCost=new Vector<Double>(0);
         Akcia=new Vector<Boolean>(0);
         Discount=new Vector<Integer>(0);
     }
@@ -70,6 +72,18 @@ public class PriceTableDataModel extends AbstractTableModel{
     private void removeCost(int pos){
         Cost.removeElementAt(pos);
     }
+    private Double getNewCost(int pos) {
+        return NewCost.get(pos);
+    }
+    private void setNewCost(Double aCost, int pos) {
+        NewCost.setElementAt(aCost, pos);
+    }
+    private void addNewCost(Double aCost){
+        NewCost.add(aCost);
+    }
+    private void removeNewCost(int pos){
+        NewCost.removeElementAt(pos);
+    }
 
     private Double getPriceCost(int pos) {
         return PriceCost.get(pos);
@@ -110,11 +124,12 @@ public class PriceTableDataModel extends AbstractTableModel{
         Discount.removeElementAt(pos);
     }
 
-    public void add(String aNazv, double aCost, double aPriceCost, boolean isAkcia, int aDisc){
+    public void add(String aNazv, double aCost, double aPriceCost, double aNewCost,boolean isAkcia, int aDisc){
         addCheckCol(false);
         addNazv(aNazv);
         addCost(new Double(aCost));
         addPriceCost(new Double(aPriceCost));
+        addNewCost(new Double(aNewCost));
         addAkcia(isAkcia);
         addDiscount(new Integer(aDisc));
         fireTableDataChanged();
@@ -124,6 +139,7 @@ public class PriceTableDataModel extends AbstractTableModel{
         removeCost(row);
         removeNazv(row);
         removePriceCost(row);
+        removeNewCost(row);
         removeAkcia(row);
         removeDiscount(row);
         fireTableDataChanged();
@@ -133,6 +149,7 @@ public class PriceTableDataModel extends AbstractTableModel{
         Cost.removeAllElements();
         Nazv.removeAllElements();
         PriceCost.removeAllElements();
+        NewCost.removeAllElements();
         Akcia.removeAllElements();
         Discount.removeAllElements();
         fireTableDataChanged();
@@ -143,13 +160,14 @@ public class PriceTableDataModel extends AbstractTableModel{
             case 1: return getNazv(row);
             case 2: return getCost(row);
             case 3: return getPriceCost(row);
-            case 4: return (getAkcia(row)).booleanValue();
-            case 5: return getDiscount(row);
+            case 4: return getNewCost(row);
+            case 5: return (getAkcia(row)).booleanValue();
+            case 6: return getDiscount(row);
             default: return null;
         }
     }
     public int getColumnCount(){
-        return 6;
+        return 7;
     }
     public int getRowCount(){
         return Nazv.size();
@@ -163,17 +181,19 @@ public class PriceTableDataModel extends AbstractTableModel{
             case 2:
 		return "Цена";
             case 3:
-		return "Цена прайса";
+        	return "Цена прайса";
             case 4:
-                return "Акция";
+                return "Новая цена";
             case 5:
+                return "Акция";
+            case 6:
                 return "Скидка";
             default:
 		return "";
 	}
     }
     public boolean isCellEditable(int row, int col){
-        if (col==1 || col==2)
+        if (col==1 || col==2 || col==3)
             return false;
         else
             return true;
@@ -197,10 +217,14 @@ public class PriceTableDataModel extends AbstractTableModel{
                 fireTableDataChanged();
                 return;
             case 4:
-                setAkcia((Boolean)Value, row);
+                setNewCost(new Double((String)Value), row);
                 fireTableDataChanged();
                 return;
             case 5:
+                setAkcia((Boolean)Value, row);
+                fireTableDataChanged();
+                return;
+            case 6:
                 setDiscount(new Integer((String)Value), row);
                 fireTableDataChanged();
                 return;
@@ -225,7 +249,7 @@ public class PriceTableDataModel extends AbstractTableModel{
                 return Class.forName("Object");
         }
 */
-        return (col == 0 || col==4) ? Boolean.class : super.getColumnClass(col);
+        return (col == 0 || col==5) ? Boolean.class : super.getColumnClass(col);
     }
 
 }

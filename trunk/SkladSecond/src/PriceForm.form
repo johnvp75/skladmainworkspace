@@ -113,6 +113,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JComboBox" name="priceCombo">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="priceComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>

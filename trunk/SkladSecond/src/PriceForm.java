@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates
@@ -56,6 +57,11 @@ public class PriceForm extends javax.swing.JDialog {
         inkCheckBox = new javax.swing.JCheckBox();
         nacCheckBox = new javax.swing.JCheckBox();
         koefCheckBox = new javax.swing.JCheckBox();
+        selectAllButton = new javax.swing.JButton();
+        unselectButton = new javax.swing.JButton();
+        selectNullButton = new javax.swing.JButton();
+        invertButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -124,6 +130,41 @@ public class PriceForm extends javax.swing.JDialog {
 
         koefCheckBox.setText("Коеффициент");
 
+        selectAllButton.setText("Отметить все");
+        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllButtonActionPerformed(evt);
+            }
+        });
+
+        unselectButton.setText("Убрать все");
+        unselectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unselectButtonActionPerformed(evt);
+            }
+        });
+
+        selectNullButton.setText("Отметить нулевые");
+        selectNullButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectNullButtonActionPerformed(evt);
+            }
+        });
+
+        invertButton.setText("Инвертировать");
+        invertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invertButtonActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Фильтр");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -132,11 +173,21 @@ public class PriceForm extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 591, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(runButton, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(runButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(selectAllButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                    .addComponent(unselectButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(selectNullButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(invertButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -185,9 +236,19 @@ public class PriceForm extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(saveButton)
                         .addGap(18, 18, 18)
-                        .addComponent(closeButton))
+                        .addComponent(closeButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectAllButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(unselectButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectNullButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(invertButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37))
+                .addGap(33, 33, 33))
         );
 
         pack();
@@ -278,7 +339,7 @@ public class PriceForm extends javax.swing.JDialog {
             rs.next();
             int price=rs.getInt(1);
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
-                if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0) || ((Double)priceTable.getValueAt(i, 4))>0){
                         if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 4)+", akciya="+priceTable.getModel().getValueAt(i, 6)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 5)).booleanValue()?"1":"0")+
                                 " where id_tovar=(select id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"') and id_skl="+skl+" and id_price="+price)==0)
                             DataSet.UpdateQuery("insert into price (cost, akciya, isakcia, id_skl, id_price, id_tovar) select " +
@@ -302,6 +363,42 @@ public class PriceForm extends javax.swing.JDialog {
     private void priceComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceComboActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_priceComboActionPerformed
+
+    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(true, i, 0);
+        }
+}//GEN-LAST:event_selectAllButtonActionPerformed
+
+    private void unselectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unselectButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(false, i, 0);
+        }
+    }//GEN-LAST:event_unselectButtonActionPerformed
+
+    private void selectNullButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectNullButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if (((Double)priceTable.getValueAt(i, 3))==0)
+                priceTable.setValueAt(true, i, 0);
+        }
+}//GEN-LAST:event_selectNullButtonActionPerformed
+
+    private void invertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invertButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if ((Boolean)priceTable.getValueAt(i, 0))
+                priceTable.setValueAt(false, i, 0);
+            else
+                priceTable.setValueAt(true, i, 0);
+        }
+    }//GEN-LAST:event_invertButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String str=JOptionPane.showInputDialog("Введите часть названия для фильтра");
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if (((String)priceTable.getValueAt(i, 1)).toUpperCase().indexOf(str.toUpperCase())>-1)
+                priceTable.setValueAt(true, i, 0);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
@@ -328,6 +425,8 @@ public class PriceForm extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
     private javax.swing.JCheckBox inkCheckBox;
+    private javax.swing.JButton invertButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -340,6 +439,9 @@ public class PriceForm extends javax.swing.JDialog {
     private javax.swing.JTable priceTable;
     private javax.swing.JButton runButton;
     private javax.swing.JButton saveButton;
+    private javax.swing.JButton selectAllButton;
+    private javax.swing.JButton selectNullButton;
+    private javax.swing.JButton unselectButton;
     // End of variables declaration//GEN-END:variables
     private String Sklad;
 

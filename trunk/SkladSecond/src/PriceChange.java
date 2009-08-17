@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates
@@ -58,6 +60,12 @@ public class PriceChange extends javax.swing.JDialog {
         runButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        selectAllButton = new javax.swing.JButton();
+        unselectButton = new javax.swing.JButton();
+        selectNullButton = new javax.swing.JButton();
+        invertButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -129,6 +137,41 @@ public class PriceChange extends javax.swing.JDialog {
             }
         });
 
+        selectAllButton.setText("Отметить все");
+        selectAllButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllButtonActionPerformed(evt);
+            }
+        });
+
+        unselectButton.setText("Убрать все");
+        unselectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unselectButtonActionPerformed(evt);
+            }
+        });
+
+        selectNullButton.setText("Отметить нулевые");
+        selectNullButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectNullButtonActionPerformed(evt);
+            }
+        });
+
+        invertButton.setText("Инвертировать");
+        invertButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                invertButtonActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Фильтр");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -140,11 +183,11 @@ public class PriceChange extends javax.swing.JDialog {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(MainCombo, 0, 240, Short.MAX_VALUE)))
+                        .addComponent(MainCombo, 0, 230, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -170,11 +213,25 @@ public class PriceChange extends javax.swing.JDialog {
                         .addComponent(inkCheckBox))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 733, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(43, 43, 43)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(43, 43, 43)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(closeButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(selectAllButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                                    .addComponent(unselectButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(selectNullButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(invertButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(11, 11, 11)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -210,7 +267,19 @@ public class PriceChange extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(saveButton)
                         .addGap(18, 18, 18)
-                        .addComponent(closeButton))
+                        .addComponent(closeButton)
+                        .addGap(114, 114, 114)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectAllButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(unselectButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(selectNullButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(invertButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jScrollPane2)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)))
@@ -241,7 +310,7 @@ public class PriceChange extends javax.swing.JDialog {
             rs.next();
             int price=rs.getInt(1);
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
-                if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0) || ((Double)priceTable.getValueAt(i, 4))>0){
                     if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 4)+", akciya="+priceTable.getModel().getValueAt(i, 6)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 5)).booleanValue()?"1":"0")+
                             " where id_tovar=(select id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"') and id_skl="+skl+" and id_price="+price)==0)
                         DataSet.UpdateQuery("insert into price (cost, akciya, isakcia, id_skl, id_price, id_tovar) select " +
@@ -304,6 +373,45 @@ public class PriceChange extends javax.swing.JDialog {
         priceCombo.addActionListener(actionCombo);
     }//GEN-LAST:event_formComponentShown
 
+    private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(true, i, 0);
+        }
+    }//GEN-LAST:event_selectAllButtonActionPerformed
+
+    private void unselectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unselectButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(false, i, 0);
+        }
+
+    }//GEN-LAST:event_unselectButtonActionPerformed
+
+    private void selectNullButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectNullButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if (((Double)priceTable.getValueAt(i, 3))==0)
+                priceTable.setValueAt(true, i, 0);
+        }
+    }//GEN-LAST:event_selectNullButtonActionPerformed
+
+    private void invertButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_invertButtonActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if ((Boolean)priceTable.getValueAt(i, 0))
+                priceTable.setValueAt(false, i, 0);
+            else
+                priceTable.setValueAt(true, i, 0);
+        }
+
+    }//GEN-LAST:event_invertButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String str=JOptionPane.showInputDialog("Введите часть названия для фильтра");
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            if (((String)priceTable.getValueAt(i, 1)).toUpperCase().indexOf(str.toUpperCase())>-1)
+                priceTable.setValueAt(true, i, 0);
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -326,12 +434,15 @@ public class PriceChange extends javax.swing.JDialog {
     private javax.swing.JButton closeButton;
     private javax.swing.JTree groupTree;
     private javax.swing.JCheckBox inkCheckBox;
+    private javax.swing.JButton invertButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JCheckBox koefCheckBox;
     private javax.swing.JTextField koefTextField;
     private javax.swing.JCheckBox nacCheckBox;
@@ -341,7 +452,10 @@ public class PriceChange extends javax.swing.JDialog {
     private javax.swing.JTable priceTable;
     private javax.swing.JButton runButton;
     private javax.swing.JButton saveButton;
+    private javax.swing.JButton selectAllButton;
+    private javax.swing.JButton selectNullButton;
     private javax.swing.JComboBox skladCombo;
+    private javax.swing.JButton unselectButton;
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
 
@@ -365,42 +479,36 @@ public class PriceChange extends javax.swing.JDialog {
         return formatter.format(ret);
     }
     private void change(){
-        ((PriceTableDataModel)priceTable.getModel()).removeAll();
         try{
-            ResultSet rs=DataSet.QueryExec("select distinct trim(name) from tovar inner join kart on tovar.id_tovar=kart.id_tovar where (kart.id_group="+getGroup()+
-                    " or kart.id_group in (select id_group from groupid where parent_group="+getGroup()+")) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') order by upper(trim(name))", false);
-            while (rs.next()){
-                ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), 0.0, 0.0, 0.0, false, 0);
-            }
-            for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
-                rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))", false);
-                if (rs.next()){
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(1), i, 3);
-                    boolean b=false;
-                    if (rs.getInt(3)==1)
-                        b=true;
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 5);
-                    ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 6);
-                }
-            }
+            ((PriceTableDataModel)priceTable.getModel()).removeAll();
+            ResultSet rs;
             if (MainCombo.getSelectedIndex()==0){
 
-            }else
-                for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
-                    rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))", false);
-                    if (rs.next()){
-                        ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getDouble(1), i, 2);
-                        boolean b=false;
-                        if (rs.getInt(3)==1)
-                            b=true;
-                        ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 5);
-                        ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 6);
-                    }
+            }
+            else{
+
+                if (getGroup()==-2)
+                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost from " +
+                            "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
+                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
+                            "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
+                            ") i) left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
+                            " order by upper(name)", false);
+                else
+                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost from " +
+                            "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
+                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where k.id_group in " +
+                            "(SELECT id_group from groupid start with id_group="+getGroup()+" connect BY prior id_group= parent_group) " +
+                            "and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
+                            ") i) left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
+                            " order by upper(name)", false);
+                while (rs.next()){
+                    ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), rs.getDouble(2), rs.getDouble(3), 0.0, false, 0);
                 }
 
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 }

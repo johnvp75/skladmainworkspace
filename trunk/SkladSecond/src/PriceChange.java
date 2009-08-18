@@ -488,22 +488,22 @@ public class PriceChange extends javax.swing.JDialog {
             else{
 
                 if (getGroup()==-2)
-                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost from " +
+                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
                             "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
                             "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
                             "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
-                            ") i) left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
+                            ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
                             " order by upper(name)", false);
                 else
-                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost from " +
+                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
                             "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
                             "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where k.id_group in " +
                             "(SELECT id_group from groupid start with id_group="+getGroup()+" connect BY prior id_group= parent_group) " +
                             "and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
-                            ") i) left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
+                            ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
                             " order by upper(name)", false);
                 while (rs.next()){
-                    ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), rs.getDouble(2), rs.getDouble(3), 0.0, false, 0);
+                    ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), rs.getDouble(2), rs.getDouble(3), 0.0, (rs.getInt(5)==1), rs.getInt(4));
                 }
 
             }

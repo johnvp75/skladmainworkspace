@@ -44,6 +44,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import javax.swing.JViewport;
 
 /*
  * To change this template, choose Tools | Templates
@@ -194,6 +195,7 @@ public class InputPanel extends javax.swing.JPanel {
         naklTable.getColumnModel().getColumn(3).setMaxWidth(71);
         naklTable.getColumnModel().getColumn(4).setMaxWidth(96);
         naklTable.getColumnModel().getColumn(5).setMaxWidth(58);
+        naklTable.setAutoscrolls(true);
         naklTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         naklTable.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent evt) {
@@ -564,8 +566,10 @@ public class InputPanel extends javax.swing.JPanel {
         if(evt.getKeyCode()==evt.VK_ENTER){
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
+            naklTable.getSelectionModel().setSelectionInterval(row, row);
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
+//            jScrollPane3.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
         }
         if(evt.getKeyCode()==evt.VK_F5)
             newTovar();

@@ -95,9 +95,10 @@ public class PriceForm extends javax.swing.JDialog {
         priceTable.setCellSelectionEnabled(true);
         priceTable.getTableHeader().setResizingAllowed(false);
         priceTable.getTableHeader().setReorderingAllowed(false);
-        //priceTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(new JCheckBox()));
         priceTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         jScrollPane1.setViewportView(priceTable);
+        priceTable.getTableHeader().setResizingAllowed(true);
+        priceTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         nacTextField.setText("0");
 

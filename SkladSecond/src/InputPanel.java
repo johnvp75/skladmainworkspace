@@ -523,7 +523,9 @@ public class InputPanel extends javax.swing.JPanel {
             ResultSet rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from val where name='" + valCombo.getSelectedItem() + "')", false);
             if (rs.next())
                 curs=rs.getDouble(1);
-
+            rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from sklad where name='" + skladCombo.getSelectedItem() + "')",false);
+            if (rs.next())
+                curs=curs/rs.getDouble(1);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

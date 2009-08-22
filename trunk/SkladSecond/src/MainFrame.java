@@ -48,6 +48,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenu5 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -78,8 +79,17 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem1);
 
-        jMenuItem2.setText("Просмотр и редактирование");
-        jMenu1.add(jMenuItem2);
+        jMenu5.setText("Редактирование");
+
+        jMenuItem2.setText("Непроведенных");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem2);
+
+        jMenu1.add(jMenu5);
 
         jMenuItem3.setText("Удаление");
         jMenu1.add(jMenuItem3);
@@ -157,6 +167,7 @@ public class MainFrame extends javax.swing.JFrame {
         dialog.setRul(";1;");
         if (dialog.showDialog(null, "Вход в систему")){
             setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
+            MainFrame.setEditDocId(0);
             inputPanel1.setManager(dialog.GetManager());
             inputPanel1.setVisible(true);
         }
@@ -178,6 +189,12 @@ public class MainFrame extends javax.swing.JFrame {
         inputPanel1.setVisible(false);
     }//GEN-LAST:event_formComponentShown
 
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        EditDoc editDoc=new EditDoc(this, true);
+        editDoc.setVisible(true);
+        inputPanel1.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -195,6 +212,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
@@ -205,6 +223,15 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     // End of variables declaration//GEN-END:variables
+    private static int EditDocId = 0;
+
+    public static int getEditDocId() {
+        return EditDocId;
+    }
+
+    public static void setEditDocId(int EditDocId) {
+        MainFrame.EditDocId = EditDocId;
+    }
 
     private static ManagerChooser dialog;
 

@@ -445,14 +445,39 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         initCombo();
-        discTextField.setText("0");
-        model.setIndDiscount(0);
-        noteTextField.setText("");
         koefTextField.setText("1");
         setKoef(1.0);
-        setNote("");
         setChanged(false);
-        setId_doc(0);
+        if (MainFrame.getEditDocId()==0){
+            discTextField.setText("0");
+            model.setIndDiscount(0);
+            noteTextField.setText("");
+            setNote("");
+            setId_doc(0);
+        }else{
+            try{
+                ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), trim(m.name), trim(v.name), d.note, d.disc " +
+                        "from document d, client c, sklad s, manager m, val v where d.id_doc="+MainFrame.getEditDocId()+" and " +
+                        "d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_manager=m.id_manager and d.id_val=v.id_val", false);
+                rs.next();
+                discTextField.setText(rs.getString(6));
+                model.setIndDiscount(rs.getInt(6));
+                noteTextField.setText(rs.getString(5));
+                setNote(rs.getString(5));
+                setId_doc(MainFrame.getEditDocId());
+                clientCombo.setSelectedItem(rs.getString(1));
+                skladCombo.setSelectedItem(rs.getString(2));
+                setManager(rs.getString(3));
+                valCombo.setSelectedItem(rs.getString(4));
+                rs=DataSet.QueryExec("select trim(t.name), l.kol, l.cost, l.disc from lines l, tovar t where l.id_doc="+MainFrame.getEditDocId()+" and t.id_tovar=l.id_tovar", false);
+                while (rs.next()){
+                   model.add(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4), 0);
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
     }//GEN-LAST:event_formComponentShown
 
     private void nameListMouseClicked(MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
@@ -523,7 +548,7 @@ public class InputPanel extends javax.swing.JPanel {
             ResultSet rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from val where name='" + valCombo.getSelectedItem() + "')", false);
             if (rs.next())
                 curs=rs.getDouble(1);
-            rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from sklad where name='" + skladCombo.getSelectedItem() + "')",false);
+            rs = DataSet.QueryExec("select curs from curs_now where id_val=(select id_val from type_price where id_price =(select id_price from sklad where name='" + skladCombo.getSelectedItem() + "'))",false);
             if (rs.next())
                 curs=curs/rs.getDouble(1);
         } catch (Exception ex) {

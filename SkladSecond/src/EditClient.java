@@ -1,3 +1,10 @@
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -13,11 +20,15 @@
  *
  * @author User
  */
-public class EditClient extends javax.swing.JFrame {
+public class EditClient extends javax.swing.JDialog {
 
     /** Creates new form EditClient */
     public EditClient() {
+        
+        super(((JFrame)null),true);
         initComponents();
+        
+        
     }
 
     /** This method is called from within the constructor to
@@ -28,23 +39,258 @@ public class EditClient extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jLabel1 = new javax.swing.JLabel();
+        nameCombo = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        AdressTextField = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        phoneArea = new javax.swing.JTextArea();
+        jLabel4 = new javax.swing.JLabel();
+        typeCombo = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        skladCombo = new javax.swing.JComboBox();
+        jLabel7 = new javax.swing.JLabel();
+        discTextField = new javax.swing.JTextField();
+        saveButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
+
+        jLabel1.setText("Наименование:");
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, nameCombo, org.jdesktop.beansbinding.ObjectProperty.create(), jLabel1, org.jdesktop.beansbinding.BeanProperty.create("labelFor"));
+        bindingGroup.addBinding(binding);
+
+        nameCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton1.setText("Изменить");
+
+        jLabel2.setText("Адрес:");
+
+        AdressTextField.setText("jTextField1");
+
+        jLabel3.setText("Телефон");
+
+        phoneArea.setColumns(20);
+        phoneArea.setRows(5);
+        jScrollPane1.setViewportView(phoneArea);
+
+        jLabel4.setText("Вид клиента");
+
+        typeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Поставщик", "Покупатель (опт)", "Покупатель (розница)" }));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 3, 14)); // NOI18N
+        jLabel5.setText("Скидки");
+
+        jLabel6.setText("Склад:");
+
+        skladCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        skladCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skladComboActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Скидка");
+
+        discTextField.setText("jTextField1");
+        discTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                discTextFieldActionPerformed(evt);
+            }
+        });
+
+        saveButton.setText("Сохранить");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
+
+        cancelButton.setText("Закрыть");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(AdressTextField)
+                        .addComponent(nameCombo, 0, 211, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(18, 18, 18)
+                                .addComponent(skladCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(48, 48, 48)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(139, 139, 139))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(126, 126, 126)
+                .addComponent(saveButton)
+                .addGap(65, 65, 65)
+                .addComponent(cancelButton)
+                .addContainerGap(349, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(nameCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(AdressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel3)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
+                            .addComponent(jLabel5)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(60, 60, 60)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(saveButton)
+                    .addComponent(cancelButton))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
+
+        bindingGroup.bind();
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        try{
+            DataSet.UpdateQuery("update client set adres='"+AdressTextField.getText()+"', phone='"+phoneArea.getText()+"', type="+typeCombo.getSelectedIndex()+" where id_client="+getId());
+            DataSet.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        try{
+            ResultSet rs=DataSet.QueryExec("select trim(name) from client order by upper(trim(name))", false);
+            nameCombo.removeAllItems();
+            while(rs.next())
+                nameCombo.addItem(rs.getString(1));
+            rs=DataSet.QueryExec("select trim(name) from sklad order by upper(trim(name))", false);
+            skladCombo.removeAllItems();
+            while(rs.next()){
+                skladCombo.addItem(rs.getString(1));
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        nameCombo.addActionListener(new clientCheck());
+        nameCombo.setSelectedIndex(0);
+        skladCombo.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent evt){
+                try{
+                    ResultSet rs=DataSet.QueryExec("select disc from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')", false);
+                    if (rs.next())
+                        discTextField.setText(rs.getString(1));
+                    else
+                        discTextField.setText(new String("0"));
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        skladCombo.setSelectedIndex(0);
+    }//GEN-LAST:event_formComponentShown
+
+    private void skladComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladComboActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_skladComboActionPerformed
+
+    private void discTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discTextFieldActionPerformed
+        try{
+            DataSet.UpdateQuery("delete from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')");
+            DataSet.UpdateQuery("insert into discount (id_client,  disc, id_skl) select "+getId()+" as id_client, "+discTextField.getText()+" as disc, id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'");
+            DataSet.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_discTextFieldActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+    class clientCheck implements ActionListener{
+        public void actionPerformed(ActionEvent evt){
+            String client=(String) ((JComboBox)evt.getSource()).getSelectedItem();
+            try{
+                ResultSet rs=DataSet.QueryExec("select id_client, adres, phone, type from client where name='"+client+"'", false);
+                if (rs.next()){
+                    setId(rs.getInt(1));
+                    AdressTextField.setText(rs.getString(2));
+                    phoneArea.setText(rs.getString(3));
+                    typeCombo.setSelectedIndex(rs.getInt(4));
+                }
+                skladCombo.setSelectedIndex(0);
+
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
     /**
     * @param args the command line arguments
     */
@@ -57,6 +303,33 @@ public class EditClient extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField AdressTextField;
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JTextField discTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JComboBox nameCombo;
+    private javax.swing.JTextArea phoneArea;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JComboBox skladCombo;
+    private javax.swing.JComboBox typeCombo;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
+    protected int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
 }

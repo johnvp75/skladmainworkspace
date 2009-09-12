@@ -227,9 +227,24 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         ((DataListModel)barcodeList.getModel()).removeAll();
-        nameTextField.setText("");
-        countTextField.setText("1");
-        barcodeTextField.setText("");
+        if (isNewTovar()){
+            nameTextField.setText("");
+            countTextField.setText("1");
+            barcodeTextField.setText("");
+        }
+        else{
+            try{
+                ResultSet rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
+                if (rs.next())
+                    countTextField.setText(rs.getString(1));
+                rs=DataSet.QueryExec("select bar_code from bar_code where id_tovar="+getId()+" and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
+                while (rs.next())
+                    ((DataListModel)barcodeList.getModel()).add(rs.getString(1));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
         setOk(false);
         nameTextField.requestFocus();
     }//GEN-LAST:event_formComponentShown
@@ -269,28 +284,50 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
-        
-        try{
-            ResultSet rs=DataSet.QueryExec("Select max(id_tovar) from tovar", false);
-            rs.next();
-            int id=rs.getInt(1)+1;
-            DataSet.UpdateQuery("savepoint point1");
-            DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
-            rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
-            rs.next();
-            int skl=rs.getInt(1);
-            for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
-                DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
-            setOk(true);
-            setVisible(false);
-        }catch(Exception e){
-            JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
-            try {
-                DataSet.UpdateQuery("rollback to point1");
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+        if (isNewTovar())
+            try{
+                ResultSet rs=DataSet.QueryExec("Select max(id_tovar) from tovar", false);
+                rs.next();
+                int id=rs.getInt(1)+1;
+                DataSet.UpdateQuery("savepoint point1");
+                DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
+                rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
+                rs.next();
+                int skl=rs.getInt(1);
+                for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
+                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
+                setOk(true);
+                setVisible(false);
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+                try {
+                    DataSet.UpdateQuery("rollback to point1");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                e.printStackTrace();
             }
-            e.printStackTrace();
+        else{
+            try{
+                DataSet.UpdateQuery("savepoint point1");
+                ResultSet rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
+                rs.next();
+                int skl=rs.getInt(1);
+                DataSet.UpdateQuery("delete from bar_code where id_tovar="+getId()+" and id_skl="+skl);
+                DataSet.UpdateQuery("update tovar set name='"+nameTextField.getText().trim()+"', kol="+countTextField.getText()+" where id_tovar="+getId());
+                for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
+                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+getId()+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
+                setOk(true);
+                setVisible(false);
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(this, "Запись не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+                try {
+                    DataSet.UpdateQuery("rollback to point1");
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+                e.printStackTrace();
+            }
         }
 
     }//GEN-LAST:event_okButtonActionPerformed
@@ -351,6 +388,46 @@ public class NewTovarDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private String Sklad;
     private boolean ok = false;
+    protected boolean NewTovar = true;
+    private String nameTovar;
+
+    public String getNameTovar() {
+        return nameTovar;
+    }
+
+    public void setNameTovar(String nameTovar) {
+        this.nameTovar = nameTovar;
+    }
+    protected int Id;
+
+    private int getId() {
+        return Id;
+    }
+
+    private void setId(int Id) {
+        this.Id = Id;
+    }
+
+    private boolean isNewTovar() {
+        return NewTovar;
+    }
+
+    public void setNewTovar(boolean NewTovar, String name) {
+        this.NewTovar = NewTovar;
+        nameTextField.setText(name);
+        setNameTovar("");
+        if (!NewTovar){
+            setNameTovar(name);
+            try{
+                ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+name+"'", false);
+                if (rs.next())
+                    setId(rs.getInt(1));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 
     public boolean isOk() {
         return ok;
@@ -368,7 +445,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private boolean checkTovar(){
-        
+        if ((!isNewTovar()) && nameTextField.getText().trim().equals(getNameTovar().trim()))
+            return true;
         try {
             ResultSet rs=DataSet.QueryExec("Select count(*) from tovar where upper(trim(name))='"+nameTextField.getText().trim().toUpperCase()+"'", false);
             rs.next();

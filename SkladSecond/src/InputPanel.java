@@ -113,6 +113,7 @@ public class InputPanel extends javax.swing.JPanel {
         itogo = new JLabel();
         jLabel7 = new JLabel();
         koefTextField = new JTextField();
+        editButton = new JButton();
 
         AddGroup.setText("Добавить группу");
         AddGroup.addActionListener(new ActionListener() {
@@ -315,6 +316,13 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
+        editButton.setText("Редактировать");
+        editButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -362,9 +370,10 @@ public class InputPanel extends javax.swing.JPanel {
                                             .addComponent(valCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
                             .addGap(50, 50, 50)
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                 .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(NewTovarButton))))
+                                .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(itogowo, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -402,7 +411,9 @@ public class InputPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(findButton)
                         .addGap(29, 29, 29)
-                        .addComponent(NewTovarButton))
+                        .addComponent(NewTovarButton)
+                        .addGap(29, 29, 29)
+                        .addComponent(editButton))
                     .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 279, GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
@@ -627,9 +638,10 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_NewTovarButtonActionPerformed
 
     private void newTovar(){
-               if (dialog==null)
+        if (dialog==null)
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
+        dialog.setNewTovar(true, "");
         dialog.setVisible(true);
         if (dialog.isOk()){
             try {
@@ -648,6 +660,19 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.requestFocus();
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
+        }
+    }
+    private void editTovar(){
+        if (nameList.getSelectedIndex()<0)
+            return;
+        if (dialog==null)
+            dialog = new NewTovarDialog(null,true);
+        dialog.setSklad((String)skladCombo.getSelectedItem());
+        dialog.setNewTovar(false, (String)nameList.getSelectedValue());
+        dialog.setVisible(true);
+        if (dialog.isOk()){
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+            nameList.setSelectedValue(dialog.getTovar(), true);
         }
     }
     private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
@@ -765,7 +790,7 @@ public class InputPanel extends javax.swing.JPanel {
                         DataSet.UpdateQuery("insert into kart (id_tovar, id_skl, id_group, id_nom, cost, day, val) select " +
                                 "(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"') as id_tovar," +
                                 "(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') as id_skl," +
-                                + ((DataNode) groupTree.getLastSelectedPathComponent()).getIndex() + " as id_group," +
+                                "(select distinct id_group from kart where id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"') and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem() + "')) as id_group," +
                                 "(select max(id_nom)+1 from kart) as id_nom," +
                                 ""+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+" as cost," +
                                 "sysdate as day," +
@@ -886,6 +911,10 @@ public class InputPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_RenameGroupActionPerformed
 
+    private void editButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        editTovar();
+    }//GEN-LAST:event_editButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddGroup;
@@ -894,6 +923,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JMenuItem RenameGroup;
     private JComboBox clientCombo;
     private JTextField discTextField;
+    private JButton editButton;
     private JButton findButton;
     private JTree groupTree;
     private JLabel itogo;

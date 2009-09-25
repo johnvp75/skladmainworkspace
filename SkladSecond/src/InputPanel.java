@@ -114,6 +114,8 @@ public class InputPanel extends javax.swing.JPanel {
         jLabel7 = new JLabel();
         koefTextField = new JTextField();
         editButton = new JButton();
+        jLabel8 = new JLabel();
+        type_docCombo = new JComboBox();
 
         AddGroup.setText("Добавить группу");
         AddGroup.addActionListener(new ActionListener() {
@@ -323,6 +325,10 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabel8.setText("Вид документа:");
+
+        type_docCombo.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -355,12 +361,14 @@ public class InputPanel extends javax.swing.JPanel {
                                     .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                         .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))))
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(77, 77, 77)
                                     .addComponent(jLabel3)
                                     .addGap(18, 18, 18)
-                                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel8))
                                 .addGroup(layout.createSequentialGroup()
                                     .addGap(14, 14, 14)
                                     .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
@@ -369,11 +377,16 @@ public class InputPanel extends javax.swing.JPanel {
                                             .addPreferredGap(ComponentPlacement.RELATED)
                                             .addComponent(valCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                         .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
-                            .addGap(50, 50, 50)
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-                                .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(50, 50, 50)
+                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                        .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                                    .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(itogowo, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -396,7 +409,9 @@ public class InputPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(skladCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -467,9 +482,9 @@ public class InputPanel extends javax.swing.JPanel {
             setId_doc(0);
         }else{
             try{
-                ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), trim(m.name), trim(v.name), d.note, d.disc " +
-                        "from document d, client c, sklad s, manager m, val v where d.id_doc="+MainFrame.getEditDocId()+" and " +
-                        "d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_manager=m.id_manager and d.id_val=v.id_val", false);
+                ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), trim(m.name), trim(v.name), d.note, d.disc, trim(t.name) " +
+                        "from document d, client c, sklad s, manager m, val v, type_doc t where d.id_doc="+MainFrame.getEditDocId()+" and " +
+                        "d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_manager=m.id_manager and d.id_val=v.id_val and t.id_type_doc=d.id_type_doc", false);
                 rs.next();
                 discTextField.setText(rs.getString(6));
                 model.setIndDiscount(rs.getInt(6));
@@ -480,6 +495,7 @@ public class InputPanel extends javax.swing.JPanel {
                 skladCombo.setSelectedItem(rs.getString(2));
                 setManager(rs.getString(3));
                 valCombo.setSelectedItem(rs.getString(4));
+                type_docCombo.setSelectedItem(rs.getString(7));
                 rs=DataSet.QueryExec("select trim(t.name), l.kol, l.cost, l.disc from lines l, tovar t where l.id_doc="+MainFrame.getEditDocId()+" and t.id_tovar=l.id_tovar", false);
                 while (rs.next()){
                    model.add(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4), 0);
@@ -697,14 +713,15 @@ public class InputPanel extends javax.swing.JPanel {
                 rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
                 if (rs1.next())
                     setId_doc(rs1.getInt(1)+1);
-                SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select 1 as id_type_doc,"+getId_doc()+" as id_doc"+
+                SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select (" +
+                        "select id_type_doc from type_doc where name='"+type_docCombo.getSelectedItem()+"') as id_type_doc,"+getId_doc()+" as id_doc"+
                     ", (select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"') as id_client" +
                     ", (select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"') as id_skl"+
                     ", (select id_val from val where name='"+(String)valCombo.getSelectedItem()+"') as id_val" +
                     ", "+model.summ()+" as sum ,'"+getNote()+"' as note, "+model.getIndDiscount()+" as disc, " +
                     " id_manager from manager where name='"+getManager()+"'";
             }else{
-                SQL="update document set id_type_doc=1 "+
+                SQL="update document set id_type_doc=(select id_type_doc from type_doc where name='"+type_docCombo.getSelectedItem()+"') "+
                     ", id_client=(select id_client from client where name='"+(String)clientCombo.getSelectedItem()+"')" +
                     ", id_skl=(select id_skl from SKLAD where name='"+(String)skladCombo.getSelectedItem()+"')"+
                     ", id_val=(select id_val from val where name='"+(String)valCombo.getSelectedItem()+"')" +
@@ -772,7 +789,7 @@ public class InputPanel extends javax.swing.JPanel {
             return;
         }
         try{
-            ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=0) ", false);
+            ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=(select id_type_doc from type_doc where name='"+type_docCombo.getSelectedItem()+"')) ", false);
             rs.next();
             int numb=rs.getInt(1)+1;
             DataSet.QueryExec("select * from document where id_doc="+getId_doc()+" for update", false);
@@ -936,6 +953,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JLabel jLabel5;
     private JLabel jLabel6;
     private JLabel jLabel7;
+    private JLabel jLabel8;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
     private JScrollPane jScrollPane3;
@@ -949,6 +967,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JButton saveButton;
     private JComboBox skladCombo;
     private JPopupMenu treePopup;
+    private JComboBox type_docCombo;
     private JComboBox valCombo;
     private JButton viewButton;
     // End of variables declaration//GEN-END:variables
@@ -1034,6 +1053,16 @@ public class InputPanel extends javax.swing.JPanel {
             e.printStackTrace();
         }
         valCombo.setSelectedIndex(0);
+
+        type_docCombo.removeAllItems();
+        try{
+            rs=DataSet.QueryExec("select trim(name) from type_doc where operacia=1 order by trim(name)", false);
+            while (rs.next())
+                type_docCombo.addItem(rs.getString(1));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        type_docCombo.setSelectedItem("Приход товара");
 
 
     }

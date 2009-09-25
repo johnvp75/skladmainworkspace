@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
   </Properties>
@@ -67,7 +67,7 @@
           </Events>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable()"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Vector&lt;String&gt; Client =new Vector&lt;String&gt;(0);&#xa;Vector&lt;String&gt; Sklad =new Vector&lt;String&gt;(0);&#xa;Vector&lt;String&gt; Sum =new Vector&lt;String&gt;(0);&#xa;Vector&lt;Integer&gt; id =new Vector&lt;Integer&gt;(0);&#xa;try{&#xa;            ResultSet rs=DataSet.QueryExec(&quot;select trim(c.name), trim(s.name), d.sum, d.id_doc from client c, sklad s, document d where d.id_client=c.id_client and &quot; +&#xa;                    &quot;d.id_skl=s.id_skl and d.numb is null order by upper(trim(c.name)), upper(trim(s.name))&quot;, false);&#xa;            while (rs.next()){&#xa;                Client.add(rs.getString(1));&#xa;                Sklad.add(rs.getString(2));&#xa;                Sum.add(rs.getString(3));&#xa;                id.add(rs.getInt(4));&#xa;            }&#xa;        }catch(Exception e){&#xa;            e.printStackTrace();&#xa;        }&#xa;EditTableModel model=new EditTableModel(Client,Sklad,Sum,id);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="Vector&lt;String&gt; Client =new Vector&lt;String&gt;(0);&#xa;Vector&lt;String&gt; Sklad =new Vector&lt;String&gt;(0);&#xa;Vector&lt;String&gt; Sum =new Vector&lt;String&gt;(0);&#xa;Vector&lt;Integer&gt; id =new Vector&lt;Integer&gt;(0);&#xa;try{&#xa;            ResultSet rs=DataSet.QueryExec(&quot;select trim(c.name), trim(s.name), d.sum, d.id_doc from client c, sklad s, document d, type_doc t where d.id_client=c.id_client and &quot; +&#xa;                    &quot;d.id_skl=s.id_skl and d.numb is null and t.id_type_doc=d.id_type_doc and t.operacia=1 order by upper(trim(c.name)), upper(trim(s.name))&quot;, false);&#xa;            while (rs.next()){&#xa;                Client.add(rs.getString(1));&#xa;                Sklad.add(rs.getString(2));&#xa;                Sum.add(rs.getString(3));&#xa;                id.add(rs.getInt(4));&#xa;            }&#xa;        }catch(Exception e){&#xa;            e.printStackTrace();&#xa;        }&#xa;EditTableModel model=new EditTableModel(Client,Sklad,Sum,id);"/>
           </AuxValues>
         </Component>
       </SubComponents>

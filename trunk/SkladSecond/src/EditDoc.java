@@ -41,8 +41,8 @@ public class EditDoc extends javax.swing.JDialog {
         Vector<String> Sum =new Vector<String>(0);
         Vector<Integer> id =new Vector<Integer>(0);
         try{
-            ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), d.sum, d.id_doc from client c, sklad s, document d where d.id_client=c.id_client and " +
-                "d.id_skl=s.id_skl and d.numb is null order by upper(trim(c.name)), upper(trim(s.name))", false);
+            ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), d.sum, d.id_doc from client c, sklad s, document d, type_doc t where d.id_client=c.id_client and " +
+                "d.id_skl=s.id_skl and d.numb is null and t.id_type_doc=d.id_type_doc and t.operacia=1 order by upper(trim(c.name)), upper(trim(s.name))", false);
             while (rs.next()){
                 Client.add(rs.getString(1));
                 Sklad.add(rs.getString(2));

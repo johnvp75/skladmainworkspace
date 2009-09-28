@@ -91,6 +91,18 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="jMenu7">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="&#x420;&#x430;&#x431;&#x43e;&#x442;&#x430; &#x441; &#x43e;&#x441;&#x442;&#x430;&#x442;&#x43a;&#x430;&#x43c;&#x438;"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem10">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="&#x41e;&#x431;&#x43d;&#x443;&#x43b;&#x435;&#x43d;&#x438;&#x435;"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu3">
           <Properties>
             <Property name="text" type="java.lang.String" value="&#x41e;&#x43a;&#x43d;&#x43e;"/>

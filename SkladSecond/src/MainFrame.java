@@ -59,6 +59,8 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
+        jMenu7 = new javax.swing.JMenu();
+        jMenuItem10 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
 
@@ -134,6 +136,13 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu4.add(jMenuItem8);
 
         jMenuBar1.add(jMenu4);
+
+        jMenu7.setText("Работа с остатками");
+
+        jMenuItem10.setText("Обнуление");
+        jMenu7.add(jMenuItem10);
+
+        jMenuBar1.add(jMenu7);
 
         jMenu3.setText("Окно");
 
@@ -232,8 +241,10 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
+    private javax.swing.JMenu jMenu7;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem10;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

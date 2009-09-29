@@ -263,7 +263,7 @@ public class RestChange extends javax.swing.JDialog {
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         for (int i=0;i<priceTable.getModel().getRowCount();i++){
             if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
-                priceTable.getModel().setValueAt(cen(i), i, 4);
+//                priceTable.getModel().setValueAt(cen(i), i, 4);
             }
         }
 }//GEN-LAST:event_runButtonActionPerformed
@@ -273,7 +273,7 @@ public class RestChange extends javax.swing.JDialog {
             ResultSet rs=DataSet.QueryExec("Select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"'", false);
             rs.next();
             int skl=rs.getInt(1);
-            rs=DataSet.QueryExec("Select id_price from type_price where name='"+priceCombo.getSelectedItem()+"'", false);
+//            rs=DataSet.QueryExec("Select id_price from type_price where name='"+priceCombo.getSelectedItem()+"'", false);
             rs.next();
             int price=rs.getInt(1);
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
@@ -430,7 +430,7 @@ public class RestChange extends javax.swing.JDialog {
         this.Group = Group;
     }
     private void change(){
-        try{
+/*        try{
             ((PriceTableDataModel)priceTable.getModel()).removeAll();
             ResultSet rs;
             {
@@ -458,5 +458,7 @@ public class RestChange extends javax.swing.JDialog {
         }catch(Exception e){
             e.printStackTrace();
         }
+ */
     }
+
 }

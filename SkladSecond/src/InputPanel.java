@@ -81,6 +81,10 @@ public class InputPanel extends javax.swing.JPanel {
         AddGroup = new JMenuItem();
         AddSubGroup = new JMenuItem();
         RenameGroup = new JMenuItem();
+        InsertItem = new JMenuItem();
+        ListPopup = new JPopupMenu();
+        MoveItem = new JMenuItem();
+        AddCut = new JMenuItem();
         jLabel1 = new JLabel();
         skladCombo = new JComboBox();
         jLabel2 = new JLabel();
@@ -141,6 +145,30 @@ public class InputPanel extends javax.swing.JPanel {
         });
         treePopup.add(RenameGroup);
 
+        InsertItem.setText("Вставить");
+        InsertItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                InsertItemActionPerformed(evt);
+            }
+        });
+        treePopup.add(InsertItem);
+
+        MoveItem.setText("Вырезать");
+        MoveItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                MoveItemActionPerformed(evt);
+            }
+        });
+        ListPopup.add(MoveItem);
+
+        AddCut.setText("Добавить вырезанное");
+        AddCut.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                AddCutActionPerformed(evt);
+            }
+        });
+        ListPopup.add(AddCut);
+
         addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent evt) {
                 formComponentHidden(evt);
@@ -179,6 +207,7 @@ public class InputPanel extends javax.swing.JPanel {
         nameList.setVisibleRowCount(22);
         nameList.setFixedCellWidth(300);
         nameList.setFixedCellHeight(16);
+        nameList.setComponentPopupMenu(ListPopup);
         nameList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 nameListMouseClicked(evt);
@@ -474,6 +503,8 @@ public class InputPanel extends javax.swing.JPanel {
         koefTextField.setText("1");
         setKoef(1.0);
         setChanged(false);
+        InsertItem.setEnabled(false);
+        AddCut.setEnabled(false);
         if (MainFrame.getEditDocId()==0){
             discTextField.setText("0");
             model.setIndDiscount(0);
@@ -932,10 +963,64 @@ public class InputPanel extends javax.swing.JPanel {
         editTovar();
     }//GEN-LAST:event_editButtonActionPerformed
 
+    private void MoveItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_MoveItemActionPerformed
+        if (groupTree.getLeadSelectionPath().getLastPathComponent()==null || nameList.getSelectedValue()==null)
+            return;
+        setNameMove((String)nameList.getSelectedValue());
+        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
+        InsertItem.setEnabled(true);
+        AddCut.setEnabled(true);
+    }//GEN-LAST:event_MoveItemActionPerformed
+
+    private void InsertItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_InsertItemActionPerformed
+        if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
+            return;
+        int gr=((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex();
+        try{
+            DataSet.UpdateQuery("update kart set id_group="+gr+" where id_tovar = (select id_tovar from tovar where name='"+getNameMove()+"') and id_group="+getGroumMove()+
+                    " and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')");
+            DataSet.commit();
+            InsertItem.setEnabled(false);
+            AddCut.setEnabled(false);
+            initList(gr);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_InsertItemActionPerformed
+
+    private void AddCutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddCutActionPerformed
+        if (nameList.getSelectedValue()==null || JOptionPane.showConfirmDialog(this, "Вы уверены что следует объеденить "+getNameMove()+" c "+(String)nameList.getSelectedValue()+"\n при этом пропадет "+getNameMove(), "Объединение", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
+            return;
+        try{
+            ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+getNameMove()+"'", false);
+            rs.next();
+            int move=rs.getInt(1);
+            rs=DataSet.QueryExec("select id_tovar from tovar where name='"+(String)nameList.getSelectedValue()+"'", false);
+            rs.next();
+            int add=rs.getInt(1);
+            DataSet.UpdateQuery("update lines set id_tovar="+add+" where id_tovar = "+move);
+            DataSet.UpdateQuery("update kart set id_tovar="+add+", id_group="+((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex()+" where id_tovar = "+move);
+            DataSet.UpdateQuery("update bar_code set id_tovar="+add+" where id_tovar = "+move);
+            DataSet.UpdateQuery("delete from price where id_tovar = "+move);
+            DataSet.UpdateQuery("delete from tovar where id_tovar = "+move);
+            DataSet.commit();
+            InsertItem.setEnabled(false);
+            AddCut.setEnabled(false);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_AddCutActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JMenuItem AddCut;
     private JMenuItem AddGroup;
     private JMenuItem AddSubGroup;
+    private JMenuItem InsertItem;
+    private JPopupMenu ListPopup;
+    private JMenuItem MoveItem;
     private JButton NewTovarButton;
     private JMenuItem RenameGroup;
     private JComboBox clientCombo;
@@ -978,6 +1063,27 @@ public class InputPanel extends javax.swing.JPanel {
     private String Manager;
     private double koef = 1.0;
     private PriceForm priceDialog=null;
+    protected String nameMove;
+
+    public String getNameMove() {
+        return nameMove;
+    }
+
+    public void setNameMove(String nameMove) {
+        this.nameMove = nameMove;
+    }
+
+    protected int groumMove;
+
+    public int getGroumMove() {
+        return groumMove;
+    }
+
+    public void setGroumMove(int groumMove) {
+        this.groumMove = groumMove;
+    }
+
+
     public double getKoef() {
         return koef;
     }

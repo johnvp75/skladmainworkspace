@@ -112,7 +112,7 @@ public class RestTableDataModel extends AbstractTableModel{
         }
     }
     public int getColumnCount(){
-        return 7;
+        return 4;
     }
     public int getRowCount(){
         return Nazv.size();

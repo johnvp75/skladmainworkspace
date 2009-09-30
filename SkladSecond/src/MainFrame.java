@@ -140,6 +140,11 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu7.setText("Работа с остатками");
 
         jMenuItem10.setText("Обнуление");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
         jMenu7.add(jMenuItem10);
 
         jMenuBar1.add(jMenu7);
@@ -204,8 +209,13 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
-        PriceChange price=new PriceChange(null,true);
-        price.setVisible(true);
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";6;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            PriceChange price=new PriceChange(null,true);
+            price.setVisible(true);
+        }
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -221,6 +231,18 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         (new EditClient()).setVisible(true);
     }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";5;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
+            RestChange rest=new RestChange(null,true);
+            rest.setManager(dialog.GetManager());
+            rest.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     /**
     * @param args the command line arguments

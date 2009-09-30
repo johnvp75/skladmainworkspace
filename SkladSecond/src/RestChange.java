@@ -262,8 +262,18 @@ public class RestChange extends javax.swing.JDialog {
             int id_val=rs.getInt(1);
             GregorianCalendar now=new GregorianCalendar();
             rs= DataSet.QueryExec("select max(id_doc)+1 from document", false);
+            rs.next();
+            int id_doc=rs.getInt(1);
 
-            DataSet.UpdateQuery("insert into document (id_type_doc, id_client, id_skl, id manager, id_val, numb, day, sum, note, disc");
+            String SQL="insert into document (id_doc, id_type_doc, id_client, id_skl, id manager, id_val, numb, day, sum, note, disc) " +
+                    "select "+id_doc+" as id_doc, 5 as id_type_doc, "+id_client+" as id_client, " +
+                    "(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') as id_skl, " +
+                    "(select id_manager from manager where name = '"+getManager()+"') as id_manager, " +id_val+
+                    " as id_val, "+numb+" as numb, ";
+            if (dayCheck.isSelected())
+                SQL=SQL+endDay.getText()+" as day,";
+            if (numbCheck.isSelected())
+                SQL="d.day<(select day from document where numb="+endNumb.getText()+" and id_type_doc=2)";
         }catch(Exception e){
             e.printStackTrace();
         }

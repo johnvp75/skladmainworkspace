@@ -276,7 +276,7 @@ public class EditClient extends javax.swing.JDialog {
         public void actionPerformed(ActionEvent evt){
             String client=(String) ((JComboBox)evt.getSource()).getSelectedItem();
             try{
-                ResultSet rs=DataSet.QueryExec("select id_client, adres, phone, type from client where name='"+client+"'", false);
+                ResultSet rs=DataSet.QueryExec("select id_client, trim(adres), trim(phone), type from client where name='"+client+"'", false);
                 if (rs.next()){
                     setId(rs.getInt(1));
                     AdressTextField.setText(rs.getString(2));

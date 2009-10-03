@@ -133,6 +133,28 @@ public class RestChange extends javax.swing.JDialog {
             }
         });
 
+        endDay.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endDayActionPerformed(evt);
+            }
+        });
+        endDay.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                endDayFocusLost(evt);
+            }
+        });
+
+        endNumb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endNumbActionPerformed(evt);
+            }
+        });
+        endNumb.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                endNumbFocusLost(evt);
+            }
+        });
+
         dayCheck.setText("На дату (на начало дня):");
         dayCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -242,7 +264,7 @@ public class RestChange extends javax.swing.JDialog {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try{
-            DataSet.UpdateQuery("lock table document");
+            DataSet.UpdateQuery("lock table document in exclusive mode");
             int numb=1;
             ResultSet rs=DataSet.QueryExec("select max(numb) from document where id_type_doc=5", false);
             if (rs.next())
@@ -265,16 +287,35 @@ public class RestChange extends javax.swing.JDialog {
             rs.next();
             int id_doc=rs.getInt(1);
 
-            String SQL="insert into document (id_doc, id_type_doc, id_client, id_skl, id manager, id_val, numb, day, sum, note, disc) " +
+            String SQL="insert into document (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc) " +
                     "select "+id_doc+" as id_doc, 5 as id_type_doc, "+id_client+" as id_client, " +
-                    "(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') as id_skl, " +
+                    "id_skl, " +
                     "(select id_manager from manager where name = '"+getManager()+"') as id_manager, " +id_val+
                     " as id_val, "+numb+" as numb, ";
             if (dayCheck.isSelected())
                 SQL=SQL+endDay.getText()+" as day,";
             if (numbCheck.isSelected())
-                SQL="d.day<(select day from document where numb="+endNumb.getText()+" and id_type_doc=2)";
+                SQL=SQL+"(select day from document where numb="+endNumb.getText()+" and id_type_doc=2) as day, ";
+            SQL=SQL+"0.00 as sum, 'Обнуление остатков "+now.getTime().toString()+"' as note, 0 as disc from sklad where name='"+skladCombo.getSelectedItem()+"'";
+            DataSet.UpdateQuery(SQL);
+            boolean roll=true;
+                for (int i=0; i<restTable.getModel().getRowCount();i++)
+                    if ((Boolean)restTable.getModel().getValueAt(i, 0)){
+                        roll=false;
+                        double kol=(Double)restTable.getModel().getValueAt(i, 2)-(Double)restTable.getModel().getValueAt(i, 3);
+                        DataSet.UpdateQuery("insert into lines (id_doc, kol, cost, disc, id_tovar) select "+id_doc+" as id_doc, "+kol+" as kol, 0 as cost, 0 as disc, id_tovar " +
+                            "from tovar where name='"+restTable.getModel().getValueAt(i, 1)+"'");
+                    }
+            if (roll)
+                DataSet.rollback();
+            else
+                DataSet.commit();
         }catch(Exception e){
+            try{
+                DataSet.rollback();
+            }catch(Exception exp){
+                exp.printStackTrace();
+            }
             e.printStackTrace();
         }
 
@@ -353,12 +394,36 @@ public class RestChange extends javax.swing.JDialog {
     private void dayCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dayCheckActionPerformed
         dayCheck.setSelected(true);
         numbCheck.setSelected(false);
+        if (endDay.getText().length()>0)
+            change();
     }//GEN-LAST:event_dayCheckActionPerformed
 
     private void numbCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numbCheckActionPerformed
         dayCheck.setSelected(false);
         numbCheck.setSelected(true);
+        if (endNumb.getText().length()>0)
+            change();
     }//GEN-LAST:event_numbCheckActionPerformed
+
+    private void endDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endDayActionPerformed
+        if (dayCheck.isSelected())
+            change();
+    }//GEN-LAST:event_endDayActionPerformed
+
+    private void endDayFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_endDayFocusLost
+        if (dayCheck.isSelected())
+            change();
+    }//GEN-LAST:event_endDayFocusLost
+
+    private void endNumbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endNumbActionPerformed
+        if (numbCheck.isSelected())
+            change();
+    }//GEN-LAST:event_endNumbActionPerformed
+
+    private void endNumbFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_endNumbFocusLost
+        if (numbCheck.isSelected())
+            change();
+    }//GEN-LAST:event_endNumbFocusLost
 
     /**
     * @param args the command line arguments
@@ -431,11 +496,11 @@ public class RestChange extends javax.swing.JDialog {
                     " (select sum(l.kol) as prihod, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
                     " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
-                    " and d.id_type_doc=1 and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
+                    " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
                     " right join (select sum(l.kol) as real, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
                     " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
-                    " and d.id_type_doc=2 and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
+                    " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
                     " where ot.id=t.id_tovar" +
                     " union" +
                     " select nvl(ot.prihod,0) - nvl(ot.real,0),  trim(t.name) as name from tovar t, " +
@@ -443,11 +508,11 @@ public class RestChange extends javax.swing.JDialog {
                     " (select sum(l.kol) as prihod, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
                     " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where " +SQL+
-                    " and d.id_type_doc=1 and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
+                    " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
                     " left join (select sum(l.kol) as real, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
                     " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
-                    " and d.id_type_doc=2 and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
+                    " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
                     " where ot.id=t.id_tovar) order by name";
             ResultSet rs=DataSet.QueryExec(SQL, false);
             while (rs.next())

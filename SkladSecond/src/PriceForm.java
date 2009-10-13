@@ -340,7 +340,7 @@ public class PriceForm extends javax.swing.JDialog {
             rs.next();
             int price=rs.getInt(1);
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
-                if ((Boolean)priceTable.getModel().getValueAt(i, 0) || ((Double)priceTable.getValueAt(i, 4))>0){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0)){
                         if (DataSet.UpdateQuery("update price set cost="+priceTable.getModel().getValueAt(i, 4)+", akciya="+priceTable.getModel().getValueAt(i, 6)+", isakcia="+(((Boolean)priceTable.getModel().getValueAt(i, 5)).booleanValue()?"1":"0")+
                                 " where id_tovar=(select id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"') and id_skl="+skl+" and id_price="+price)==0)
                             DataSet.UpdateQuery("insert into price (cost, akciya, isakcia, id_skl, id_price, id_tovar) select " +

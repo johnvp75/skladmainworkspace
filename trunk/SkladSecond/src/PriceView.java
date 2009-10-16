@@ -134,7 +134,6 @@ public class PriceView extends javax.swing.JDialog {
             priceCombo.removeAllItems();
             while (rs.next()){
                 priceCombo.addItem(rs.getString(1));
-                MainCombo.addItem(rs.getString(1));
             }
             if (priceCombo.getItemCount()==0)
                 return;
@@ -147,7 +146,6 @@ public class PriceView extends javax.swing.JDialog {
                 change();
             }
         };
-        MainCombo.addActionListener(actionCombo);
         skladCombo.addActionListener(actionCombo);
         priceCombo.addActionListener(actionCombo);
     }//GEN-LAST:event_formComponentShown
@@ -189,37 +187,21 @@ public class PriceView extends javax.swing.JDialog {
         this.Group = Group;
     }
 
-    private String cen(int row){
-        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1);
-        String str="0.";
-        for (int i=0;i<okrCombo.getSelectedIndex();i++)
-            str=str+"0";
-        NumberFormat formatter = new DecimalFormat ( str ) ;
-        //ret=(ret*Math.pow(10, 2-okrCombo.getSelectedIndex())+0.5)/Math.pow(10, 2-okrCombo.getSelectedIndex());
-        if (inkCheckBox.isSelected())
-            ret=ret+(0.5/Math.pow(10, okrCombo.getSelectedIndex())-0.1/Math.pow(10, okrCombo.getSelectedIndex()+1));
-        return formatter.format(ret);
-    }
     private void change(){
         try{
             ((PriceTableDataModel)priceTable.getModel()).removeAll();
             ResultSet rs;
-            if (MainCombo.getSelectedIndex()==0){
-
-            }
-            else{
-
                 if (getGroup()==-2)
                     rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
                             "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
-                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
+//                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
                             "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
                             ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
                             " order by upper(name)", false);
                 else
                     rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
                             "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
-                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where k.id_group in " +
+//                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where k.id_group in " +
                             "(SELECT id_group from groupid start with id_group="+getGroup()+" connect BY prior id_group= parent_group) " +
                             "and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
                             ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
@@ -228,7 +210,7 @@ public class PriceView extends javax.swing.JDialog {
                     ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), rs.getDouble(2), rs.getDouble(3), 0.0, (rs.getInt(5)==1), rs.getInt(4));
                 }
 
-            }
+            
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -1,12 +1,16 @@
 
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /*
  * To change this template, choose Tools | Templates
@@ -47,7 +51,15 @@ public class PriceView extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         priceCombo = new javax.swing.JComboBox();
         jScrollPane2 = new javax.swing.JScrollPane();
-        priceTable = new javax.swing.JTable();
+        String[] nameColumn = new String[2];
+        nameColumn[0]="Наименование";
+        nameColumn[1]="Цена";
+        priceTable = new javax.swing.JTable(new DefaultTableModel(nameColumn,0));
+        printButton = new javax.swing.JButton();
+        addCheckBox = new javax.swing.JCheckBox();
+        realrestRadioButton = new javax.swing.JRadioButton();
+        dateRadioButton = new javax.swing.JRadioButton();
+        dateTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -73,6 +85,38 @@ public class PriceView extends javax.swing.JDialog {
 
         jScrollPane2.setViewportView(priceTable);
 
+        printButton.setText("Печать");
+        printButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printButtonActionPerformed(evt);
+            }
+        });
+
+        addCheckBox.setText("Добавить к имеющемуся");
+        addCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addCheckBoxActionPerformed(evt);
+            }
+        });
+
+        realrestRadioButton.setSelected(true);
+        realrestRadioButton.setText("Текущие остатки");
+        realrestRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                realrestRadioButtonActionPerformed(evt);
+            }
+        });
+
+        dateRadioButton.setText("Приход после");
+        dateRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateRadioButtonActionPerformed(evt);
+            }
+        });
+
+        dateTextField.setText("01.01.2001");
+        dateTextField.setEnabled(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -90,13 +134,28 @@ public class PriceView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(10, 10, 10)
-                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 475, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(430, 430, 430))
+                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(addCheckBox))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(62, 62, 62)
+                                .addComponent(printButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(dateRadioButton)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(realrestRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(85, 85, 85))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -104,12 +163,24 @@ public class PriceView extends javax.swing.JDialog {
                         .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
-                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addCheckBox)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(22, 22, 22))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(realrestRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(dateRadioButton)
+                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 329, Short.MAX_VALUE)
+                        .addComponent(printButton)
+                        .addGap(139, 139, 139))))
         );
 
         pack();
@@ -150,6 +221,30 @@ public class PriceView extends javax.swing.JDialog {
         priceCombo.addActionListener(actionCombo);
     }//GEN-LAST:event_formComponentShown
 
+    private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
+        try {
+            priceTable.print();
+        } catch (PrinterException ex) {
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_printButtonActionPerformed
+
+    private void addCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addCheckBoxActionPerformed
+
+    private void realrestRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_realrestRadioButtonActionPerformed
+        realrestRadioButton.setSelected(true);
+        dateRadioButton.setSelected(false);
+        dateTextField.setEnabled(false);
+    }//GEN-LAST:event_realrestRadioButtonActionPerformed
+
+    private void dateRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateRadioButtonActionPerformed
+        dateRadioButton.setSelected(true);
+        realrestRadioButton.setSelected(false);
+        dateTextField.setEnabled(true);
+    }//GEN-LAST:event_dateRadioButtonActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -168,6 +263,9 @@ public class PriceView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox addCheckBox;
+    private javax.swing.JRadioButton dateRadioButton;
+    private javax.swing.JTextField dateTextField;
     private javax.swing.JTree groupTree;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -175,6 +273,8 @@ public class PriceView extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JComboBox priceCombo;
     private javax.swing.JTable priceTable;
+    private javax.swing.JButton printButton;
+    private javax.swing.JRadioButton realrestRadioButton;
     private javax.swing.JComboBox skladCombo;
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
@@ -189,28 +289,45 @@ public class PriceView extends javax.swing.JDialog {
 
     private void change(){
         try{
-            ((PriceTableDataModel)priceTable.getModel()).removeAll();
+//            priceTable.removeAll();
+            if (!addCheckBox.isSelected())
+                ((DefaultTableModel)priceTable.getModel()).setRowCount(0);
             ResultSet rs;
-                if (getGroup()==-2)
-                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
-                            "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
-//                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
-                            "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
-                            ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
-                            " order by upper(name)", false);
-                else
-                    rs=DataSet.QueryExec("SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
-                            "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
-//                            "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where k.id_group in " +
-                            "(SELECT id_group from groupid start with id_group="+getGroup()+" connect BY prior id_group= parent_group) " +
-                            "and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
-                            ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
-                            " order by upper(name)", false);
-                while (rs.next()){
-                    ((PriceTableDataModel)priceTable.getModel()).add(rs.getString(1), rs.getDouble(2), rs.getDouble(3), 0.0, (rs.getInt(5)==1), rs.getInt(4));
+            String SQL="";
+            if (getGroup()==-2)
+                SQL="SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
+                    "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
+//                  "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
+                    "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
+                    ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
+                    " order by upper(name)";
+            else{
+                if (realrestRadioButton.isSelected())
+                    SQL=String.format("select trim(t.name), p.cost from tovar t, price p where p.id_tovar in (select tt.id FROM ("+
+                        "select sum(l.kol)-sum(t1.real) as kol, l.id_tovar as id from lines l, document d, "+
+                        "(select sum(l.kol) as real, l.id_tovar from lines l, document d  WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
+                        "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
+                        "and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not(d.numb is null) group by l.id_tovar) t1 "+
+                        "WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
+                        "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
+                        "and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and not(d.numb is null) AND l.id_tovar=t1.id_tovar group BY l.id_tovar) tt where tt.kol>0) AND p.id_price=(select id_price from type_price where name='%3$s')" +
+                        " and p.id_tovar= t.id_tovar order by "+
+                        "trim(t.name)", getGroup(),skladCombo.getSelectedItem(), priceCombo.getSelectedItem());
+                if (dateRadioButton.isSelected())
+                    SQL=String.format("select trim(t.name), p.cost from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
+                        "(select l.id_tovar from lines l, document d where l.id_doc=d.id_doc and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.id_skl=(select id_skl from sklad where name='%s') "+
+                        "and d.day>to_date('%s','DD.MM.YYYY')) and p.id_tovar in (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group))",
+                        priceCombo.getSelectedItem(), skladCombo.getSelectedItem(),dateTextField.getText(),getGroup());
                 }
-
-            
+            rs=DataSet.QueryExec(SQL, false);
+            while (rs.next()){
+                String[] rowData=new String[2];
+                rowData[0]=rs.getString(1);
+//              Number form =new Number();
+                rowData[1]=((new DecimalFormat("0.00")).format(rs.getDouble(2))).replace('.', ',') ;
+                int RowCount=((DefaultTableModel)priceTable.getModel()).getRowCount();
+                ((DefaultTableModel)priceTable.getModel()).insertRow(RowCount, rowData);
+            }
         }catch(Exception e){
             e.printStackTrace();
         }

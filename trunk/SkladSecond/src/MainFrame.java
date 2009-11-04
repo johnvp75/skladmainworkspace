@@ -1,8 +1,15 @@
 
+import java.sql.ResultSet;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /*
@@ -59,8 +66,12 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem8 = new javax.swing.JMenuItem();
+        jMenuItem11 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem10 = new javax.swing.JMenuItem();
+        jMenu8 = new javax.swing.JMenu();
+        jMenu9 = new javax.swing.JMenu();
+        jMenuItem12 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem7 = new javax.swing.JMenuItem();
 
@@ -135,6 +146,14 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu4.add(jMenuItem8);
 
+        jMenuItem11.setText("Просмотр и печать");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem11);
+
         jMenuBar1.add(jMenu4);
 
         jMenu7.setText("Работа с остатками");
@@ -148,6 +167,22 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu7.add(jMenuItem10);
 
         jMenuBar1.add(jMenu7);
+
+        jMenu8.setText("Документы");
+
+        jMenu9.setText("Просмотр, печать проведенных");
+
+        jMenuItem12.setText("По номеру");
+        jMenuItem12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem12ActionPerformed(evt);
+            }
+        });
+        jMenu9.add(jMenuItem12);
+
+        jMenu8.add(jMenu9);
+
+        jMenuBar1.add(jMenu8);
 
         jMenu3.setText("Окно");
 
@@ -244,6 +279,71 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";6;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            PriceView price=new PriceView(null,true);
+            price.setVisible(true);
+        }        // TODO add your handling code here:
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem12ActionPerformed
+        int numb=new Integer(JOptionPane.showInputDialog("Введите номер накладной"));
+        Vector<Vector<String>> OutData = new Vector<Vector<String>>(0);
+        NumberFormat formatter = new DecimalFormat ( "0.00" ) ;
+        int id=0;
+        ResultSet rs;
+        try{
+            rs=DataSet.QueryExec("Select id_doc from document where id_type_doc=2 and numb="+numb, false);
+            if (rs.next())
+                id=rs.getInt(1);
+            else
+                return;
+            rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, sum(lines.kol*cost*(1-disc/100)) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+id+" group by tovar.name, cost, lines.kol, disc order by tovar.name", false);
+            for (int i=0; i<OutData.size();i++)
+            OutData.get(i).clear();
+            OutData.clear();
+            int j=0;
+            while (rs.next()){
+                Vector<String> Row=new Vector<String>(0);
+                j++;
+		Row.add(j+"");
+		Row.add(rs.getString(1));
+		Row.add(rs.getString(2));
+		Row.add(formatter.format(rs.getDouble(3)));
+		Row.add(rs.getString(4));
+		Row.add(formatter.format(rs.getDouble(5)));
+		OutData.add(Row);
+            }
+            rs=DataSet.QueryExec("select sum, trim(note), disc, trim(val.name), trim(manager.name), trim(sklad.name), numb, trim(client.name) from (((document inner join val on document.id_val=val.id_val) inner join manager on document.id_manager=manager.id_manager) inner join " +
+                "sklad on document.id_skl=sklad.id_skl) inner join client on document.id_client=client.id_client where id_doc="+id, false);
+            rs.next();
+            GregorianCalendar now=new GregorianCalendar();
+            int size=OutData.size();
+            OutputOO.OpenDoc("nakl_pr.ots",false);
+            OutputOO.InsertOne("\""+now.get(Calendar.DAY_OF_MONTH)+"\" "+Month(now.get(Calendar.MONTH))+" "+now.get(Calendar.YEAR)+"г.", 10, true, 4,1);
+            OutputOO.InsertOne("Накладная №"+numb, 16, true, 1, 2);
+            OutputOO.InsertOne("Поставщик: "+rs.getString(8),11, true, 1,4);
+            OutputOO.InsertOne(rs.getString(2),8,false,1,6);
+            OutputOO.InsertOne("Склад: "+rs.getString(6),7,false,6,7);
+            OutputOO.InsertOne("Валюта: "+rs.getString(4),7,false,1,7);
+            OutputOO.InsertOne("ИТОГО:",10,false,4,9+size);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)/(1-rs.getDouble(3)/100)),10,false,6,9+size);
+            OutputOO.InsertOne("Скидка",10,false,2,9+size+1);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(3))+"%",10,false,4,9+size+1);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)*(1/(1-rs.getDouble(3)/100)-1)),10,false,6,9+size+1);
+            OutputOO.InsertOne("Итого со скидкой",10,false,2,9+size+2);
+            OutputOO.InsertOne(formatter.format(rs.getDouble(1)),10,true,6,9+size+2);
+            OutputOO.InsertOne("Документ оформил: "+rs.getString(5),8,false,2,9+size+4);
+            OutputOO.Insert(1, 9, OutData);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    
+    }//GEN-LAST:event_jMenuItem12ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -264,9 +364,13 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu5;
     private javax.swing.JMenu jMenu6;
     private javax.swing.JMenu jMenu7;
+    private javax.swing.JMenu jMenu8;
+    private javax.swing.JMenu jMenu9;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
+    private javax.swing.JMenuItem jMenuItem11;
+    private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
@@ -287,6 +391,24 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private static ManagerChooser dialog;
+
+    private String Month(int get) {
+	switch (get+1){
+	case 1:return "января";
+	case 2:return "февраля";
+	case 3:return "марта";
+	case 4:return "апреля";
+	case 5:return "мая";
+	case 6:return "июня";
+	case 7:return "июля";
+	case 8:return "августа";
+	case 9:return "сентября";
+	case 10:return "октября";
+	case 11:return "ноября";
+	case 12:return "декабря";
+	default: return "";
+	}
+    }
 
 
 

@@ -303,18 +303,18 @@ public class PriceView extends javax.swing.JDialog {
                     " order by upper(name)";
             else{
                 if (realrestRadioButton.isSelected())
-                    SQL=String.format("select trim(t.name), p.cost from tovar t, price p where p.id_tovar in (select tt.id FROM ("+
-                        "select sum(l.kol)-sum(t1.real) as kol, l.id_tovar as id from lines l, document d, "+
-                        "(select sum(l.kol) as real, l.id_tovar from lines l, document d  WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
-                        "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
-                        "and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not(d.numb is null) group by l.id_tovar) t1 "+
-                        "WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
-                        "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
-                        "and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and not(d.numb is null) AND l.id_tovar=t1.id_tovar group BY l.id_tovar) tt where tt.kol>0) AND p.id_price=(select id_price from type_price where name='%3$s')" +
-                        " and p.id_tovar= t.id_tovar order by "+
-                        "trim(t.name)", getGroup(),skladCombo.getSelectedItem(), priceCombo.getSelectedItem());
+                    SQL=String.format("select distinct trim(t.name), p.cost from tovar t, price p where p.id_tovar in (select id from (select t1.pr, t2.real, t1.id from " +
+                            "(select sum(l.kol) as pr, l.id_tovar as id from lines l, document d WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
+                            "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and " +
+                            "kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) and d.id_type_doc in (select id_type_doc from type_doc where " +
+                            "type_doc.operacia=1) and not(d.numb is null) group BY l.id_tovar) t1 left join (select sum(l.kol) as real, l.id_tovar as id from " +
+                            "lines l, document d  WHERE d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not(d.numb is null) and " +
+                            "d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart where kart.id_group in (select id_group from groupid start with " +
+                            "id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
+                            "group by l.id_tovar) t2 on t1.id=t2.id) where pr-nvl(real,0)>0) AND p.id_price=(select id_price from type_price where name='%3$s') "+
+                            "and p.id_tovar= t.id_tovar order by trim(t.name)", getGroup(),skladCombo.getSelectedItem(), priceCombo.getSelectedItem());
                 if (dateRadioButton.isSelected())
-                    SQL=String.format("select trim(t.name), p.cost from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
+                    SQL=String.format("select distinct trim(t.name), p.cost from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
                         "(select l.id_tovar from lines l, document d where l.id_doc=d.id_doc and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.id_skl=(select id_skl from sklad where name='%s') "+
                         "and d.day>to_date('%s','DD.MM.YYYY')) and p.id_tovar in (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group))",
                         priceCombo.getSelectedItem(), skladCombo.getSelectedItem(),dateTextField.getText(),getGroup());

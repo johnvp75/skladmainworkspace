@@ -293,7 +293,7 @@ public class RestChange extends javax.swing.JDialog {
                     "(select id_manager from manager where name = '"+getManager()+"') as id_manager, " +id_val+
                     " as id_val, "+numb+" as numb, ";
             if (dayCheck.isSelected())
-                SQL=SQL+endDay.getText()+" as day,";
+                SQL=SQL+"to_date('"+endDay.getText()+"','DD/MM/YYYY') as day,";
             if (numbCheck.isSelected())
                 SQL=SQL+"(select day from document where numb="+endNumb.getText()+" and id_type_doc=2) as day, ";
             SQL=SQL+"0.00 as sum, 'Обнуление остатков "+now.getTime().toString()+"' as note, 0 as disc from sklad where name='"+skladCombo.getSelectedItem()+"'";

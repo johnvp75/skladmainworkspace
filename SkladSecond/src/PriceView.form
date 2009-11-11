@@ -61,6 +61,7 @@
                                       <Component id="dateTextField" min="-2" pref="115" max="-2" attributes="0"/>
                                   </Group>
                                   <Component id="realrestRadioButton" alignment="0" min="-2" pref="202" max="-2" attributes="0"/>
+                                  <Component id="allRadioButton" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -101,7 +102,9 @@
                           <Component id="dateRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="dateTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="329" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="allRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="301" max="32767" attributes="0"/>
                       <Component id="printButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="139" max="-2" attributes="0"/>
                   </Group>
@@ -164,7 +167,8 @@
         <Component class="javax.swing.JTable" name="priceTable">
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTable(new DefaultTableModel(nameColumn,0))"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="String[] nameColumn = new String[2];&#xa;nameColumn[0]=&quot;&#x41d;&#x430;&#x438;&#x43c;&#x435;&#x43d;&#x43e;&#x432;&#x430;&#x43d;&#x438;&#x435;&quot;;&#xa;nameColumn[1]=&quot;&#x426;&#x435;&#x43d;&#x430;&quot;;"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodePre" type="java.lang.String" value="String[] nameColumn = new String[4];&#xa;nameColumn[0]=&quot;&#x41d;&#x430;&#x438;&#x43c;&#x435;&#x43d;&#x43e;&#x432;&#x430;&#x43d;&#x438;&#x435;&quot;;&#xa;nameColumn[1]=&quot;&#x426;&#x435;&#x43d;&#x430;&quot;;&#xa;nameColumn[2]=&quot;&#x421;&#x43a;&#x438;&#x434;&#x43a;&#x430; %&quot;;&#xa;nameColumn[3]=&quot;&quot;;"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="priceTable.getColumnModel().getColumn(0).setMaxWidth(350);&#xa;priceTable.getColumnModel().getColumn(1).setMaxWidth(60);&#xa;priceTable.getColumnModel().getColumn(2).setMaxWidth(70);&#xa;priceTable.getColumnModel().getColumn(3).setMaxWidth(60);"/>
           </AuxValues>
         </Component>
       </SubComponents>
@@ -207,6 +211,17 @@
         <Property name="text" type="java.lang.String" value="01.01.2001"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dateTextFieldActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="allRadioButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x41f;&#x43e;&#x43b;&#x43d;&#x44b;&#x439; &#x43f;&#x440;&#x430;&#x439;&#x441;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allRadioButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -233,6 +233,9 @@ public class InputPanel extends javax.swing.JPanel {
             public void keyPressed(KeyEvent evt) {
                 naklTableKeyPressed(evt);
             }
+            public void keyTyped(KeyEvent evt) {
+                naklTableKeyTyped(evt);
+            }
         });
         model.addTableModelListener(new TableModelListener(){
             public void tableChanged(TableModelEvent event){
@@ -1012,6 +1015,11 @@ public class InputPanel extends javax.swing.JPanel {
         }
 
     }//GEN-LAST:event_AddCutActionPerformed
+
+    private void naklTableKeyTyped(KeyEvent evt) {//GEN-FIRST:event_naklTableKeyTyped
+        if (evt.getKeyChar()==',')
+            evt.setKeyChar('.');
+    }//GEN-LAST:event_naklTableKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

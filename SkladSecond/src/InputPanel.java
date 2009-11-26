@@ -1201,7 +1201,7 @@ public class InputPanel extends javax.swing.JPanel {
         Vector<Vector<String>> OutData = new Vector<Vector<String>>(0);
         NumberFormat formatter = new DecimalFormat ( "0.00" ) ;
         try{
-            ResultSet rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, sum(lines.kol*cost*(1-disc/100)) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+getId_doc()+" group by tovar.name, cost, lines.kol, disc order by tovar.name", false);
+            ResultSet rs=DataSet.QueryExec("select trim(tovar.name), lines.kol, cost, disc, lines.kol*cost*(1-disc/100) from lines inner join tovar on lines.id_tovar=tovar.id_tovar where id_doc="+getId_doc()+" order by tovar.name", false);
             for (int i=0; i<OutData.size();i++)
             OutData.get(i).clear();
             OutData.clear();

@@ -496,11 +496,11 @@ public class RestChange extends javax.swing.JDialog {
                     " (select t1.prihod , t2.real,  greatest(nvl(t1.id,0), nvl(t2.id,0)) as id from " +
                     " (select sum(l.kol) as prihod, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
-                    " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
+                    " id_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
                     " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and not (d.numb is null) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
                     " right join (select sum(l.kol) as real, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
-                    " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
+                    " id_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
                     " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not (d.numb is null) and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
                     " where ot.id=t.id_tovar" +
                     " union" +
@@ -508,11 +508,11 @@ public class RestChange extends javax.swing.JDialog {
                     " (select t1.prihod , t2.real, greatest(nvl(t1.id,0), nvl(t2.id,0)) as id from " +
                     " (select sum(l.kol) as prihod, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
-                    " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where " +SQL+
+                    " id_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where " +SQL+
                     " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=1) and not (d.numb is null)  and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t1" +
                     " left join (select sum(l.kol) as real, l.id_tovar as id from lines l, document d, " +
                     " (select DISTINCT id_tovar from tovar WHERE id_tovar in (select id_tovar FROM kart WHERE id_group in (select id_group FROM groupid start with " +
-                    " parent_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
+                    " id_group="+getGroup()+" CONNECT BY prior id_group=parent_group) and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))) id where "+SQL+
                     " and d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not (d.numb is null)  and d.id_doc= l.id_doc and l.id_tovar=id.id_tovar GROUP BY l.id_tovar) t2 on t2.id=t1.id) ot " +
                     " where ot.id=t.id_tovar) order by name";
             ResultSet rs=DataSet.QueryExec(SQL, false);

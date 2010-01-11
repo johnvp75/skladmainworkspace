@@ -19,21 +19,28 @@ import javax.swing.AbstractListModel;
  *
  * @author Р–РµРєР°
  */
+
 public class DataListModel extends AbstractListModel{
-    private Vector<String> data;
+    private Vector<BarCodeData> data;
     public DataListModel(){
-        data = new Vector<String>(0);
+        data = new Vector<BarCodeData>(0);
     }
     public Object getElementAt(int pos){
         if (pos<0 && pos==getSize())
             return -1;
+        else
+            return data.get(pos).Name;
+    }
+    public BarCodeData getDataAt(int pos){
+        if (pos<0 && pos==getSize())
+            return null;
         else
             return data.get(pos);
     }
     public int getSize(){
         return data.size();
     }
-    public void add(String aValue){
+    public void add(BarCodeData aValue){
         data.add(aValue);
         fireContentsChanged(this, 0, getSize()-1);
 
@@ -43,7 +50,12 @@ public class DataListModel extends AbstractListModel{
         fireContentsChanged(this, 0, getSize()-1);
     }
     public int pos(String aValue){
-        return data.indexOf(aValue);
+        int ret=-1;
+        for (int i=0;i<getSize();i++){
+            if (data.get(i).Name.equals(aValue))
+                ret=i;
+        }
+        return ret;
     }
     public void removeAll(){
         data.clear();
@@ -51,5 +63,6 @@ public class DataListModel extends AbstractListModel{
     }
 
 }
+
 
 

@@ -60,6 +60,8 @@ public class RestChange extends javax.swing.JDialog {
         endNumb = new javax.swing.JTextField();
         dayCheck = new javax.swing.JRadioButton();
         numbCheck = new javax.swing.JRadioButton();
+        jLabel2 = new javax.swing.JLabel();
+        yearComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -169,6 +171,20 @@ public class RestChange extends javax.swing.JDialog {
             }
         });
 
+        jLabel2.setText("Год:");
+
+        yearComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        yearComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yearComboBoxActionPerformed(evt);
+            }
+        });
+        yearComboBox.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                yearComboBoxFocusLost(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -218,7 +234,11 @@ public class RestChange extends javax.swing.JDialog {
                                 .addComponent(endDay, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(endNumb)))))
+                                .addComponent(endNumb)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(yearComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -233,7 +253,9 @@ public class RestChange extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(numbCheck)
-                    .addComponent(endNumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(endNumb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(yearComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -295,7 +317,7 @@ public class RestChange extends javax.swing.JDialog {
             if (dayCheck.isSelected())
                 SQL=SQL+"to_date('"+endDay.getText()+"','DD/MM/YYYY') as day,";
             if (numbCheck.isSelected())
-                SQL=SQL+"(select day from document where numb="+endNumb.getText()+" and id_type_doc=2) as day, ";
+                SQL=SQL+"(select day from document where numb="+endNumb.getText()+" and id_type_doc=2 and to_char(day,'YYYY')='"+(String)yearComboBox.getSelectedItem()+"') as day, ";
             SQL=SQL+"0.00 as sum, 'Обнуление остатков "+now.getTime().toString()+"' as note, 0 as disc from sklad where name='"+skladCombo.getSelectedItem()+"'";
             DataSet.UpdateQuery(SQL);
             boolean roll=true;
@@ -341,6 +363,15 @@ public class RestChange extends javax.swing.JDialog {
             if (skladCombo.getItemCount()==0)
                 return;
             skladCombo.setSelectedIndex(0);
+            rs=DataSet.QueryExec("Select distinct to_char(day,'YYYY') from document where not(day is null)", false);
+            yearComboBox.removeAllItems();
+            while (rs.next()){
+                yearComboBox.addItem(rs.getString(1));
+            }
+            if (yearComboBox.getItemCount()==0)
+                return;
+            yearComboBox.setSelectedIndex(yearComboBox.getItemCount()-1);
+
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -425,6 +456,16 @@ public class RestChange extends javax.swing.JDialog {
             change();
     }//GEN-LAST:event_endNumbFocusLost
 
+    private void yearComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yearComboBoxActionPerformed
+        if (numbCheck.isSelected())
+            change();
+    }//GEN-LAST:event_yearComboBoxActionPerformed
+
+    private void yearComboBoxFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_yearComboBoxFocusLost
+         if (numbCheck.isSelected())
+            change();
+    }//GEN-LAST:event_yearComboBoxFocusLost
+
     /**
     * @param args the command line arguments
     */
@@ -451,6 +492,7 @@ public class RestChange extends javax.swing.JDialog {
     private javax.swing.JButton invertButton;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
@@ -461,6 +503,7 @@ public class RestChange extends javax.swing.JDialog {
     private javax.swing.JButton selectNullButton;
     private javax.swing.JComboBox skladCombo;
     private javax.swing.JButton unselectButton;
+    private javax.swing.JComboBox yearComboBox;
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
     protected String Manager;
@@ -490,7 +533,7 @@ public class RestChange extends javax.swing.JDialog {
 //                SQL="d.day<'"+endDay.getText()+"'";
                 SQL="d.day<to_date('"+endDay.getText()+"','DD.MM.YYYY')";
             if (numbCheck.isSelected())
-                SQL="d.day<(select day from document where numb="+endNumb.getText()+" and id_type_doc=2)";
+                SQL="d.day<(select day from document where numb="+endNumb.getText()+" and id_type_doc=2 and to_char(day,'YYYY')='"+(String)yearComboBox.getSelectedItem()+"')";
             SQL="Select * from (" +
                     "select nvl(ot.prihod,0) - nvl(ot.real,0),  trim(t.name) as name from tovar t, " +
                     " (select t1.prihod , t2.real,  greatest(nvl(t1.id,0), nvl(t2.id,0)) as id from " +

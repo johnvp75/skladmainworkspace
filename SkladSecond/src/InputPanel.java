@@ -692,6 +692,7 @@ public class InputPanel extends javax.swing.JPanel {
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setNewTovar(true, "");
+        dialog.setGroup(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
         dialog.setVisible(true);
         if (dialog.isOk()){
             try {
@@ -719,6 +720,7 @@ public class InputPanel extends javax.swing.JPanel {
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
         dialog.setNewTovar(false, (String)nameList.getSelectedValue());
+        dialog.setGroup(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
         dialog.setVisible(true);
         if (dialog.isOk()){
             initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());

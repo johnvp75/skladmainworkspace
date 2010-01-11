@@ -1,5 +1,4 @@
 
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,8 +10,6 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
@@ -24,7 +21,6 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ListSelectionModel;
-import javax.swing.WindowConstants;
 
 /*
  * To change this template, choose Tools | Templates
@@ -72,6 +68,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
         okButton = new JButton();
         cancellButton = new JButton();
         deleteButton = new JButton();
+        jLabel5 = new JLabel();
+        CodeCountTextField = new JTextField();
 
         setTitle("Ввод нового товара");
         setModal(true);
@@ -125,6 +123,11 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
         generateButton.setText("Генерировать");
         generateButton.setFocusable(false);
+        generateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                generateButtonActionPerformed(evt);
+            }
+        });
 
         okButton.setText("Добавить");
         okButton.addActionListener(new ActionListener() {
@@ -148,6 +151,15 @@ public class NewTovarDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel5.setText("Кол-во в упаковке упаковок");
+
+        CodeCountTextField.setText("1");
+        CodeCountTextField.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                CodeCountTextFieldActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -165,28 +177,35 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 .addContainerGap())
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(Alignment.LEADING, layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(okButton)
-                        .addGap(79, 79, 79)
-                        .addComponent(cancellButton))
-                    .addGroup(layout.createParallelGroup(Alignment.TRAILING)
-                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 334, Short.MAX_VALUE))
-                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel4)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(barcodeTextField, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(182, 182, 182)
-                            .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jLabel4)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(barcodeTextField, GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(182, 182, 182)
+                        .addComponent(jLabel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(26, 26, 26)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(generateButton)
-                    .addComponent(deleteButton))
+                .addComponent(generateButton)
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(117, 117, 117)
+                .addComponent(okButton)
+                .addGap(79, 79, 79)
+                .addComponent(cancellButton)
+                .addContainerGap(135, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 354, Short.MAX_VALUE)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(deleteButton)
+                .addGap(34, 34, 34))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(ComponentPlacement.UNRELATED)
+                .addComponent(CodeCountTextField, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(194, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -211,15 +230,19 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                            .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(CodeCountTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 182, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(okButton)
                             .addComponent(cancellButton)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(35, 35, 35)
+                        .addGap(75, 75, 75)
                         .addComponent(deleteButton)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -237,9 +260,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 ResultSet rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
                 if (rs.next())
                     countTextField.setText(rs.getString(1));
-                rs=DataSet.QueryExec("select bar_code from bar_code where id_tovar="+getId()+" and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
+                rs=DataSet.QueryExec("select bar_code,count from bar_code where id_tovar="+getId()+" and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
                 while (rs.next())
-                    ((DataListModel)barcodeList.getModel()).add(rs.getString(1));
+                    ((DataListModel)barcodeList.getModel()).add(new BarCodeData(rs.getString(1),rs.getInt(2)));
             }
             catch(Exception e){
                 e.printStackTrace();
@@ -268,7 +291,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
             e.printStackTrace();
         }
         if (((DataListModel)barcodeList.getModel()).pos(barcodeTextField.getText())==-1){
-            ((DataListModel)barcodeList.getModel()).add(barcodeTextField.getText());
+            ((DataListModel)barcodeList.getModel()).add(new BarCodeData(barcodeTextField.getText(),new Integer(CodeCountTextField.getText())));
         }
         barcodeTextField.setText("");
     }//GEN-LAST:event_barcodeTextFieldActionPerformed
@@ -295,7 +318,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 rs.next();
                 int skl=rs.getInt(1);
                 for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
-                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+id+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
+                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code,count) values ("+id+", "+skl+", '"+((BarCodeData)((DataListModel)barcodeList.getModel()).getDataAt(i)).Name+"', '"+((BarCodeData)((DataListModel)barcodeList.getModel()).getDataAt(i)).Count+"')");
                 setOk(true);
                 setVisible(false);
             }catch(Exception e){
@@ -316,7 +339,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 DataSet.UpdateQuery("delete from bar_code where id_tovar="+getId()+" and id_skl="+skl);
                 DataSet.UpdateQuery("update tovar set name='"+nameTextField.getText().trim()+"', kol="+countTextField.getText()+" where id_tovar="+getId());
                 for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
-                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code) values ("+getId()+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getElementAt(i)+"')");
+                    DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code,count) values ("+getId()+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getDataAt(i).Name+"', '"+((DataListModel)barcodeList.getModel()).getDataAt(i).Count+"')");
                 setOk(true);
                 setVisible(false);
             }catch(Exception e){
@@ -335,7 +358,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private void countTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_countTextFieldKeyTyped
         char[] symb = new char[1];
         symb[0]=evt.getKeyChar();
-        String str=new String(symb);
+//        String str=new String(symb);
         if (evt.getKeyCode()==evt.VK_ENTER)
             return;
 
@@ -351,6 +374,33 @@ public class NewTovarDialog extends javax.swing.JDialog {
         setOk(false);
         setVisible(false);
     }//GEN-LAST:event_cancellButtonActionPerformed
+
+    private void CodeCountTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_CodeCountTextFieldActionPerformed
+
+    }//GEN-LAST:event_CodeCountTextFieldActionPerformed
+
+    private void generateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
+        try{
+            String SQL=String.format("select max(substr(bar_code,%s,5)) from bar_code where bar_code like '%s%s'", (new Integer(getGroup())).toString().length()+1,getGroup(),"%");
+            ResultSet rs=DataSet.QueryExec(SQL, false);
+            int num=1;
+            if (rs.next())
+                num=rs.getInt(1);
+            String code=String.format("%s%05d", getGroup(),num+1);
+            String code_sum=String.format("%07d%05d", getGroup(),num+1);
+            Integer sum=new Integer(0);
+            for (int i=2;i<13;i=i+2)
+                sum=sum+(Integer.valueOf(code_sum.substring(i-1, i)));
+            sum=sum*3;
+            for (int i=1;i<12;i=i+2)
+                sum=sum+(Integer.valueOf(code_sum.substring(i-1, i)));
+            sum=10-((Double)((((sum.doubleValue()/10)-sum/10)*10)+0.1)).intValue();
+            code=code+sum.toString().substring(sum.toString().length()-1);
+            barcodeTextField.setText(code);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_generateButtonActionPerformed
 
     /**
     * @param args the command line arguments
@@ -371,6 +421,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }
 */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JTextField CodeCountTextField;
     private JList barcodeList;
     private JTextField barcodeTextField;
     private JButton cancellButton;
@@ -381,6 +432,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private JLabel jLabel2;
     private JLabel jLabel3;
     private JLabel jLabel4;
+    private JLabel jLabel5;
     private JScrollPane jScrollPane1;
     private JSeparator jSeparator1;
     private JTextField nameTextField;
@@ -390,6 +442,15 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private boolean ok = false;
     protected boolean NewTovar = true;
     private String nameTovar;
+    private int group;
+
+    public void setGroup(int Group){
+        group=Group;
+    }
+
+    private int getGroup(){
+        return group;
+    }
 
     public String getNameTovar() {
         return nameTovar;

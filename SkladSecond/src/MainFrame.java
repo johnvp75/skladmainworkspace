@@ -306,7 +306,7 @@ public class MainFrame extends javax.swing.JFrame {
         int id=0;
         ResultSet rs;
         try{
-            rs=DataSet.QueryExec("Select id_doc from document where id_type_doc=2 and numb="+numb, false);
+            rs=DataSet.QueryExec("Select id_doc from document where id_type_doc=2 and to_char(day,'YYYY')=to_char(sysdate,'YYYY') and numb="+numb, false);
             if (rs.next())
                 id=rs.getInt(1);
             else

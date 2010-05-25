@@ -10,9 +10,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -70,6 +72,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
         deleteButton = new JButton();
         jLabel5 = new JLabel();
         CodeCountTextField = new JTextField();
+        jLabel6 = new JLabel();
+        colorComboBox = new JComboBox();
+        jButton1 = new JButton();
 
         setTitle("Ввод нового товара");
         setModal(true);
@@ -160,6 +165,12 @@ public class NewTovarDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel6.setText("Цвет:");
+
+        colorComboBox.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jButton1.setText("Новый цвет");
+
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -167,14 +178,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
             .addComponent(jSeparator1, GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
+                .addComponent(jLabel2)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(countTextField, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE))
-                .addContainerGap())
+                .addComponent(countTextField, GroupLayout.PREFERRED_SIZE, 48, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(324, Short.MAX_VALUE))
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(Alignment.TRAILING)
                     .addGroup(Alignment.LEADING, layout.createSequentialGroup()
@@ -206,19 +213,37 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 .addPreferredGap(ComponentPlacement.UNRELATED)
                 .addComponent(CodeCountTextField, GroupLayout.PREFERRED_SIZE, 125, GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(194, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel6))
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(nameTextField, GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+                    .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(colorComboBox, 0, 251, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(nameTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(colorComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addGap(17, 17, 17)
+                .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(countTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
                 .addComponent(jSeparator1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
@@ -233,7 +258,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                             .addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                             .addComponent(CodeCountTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                        .addPreferredGap(ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 182, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(Alignment.BASELINE)
@@ -250,24 +275,40 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         ((DataListModel)barcodeList.getModel()).removeAll();
+        colorComboBox.removeAllItems();
+        try{
+            ResultSet rs=DataSet.QueryExec("select distinct trim(name) from color order by trim(name)", false);
+            colorComboBox.addItem("Нет цвета!");
+            while (rs.next()){
+                colorComboBox.addItem(rs.getString(1));
+            }
+            
         if (isNewTovar()){
             nameTextField.setText("");
             countTextField.setText("1");
             barcodeTextField.setText("");
+            colorComboBox.setSelectedIndex(0);
         }
         else{
-            try{
-                ResultSet rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
+            
+                rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
                 if (rs.next())
                     countTextField.setText(rs.getString(1));
                 rs=DataSet.QueryExec("select bar_code,count from bar_code where id_tovar="+getId()+" and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
                 while (rs.next())
                     ((DataListModel)barcodeList.getModel()).add(new BarCodeData(rs.getString(1),rs.getInt(2)));
-            }
-            catch(Exception e){
+                rs=DataSet.QueryExec(String.format("select trim(name) from color where id_color=(select id_color from tovar where id_tovar=%s)",getId()),false);
+                if (rs.next()){
+                    colorComboBox.setSelectedItem(rs.getString(1));
+                }else{
+                    colorComboBox.setSelectedIndex(0);
+                }
+            
+        }
+        }
+        catch(Exception e){
                 e.printStackTrace();
             }
-        }
         setOk(false);
         nameTextField.requestFocus();
     }//GEN-LAST:event_formComponentShown
@@ -425,14 +466,17 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private JList barcodeList;
     private JTextField barcodeTextField;
     private JButton cancellButton;
+    private JComboBox colorComboBox;
     private JTextField countTextField;
     private JButton deleteButton;
     private JButton generateButton;
+    private JButton jButton1;
     private JLabel jLabel1;
     private JLabel jLabel2;
     private JLabel jLabel3;
     private JLabel jLabel4;
     private JLabel jLabel5;
+    private JLabel jLabel6;
     private JScrollPane jScrollPane1;
     private JSeparator jSeparator1;
     private JTextField nameTextField;

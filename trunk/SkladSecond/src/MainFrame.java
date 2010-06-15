@@ -272,9 +272,14 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        EditDoc editDoc=new EditDoc(this, true);
-        editDoc.setVisible(true);
-        inputPanel1.setVisible(true);
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";1;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            EditDoc editDoc=new EditDoc(this, true);
+            editDoc.setVisible(true);
+            inputPanel1.setVisible(true);
+        }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed

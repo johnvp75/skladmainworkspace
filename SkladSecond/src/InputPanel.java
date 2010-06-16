@@ -220,6 +220,8 @@ public class InputPanel extends javax.swing.JPanel {
         });
         jScrollPane2.setViewportView(nameList);
 
+        jScrollPane3.setAutoscrolls(true);
+
         naklTable.setAutoCreateColumnsFromModel(false);
         naklTable.getColumnModel().getColumn(0).setMaxWidth(30);
         naklTable.getColumnModel().getColumn(1).setMaxWidth(455);
@@ -452,9 +454,7 @@ public class InputPanel extends javax.swing.JPanel {
                     .addComponent(valCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
-                        .addPreferredGap(ComponentPlacement.RELATED))
+                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(findButton)
                         .addGap(29, 29, 29)
@@ -548,6 +548,7 @@ public class InputPanel extends javax.swing.JPanel {
 //            naklTable.getColumnModel().getColumn(2).
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
+            naklTable.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
 
         }
     }//GEN-LAST:event_nameListMouseClicked
@@ -657,6 +658,7 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.getSelectionModel().setSelectionInterval(row, row);
             naklTable.editCellAt(row, 2);
             ((JTextField)naklTable.getEditorComponent()).selectAll();
+            naklTable.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
 //            jScrollPane3.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
         }
         if(evt.getKeyCode()==evt.VK_F5)

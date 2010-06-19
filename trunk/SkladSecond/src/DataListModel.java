@@ -29,7 +29,8 @@ public class DataListModel extends AbstractListModel{
         if (pos<0 && pos==getSize())
             return -1;
         else
-            return data.get(pos).Name;
+//            return data.get(pos).Name;
+            return data.get(pos);
     }
     public BarCodeData getDataAt(int pos){
         if (pos<0 && pos==getSize())

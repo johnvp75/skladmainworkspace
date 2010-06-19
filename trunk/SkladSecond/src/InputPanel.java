@@ -712,6 +712,7 @@ public class InputPanel extends javax.swing.JPanel {
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
             naklTable.editCellAt(row, 2);
+            naklTable.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
     }
@@ -740,6 +741,8 @@ public class InputPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Пустую накладную сохранить нельзя","Пустая накладная",JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        setNote(noteTextField.getText());
+        setKoef(new Double(koefTextField.getText()));
         try{
             DataSet.UpdateQuery("savepoint point2");
             String SQL;

@@ -276,6 +276,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         ((DataListModel)barcodeList.getModel()).removeAll();
         colorComboBox.removeAllItems();
+        CodeCountTextField.setText("1");
         try{
             ResultSet rs=DataSet.QueryExec("select distinct trim(name) from color order by trim(name)", false);
             colorComboBox.addItem("Нет цвета!");
@@ -288,6 +289,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
             countTextField.setText("1");
             barcodeTextField.setText("");
             colorComboBox.setSelectedIndex(0);
+
         }
         else{
             
@@ -319,8 +321,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
     private void barcodeTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_barcodeTextFieldActionPerformed
-        
-        try
+        CodeCountTextField.requestFocus();
+/*        try
         {
             ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
             rs.next();
@@ -335,6 +337,8 @@ public class NewTovarDialog extends javax.swing.JDialog {
             ((DataListModel)barcodeList.getModel()).add(new BarCodeData(barcodeTextField.getText(),new Integer(CodeCountTextField.getText())));
         }
         barcodeTextField.setText("");
+ *
+ */
     }//GEN-LAST:event_barcodeTextFieldActionPerformed
 
     private void deleteButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
@@ -354,7 +358,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 rs.next();
                 int id=rs.getInt(1)+1;
                 DataSet.UpdateQuery("savepoint point1");
-                DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
+                DataSet.UpdateQuery(String.format("insert into tovar (id_tovar,name,kol,id_color) select %s as id_tovar, '%s' as name, %s as kol, " +
+                        "(with t as (select id_color from color where name='%s') select * from t union all (select null from t having count(*)=0)) as id_color from dual",
+                        id,nameTextField.getText(),countTextField.getText(),colorComboBox.getSelectedItem()));
+//                DataSet.UpdateQuery("insert into tovar (id_tovar,name,kol) values ("+id+", '"+nameTextField.getText()+"', "+countTextField.getText()+")");
                 rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
                 rs.next();
                 int skl=rs.getInt(1);
@@ -378,7 +385,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 rs.next();
                 int skl=rs.getInt(1);
                 DataSet.UpdateQuery("delete from bar_code where id_tovar="+getId()+" and id_skl="+skl);
-                DataSet.UpdateQuery("update tovar set name='"+nameTextField.getText().trim()+"', kol="+countTextField.getText()+" where id_tovar="+getId());
+                DataSet.UpdateQuery(String.format("update tovar set name='%s',kol=%s,id_color=(with t as (select id_color from color where name='%s') select * from t union all (select null from t having count(*)=0))" +
+                        " where id_tovar=%s",nameTextField.getText().trim(),countTextField.getText(),colorComboBox.getSelectedItem(),getId()));
+//                DataSet.UpdateQuery("update tovar set name='"+nameTextField.getText().trim()+"', kol="+countTextField.getText()+" where id_tovar="+getId());
                 for (int i=0;i<((DataListModel)barcodeList.getModel()).getSize();i++)
                     DataSet.UpdateQuery("insert into bar_code (id_tovar,id_skl,bar_code,count) values ("+getId()+", "+skl+", '"+((DataListModel)barcodeList.getModel()).getDataAt(i).Name+"', '"+((DataListModel)barcodeList.getModel()).getDataAt(i).Count+"')");
                 setOk(true);
@@ -417,7 +426,21 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancellButtonActionPerformed
 
     private void CodeCountTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_CodeCountTextFieldActionPerformed
-
+    try
+        {
+            ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
+            rs.next();
+            if (rs.getInt(1)>0)
+                if (JOptionPane.showConfirmDialog(this, "Такой штрих-код имееться в базе для этого склада, ввести повторный?", "Повторный штрих-код", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
+                    return;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        if (((DataListModel)barcodeList.getModel()).pos(barcodeTextField.getText())==-1){
+            ((DataListModel)barcodeList.getModel()).add(new BarCodeData(barcodeTextField.getText(),new Integer(CodeCountTextField.getText())));
+        }
+        barcodeTextField.setText("");
     }//GEN-LAST:event_CodeCountTextFieldActionPerformed
 
     private void generateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
@@ -550,10 +573,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private boolean checkTovar(){
-        if ((!isNewTovar()) && nameTextField.getText().trim().equals(getNameTovar().trim()))
+        if ((!isNewTovar()) && nameTextField.getText().trim().toUpperCase().equals(getNameTovar().trim().toUpperCase()))
             return true;
         try {
-            ResultSet rs=DataSet.QueryExec("Select count(*) from tovar where upper(trim(name))='"+nameTextField.getText().trim().toUpperCase()+"'", false);
+            ResultSet rs=DataSet.QueryExec(String.format("select count(*) from tovar where upper(trim(name))='%s' and nvl(id_color,0)=(with t as (select id_color from color where name='%s') select * from t union all (select 0 from t having count(*)=0))", nameTextField.getText().trim().toUpperCase(),colorComboBox.getSelectedItem()), false);
             rs.next();
             if (rs.getInt(1)>0){
                 JOptionPane.showMessageDialog(this, "Такое наименование в базе существует! \n Будьте внимательней!", "Ошибка!", JOptionPane.ERROR_MESSAGE);

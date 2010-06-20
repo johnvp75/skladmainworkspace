@@ -359,7 +359,7 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JCheckBox typeCheck;
     private javax.swing.JComboBox typeCombo;
     // End of variables declaration//GEN-END:variables
-    private String SQL="";
+    private String SQL=" and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.numb is null ";
 
     public String getSQL() {
         return SQL;

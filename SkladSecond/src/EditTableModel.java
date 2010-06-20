@@ -1,4 +1,7 @@
 
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 
@@ -12,12 +15,20 @@ import javax.swing.table.AbstractTableModel;
  * @author Жека
  */
 public class EditTableModel extends AbstractTableModel{
-    private Vector<String> Client;
-    private Vector<String> Sklad;
-    private Vector<String> Sum;
-    private Vector<Integer> id_Doc;
+    private Vector<String> Client=new Vector<String>(0) ;
+    private Vector<String> Sklad=new Vector<String>(0);
+    private Vector<String> Sum=new Vector<String>(0);
+    private Vector<Integer> id_Doc=new Vector<Integer>(0);
+    private Vector<String> note=new Vector<String>(0);
+    private Vector<String> val=new Vector<String>(0);
+    private Vector<Date> date=new Vector<Date>(0);
+    private Vector<String> type_doc=new Vector<String>(0);
+    private Vector<Integer> numb=new Vector<Integer>(0);
+    private Vector<String> manager=new Vector<String>(0);
 
-    public EditTableModel(Vector<String> aClient, Vector<String> aSklad, Vector<String> aSum, Vector<Integer> aid_Doc){
+
+    public EditTableModel(String Where){
+/*
         Client=new Vector<String>(0);
         Client=aClient;
         Sklad=new Vector<String>(0);
@@ -26,12 +37,57 @@ public class EditTableModel extends AbstractTableModel{
         Sum=aSum;
         id_Doc=new Vector<Integer>(0);
         id_Doc=aid_Doc;
+ *
+ */
+        update(Where);
+    }
+    public void update(String Where){
+                Client.clear();
+                Sklad.clear();
+                Sum.clear();
+                id_Doc.clear();
+                note.clear();
+                val.clear();
+                date.clear();
+                type_doc.clear();
+                numb.clear();
+                manager.clear();
+        try {
+            ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), d.sum, d.id_doc, trim(d.note), trim(v.name)," +
+                    " d.day, trim(t.name), d.numb, trim(m.name) from document d, client c, sklad s, val v, type_doc t, manager m where " +
+                    " d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_val=v.id_val and d.id_type_doc=t.id_type_doc and " +
+                    "d.id_manager=m.id_manager"+Where+" order by d.day", false);
+            while (rs.next()){
+                Client.add(rs.getString(1));
+                Sklad.add(rs.getString(2));
+                Sum.add(rs.getString(3));
+                id_Doc.add(rs.getInt(4));
+                note.add(rs.getString(5));
+                val.add(rs.getString(6));
+                date.add(rs.getDate(7));
+                type_doc.add(rs.getString(8));
+                numb.add(rs.getInt(9));
+                manager.add(rs.getString(10));
+
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
     public Object getValueAt(int row, int col){
         switch(col){
-            case 0:return Client.elementAt(row);
-            case 1:return Sklad.elementAt(row);
-            case 2:return Sum.elementAt(row);
+            case 0:return type_doc.elementAt(row);
+            case 1:return numb.elementAt(row);
+            case 2:return Client.elementAt(row);
+            case 3:return Sklad.elementAt(row);
+            case 4:return Sum.elementAt(row);
+            case 5:return val.elementAt(row);
+            case 6:return date.elementAt(row);
+            case 7:return manager.elementAt(row);
+            case 8:return note.elementAt(row);
             default: return null;
         }
     }
@@ -44,11 +100,23 @@ public class EditTableModel extends AbstractTableModel{
     public String getColumnName(int col){
 	switch (col){
             case 0:
-		return "Клиент";
+		return "Вид документа";
             case 1:
-		return "Склад";
+		return "Номер";
             case 2:
+		return "Контрагент";
+            case 3:
+		return "Склад";
+            case 4:
 		return "Сумма";
+            case 5:
+		return "Валюта";
+            case 6:
+		return "Дата";
+            case 7:
+		return "Менеджер";
+            case 8:
+		return "Примечание";
             default:
 		return "";
 	}

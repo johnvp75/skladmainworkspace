@@ -321,6 +321,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
     private void barcodeTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_barcodeTextFieldActionPerformed
+        CodeCountTextField.selectAll();
         CodeCountTextField.requestFocus();
 /*        try
         {
@@ -426,7 +427,9 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancellButtonActionPerformed
 
     private void CodeCountTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_CodeCountTextFieldActionPerformed
-    try
+        if (barcodeTextField.getText().trim().equals(""))
+            return;
+        try
         {
             ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
             rs.next();
@@ -441,6 +444,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
             ((DataListModel)barcodeList.getModel()).add(new BarCodeData(barcodeTextField.getText(),new Integer(CodeCountTextField.getText())));
         }
         barcodeTextField.setText("");
+        barcodeTextField.requestFocus();
     }//GEN-LAST:event_CodeCountTextFieldActionPerformed
 
     private void generateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
@@ -464,6 +468,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         }catch(Exception e){
             e.printStackTrace();
         }
+        barcodeTextField.requestFocus();
     }//GEN-LAST:event_generateButtonActionPerformed
 
     /**

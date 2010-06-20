@@ -276,7 +276,9 @@ public class MainFrame extends javax.swing.JFrame {
             dialog= new ManagerChooser();
         dialog.setRul(";1;");
         if (dialog.showDialog(null, "Вход в систему")){
-            EditDoc editDoc=new EditDoc(this, true);
+            if (editDoc==null)
+                editDoc=new EditDoc(this, true);
+            editDoc.setType_doc(1);
             editDoc.setVisible(true);
             inputPanel1.setVisible(true);
         }
@@ -448,6 +450,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem9;
     // End of variables declaration//GEN-END:variables
     private static int EditDocId = 0;
+    private EditDoc editDoc=null;
 
     public static int getEditDocId() {
         return EditDocId;

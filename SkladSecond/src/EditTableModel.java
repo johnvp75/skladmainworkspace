@@ -92,7 +92,7 @@ public class EditTableModel extends AbstractTableModel{
         }
     }
     public int getColumnCount(){
-        return 3;
+        return 9;
     }
     public int getRowCount(){
         return Sum.size();

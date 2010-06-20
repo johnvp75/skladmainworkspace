@@ -36,24 +36,34 @@ public class EditDoc extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        Vector<String> Client =new Vector<String>(0);
-        Vector<String> Sklad =new Vector<String>(0);
-        Vector<String> Sum =new Vector<String>(0);
-        Vector<Integer> id =new Vector<Integer>(0);
-        try{
-            ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), d.sum, d.id_doc from client c, sklad s, document d, type_doc t where d.id_client=c.id_client and " +
-                "d.id_skl=s.id_skl and d.numb is null and t.id_type_doc=d.id_type_doc and t.operacia=1 order by upper(trim(c.name)), upper(trim(s.name))", false);
-            while (rs.next()){
-                Client.add(rs.getString(1));
-                Sklad.add(rs.getString(2));
-                Sum.add(rs.getString(3));
-                id.add(rs.getInt(4));
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        EditTableModel model=new EditTableModel(Client,Sklad,Sum,id);
+        EditTableModel model=new EditTableModel(getSQL());
         naklTable = new javax.swing.JTable();
+        clientCheck = new javax.swing.JCheckBox();
+        dateCheck = new javax.swing.JCheckBox();
+        numbCheck = new javax.swing.JCheckBox();
+        clientCombo = new javax.swing.JComboBox();
+        dateButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        startdateText = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        endnumbText = new javax.swing.JTextField();
+        noteCheck = new javax.swing.JCheckBox();
+        noteText = new javax.swing.JTextField();
+        regCheck = new javax.swing.JCheckBox();
+        nonregCheck = new javax.swing.JCheckBox();
+        managerCheck = new javax.swing.JCheckBox();
+        managerCombo = new javax.swing.JComboBox();
+        skladCheck = new javax.swing.JCheckBox();
+        skladCombo = new javax.swing.JComboBox();
+        curCheck = new javax.swing.JCheckBox();
+        curCombo = new javax.swing.JComboBox();
+        typeCheck = new javax.swing.JCheckBox();
+        typeCombo = new javax.swing.JComboBox();
+        sumCheck = new javax.swing.JCheckBox();
+        jLabel3 = new javax.swing.JLabel();
+        startsumText = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        endsumText = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -73,26 +83,200 @@ public class EditDoc extends javax.swing.JDialog {
         jScrollPane1.setViewportView(naklTable);
         naklTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
+        clientCheck.setText("Клиент:");
+
+        dateCheck.setText("По дате");
+
+        numbCheck.setText("По номеру");
+        numbCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                numbCheckActionPerformed(evt);
+            }
+        });
+
+        clientCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        dateButton.setText("jButton1");
+
+        jLabel1.setText("с");
+
+        startdateText.setText("jTextField1");
+
+        jLabel2.setText("по");
+
+        endnumbText.setText("jTextField2");
+
+        noteCheck.setText("По части примечания");
+
+        noteText.setText("jTextField1");
+
+        regCheck.setText("Проведенные");
+
+        nonregCheck.setText("Не проведенные");
+
+        managerCheck.setText("Менеджер");
+
+        managerCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        skladCheck.setText("Склад");
+        skladCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skladCheckActionPerformed(evt);
+            }
+        });
+
+        skladCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        curCheck.setText("Валюта");
+        curCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                curCheckActionPerformed(evt);
+            }
+        });
+
+        curCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        typeCheck.setText("Тип документа");
+
+        typeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        sumCheck.setText("Сумма");
+        sumCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sumCheckActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setText("с");
+
+        startsumText.setText("jTextField1");
+
+        jLabel4.setText("по");
+
+        endsumText.setText("jTextField2");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 907, Short.MAX_VALUE)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1219, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(numbCheck)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(startdateText, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(endnumbText, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(dateCheck)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(dateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                    .addComponent(clientCheck)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(clientCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(managerCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(managerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                        .addComponent(nonregCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(regCheck)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(skladCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(curCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(curCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(typeCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                                        .addComponent(sumCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(startsumText, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(endsumText, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(107, 107, 107))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(noteCheck)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(noteText, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(clientCheck)
+                            .addComponent(clientCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(noteCheck)
+                            .addComponent(noteText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(dateCheck)
+                                .addComponent(dateButton)
+                                .addComponent(nonregCheck))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(sumCheck)
+                                .addComponent(jLabel3)
+                                .addComponent(startsumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4)
+                                .addComponent(endsumText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(regCheck)
+                        .addComponent(typeCheck)
+                        .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(numbCheck)
+                    .addComponent(jLabel1)
+                    .addComponent(startdateText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(endnumbText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(managerCheck)
+                    .addComponent(managerCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(skladCheck)
+                    .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(curCheck)
+                    .addComponent(curCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addGap(30, 30, 30))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        setSQL(String.format("and d.id_type_doc in (select id_type_doc from type_doc where operacia=%s)", getType_doc()));
 
     }//GEN-LAST:event_formComponentShown
 
@@ -102,6 +286,31 @@ public class EditDoc extends javax.swing.JDialog {
             setVisible(false);
         }
     }//GEN-LAST:event_naklTableMouseClicked
+
+    private void numbCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numbCheckActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_numbCheckActionPerformed
+
+    private void skladCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladCheckActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_skladCheckActionPerformed
+    public int type_doc;
+
+    public int getType_doc() {
+        return type_doc;
+    }
+
+    public void setType_doc(int type_doc) {
+        this.type_doc = type_doc;
+    }
+
+    private void curCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_curCheckActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_curCheckActionPerformed
+
+    private void sumCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sumCheckActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sumCheckActionPerformed
 
     /**
     * @param args the command line arguments
@@ -121,8 +330,43 @@ public class EditDoc extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox clientCheck;
+    private javax.swing.JComboBox clientCombo;
+    private javax.swing.JCheckBox curCheck;
+    private javax.swing.JComboBox curCombo;
+    private javax.swing.JButton dateButton;
+    private javax.swing.JCheckBox dateCheck;
+    private javax.swing.JTextField endnumbText;
+    private javax.swing.JTextField endsumText;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JCheckBox managerCheck;
+    private javax.swing.JComboBox managerCombo;
     private javax.swing.JTable naklTable;
+    private javax.swing.JCheckBox nonregCheck;
+    private javax.swing.JCheckBox noteCheck;
+    private javax.swing.JTextField noteText;
+    private javax.swing.JCheckBox numbCheck;
+    private javax.swing.JCheckBox regCheck;
+    private javax.swing.JCheckBox skladCheck;
+    private javax.swing.JComboBox skladCombo;
+    private javax.swing.JTextField startdateText;
+    private javax.swing.JTextField startsumText;
+    private javax.swing.JCheckBox sumCheck;
+    private javax.swing.JCheckBox typeCheck;
+    private javax.swing.JComboBox typeCombo;
     // End of variables declaration//GEN-END:variables
+    private String SQL="";
+
+    public String getSQL() {
+        return SQL;
+    }
+
+    public void setSQL(String SQL) {
+        this.SQL = SQL;
+    }
 
 }

@@ -1,4 +1,5 @@
 
+import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.logging.Level;
@@ -85,6 +86,8 @@ public class InputPanel extends javax.swing.JPanel {
         ListPopup = new JPopupMenu();
         MoveItem = new JMenuItem();
         AddCut = new JMenuItem();
+        tablePopup = new JPopupMenu();
+        DelLine = new JMenuItem();
         jLabel1 = new JLabel();
         skladCombo = new JComboBox();
         jLabel2 = new JLabel();
@@ -169,6 +172,14 @@ public class InputPanel extends javax.swing.JPanel {
         });
         ListPopup.add(AddCut);
 
+        DelLine.setText("Удалить строку");
+        DelLine.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                DelLineActionPerformed(evt);
+            }
+        });
+        tablePopup.add(DelLine);
+
         addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent evt) {
                 formComponentHidden(evt);
@@ -207,6 +218,7 @@ public class InputPanel extends javax.swing.JPanel {
         nameList.setVisibleRowCount(22);
         nameList.setFixedCellWidth(300);
         nameList.setFixedCellHeight(16);
+        nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         nameList.setComponentPopupMenu(ListPopup);
         nameList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -230,7 +242,13 @@ public class InputPanel extends javax.swing.JPanel {
         naklTable.getColumnModel().getColumn(4).setMaxWidth(96);
         naklTable.getColumnModel().getColumn(5).setMaxWidth(58);
         naklTable.setAutoscrolls(true);
+        naklTable.setComponentPopupMenu(tablePopup);
         naklTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        naklTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent evt) {
+                naklTableMousePressed(evt);
+            }
+        });
         naklTable.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent evt) {
                 naklTableKeyPressed(evt);
@@ -589,6 +607,7 @@ public class InputPanel extends javax.swing.JPanel {
             groupTree.setSelectionPath(tPath);
 //            nameList.setSelectedIndex(modelList.indexOf(nazv));
             nameList.setSelectedValue(nazv, true);
+            nameList.scrollRectToVisible(nameList.getCellBounds(nameList.getSelectedIndex(), nameList.getSelectedIndex()));
             nameList.requestFocus();
 //            nameList.sc
 
@@ -1028,11 +1047,35 @@ public class InputPanel extends javax.swing.JPanel {
             evt.setKeyChar('.');
     }//GEN-LAST:event_naklTableKeyTyped
 
+    private void naklTableMousePressed(MouseEvent evt) {//GEN-FIRST:event_naklTableMousePressed
+	if (evt.getButton()==MouseEvent.BUTTON1 && evt.getClickCount()==2){
+		if (!(((JTextField)naklTable.getEditorComponent())==null)){
+			((JTextField)naklTable.getEditorComponent()).addKeyListener(new KeyAdapter(){
+				public void keyTyped(KeyEvent event){
+					if (event.getKeyChar()==',')
+						event.setKeyChar('.');
+				}
+			});
+		}
+	}
+        if (evt.getButton()==MouseEvent.BUTTON3){
+            setMousePoint(evt.getPoint());
+        }
+    }//GEN-LAST:event_naklTableMousePressed
+
+    private void DelLineActionPerformed(ActionEvent evt) {//GEN-FIRST:event_DelLineActionPerformed
+
+        int row=getMousePoint().y/naklTable.getRowHeight();
+	model.removeRow(row);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_DelLineActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
     private JMenuItem AddGroup;
     private JMenuItem AddSubGroup;
+    private JMenuItem DelLine;
     private JMenuItem InsertItem;
     private JPopupMenu ListPopup;
     private JMenuItem MoveItem;
@@ -1066,6 +1109,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JButton regButton;
     private JButton saveButton;
     private JComboBox skladCombo;
+    private JPopupMenu tablePopup;
     private JPopupMenu treePopup;
     private JComboBox type_docCombo;
     private JComboBox valCombo;
@@ -1079,6 +1123,25 @@ public class InputPanel extends javax.swing.JPanel {
     private double koef = 1.0;
     private PriceForm priceDialog=null;
     protected String nameMove;
+    private Point MousePoint;
+
+    /**
+     * Get the value of MousePoint
+     *
+     * @return the value of MousePoint
+     */
+    public Point getMousePoint() {
+        return MousePoint;
+    }
+
+    /**
+     * Set the value of MousePoint
+     *
+     * @param MousePoint new value of MousePoint
+     */
+    public void setMousePoint(Point MousePoint) {
+        this.MousePoint = MousePoint;
+    }
 
     public String getNameMove() {
         return nameMove;

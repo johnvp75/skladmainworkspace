@@ -1,5 +1,8 @@
 
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -10,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 
 /*
  * To change this template, choose Tools | Templates
@@ -62,6 +66,8 @@ public class PriceForm extends javax.swing.JDialog {
         selectNullButton = new javax.swing.JButton();
         invertButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        addCheckBox = new javax.swing.JCheckBox();
+        addTextField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -96,6 +102,11 @@ public class PriceForm extends javax.swing.JDialog {
         priceTable.getTableHeader().setResizingAllowed(false);
         priceTable.getTableHeader().setReorderingAllowed(false);
         priceTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+        priceTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                priceTableMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(priceTable);
         priceTable.getTableHeader().setResizingAllowed(true);
         priceTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -103,6 +114,11 @@ public class PriceForm extends javax.swing.JDialog {
         nacTextField.setText("0");
 
         koefTextField.setText("1");
+        koefTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                koefTextFieldKeyTyped(evt);
+            }
+        });
 
         runButton.setText("Расчитать");
         runButton.addActionListener(new java.awt.event.ActionListener() {
@@ -166,6 +182,15 @@ public class PriceForm extends javax.swing.JDialog {
             }
         });
 
+        addCheckBox.setText("Прибавить");
+
+        addTextField.setText("1");
+        addTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                addTextFieldKeyTyped(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -195,13 +220,7 @@ public class PriceForm extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(inkCheckBox))
+                                .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(nacCheckBox)
@@ -209,7 +228,19 @@ public class PriceForm extends javax.swing.JDialog {
                                 .addGap(47, 47, 47)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(koefTextField)
-                                    .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))))
+                                    .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(addCheckBox)
+                                .addGap(47, 47, 47)
+                                .addComponent(addTextField)))
+                        .addGap(18, 18, 18)
+                        .addComponent(inkCheckBox)))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -229,7 +260,9 @@ public class PriceForm extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(koefTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(koefCheckBox))
+                    .addComponent(koefCheckBox)
+                    .addComponent(addTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addCheckBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -400,6 +433,31 @@ public class PriceForm extends javax.swing.JDialog {
                 priceTable.setValueAt(true, i, 0);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void priceTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_priceTableMousePressed
+	if (evt.getButton()==MouseEvent.BUTTON1 && evt.getClickCount()==2){
+		if (!(((JTextField)priceTable.getEditorComponent())==null)){
+			((JTextField)priceTable.getEditorComponent()).addKeyListener(new KeyAdapter(){
+				public void keyTyped(KeyEvent event){
+					if (event.getKeyChar()==',')
+						event.setKeyChar('.');
+				}
+			});
+		}
+	}        // TODO add your handling code here:
+    }//GEN-LAST:event_priceTableMousePressed
+
+    private void koefTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_koefTextFieldKeyTyped
+        if (evt.getKeyChar()==',')
+            evt.setKeyChar('.');
+        // TODO add your handling code here:
+    }//GEN-LAST:event_koefTextFieldKeyTyped
+
+    private void addTextFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_addTextFieldKeyTyped
+        if (evt.getKeyChar()==',')
+            evt.setKeyChar('.');
+        // TODO add your handling code here:
+    }//GEN-LAST:event_addTextFieldKeyTyped
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
@@ -424,6 +482,8 @@ public class PriceForm extends javax.swing.JDialog {
     }
 */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox addCheckBox;
+    private javax.swing.JTextField addTextField;
     private javax.swing.JButton closeButton;
     private javax.swing.JCheckBox inkCheckBox;
     private javax.swing.JButton invertButton;
@@ -454,7 +514,7 @@ public class PriceForm extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private String cen(int row){
-        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1);
+        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(1+(new Double(addTextField.getText())).doubleValue()/100) : 0);
         String str="0.";
         for (int i=0;i<okrCombo.getSelectedIndex();i++)
             str=str+"0";

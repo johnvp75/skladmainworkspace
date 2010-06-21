@@ -39,7 +39,7 @@ public class EditTableModel extends AbstractTableModel{
         id_Doc=aid_Doc;
  *
  */
-        update(Where);
+        update(Where+" and 1=2 ");
     }
     public void update(String Where){
                 Client.clear();
@@ -53,10 +53,11 @@ public class EditTableModel extends AbstractTableModel{
                 numb.clear();
                 manager.clear();
         try {
-            ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), d.sum, d.id_doc, trim(d.note), trim(v.name)," +
+            String SQL="select trim(c.name), trim(s.name), d.sum, d.id_doc, trim(d.note), trim(v.name)," +
                     " d.day, trim(t.name), d.numb, trim(m.name) from document d, client c, sklad s, val v, type_doc t, manager m where " +
                     " d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_val=v.id_val and d.id_type_doc=t.id_type_doc and " +
-                    "d.id_manager=m.id_manager"+Where+" order by d.day", false);
+                    "d.id_manager=m.id_manager "+Where+" order by d.day";
+            ResultSet rs=DataSet.QueryExec(SQL, false);
             while (rs.next()){
                 Client.add(rs.getString(1));
                 Sklad.add(rs.getString(2));
@@ -70,6 +71,7 @@ public class EditTableModel extends AbstractTableModel{
                 manager.add(rs.getString(10));
 
             }
+            fireTableDataChanged();
 
         }
         catch(Exception e){

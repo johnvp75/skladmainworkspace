@@ -199,11 +199,12 @@
     </Container>
     <Component class="javax.swing.JCheckBox" name="clientCheck">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&#x41a;&#x43b;&#x438;&#x435;&#x43d;&#x442;:"/>
+        <Property name="text" type="java.lang.String" value="&#x41a;&#x43e;&#x43d;&#x442;&#x440;&#x430;&#x433;&#x435;&#x43d;&#x442;"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="dateCheck">
       <Properties>
+        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="&#x41f;&#x43e; &#x434;&#x430;&#x442;&#x435;"/>
       </Properties>
     </Component>
@@ -216,20 +217,10 @@
       </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="clientCombo">
-      <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
-        </Property>
-      </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="dateButton">
       <Properties>
-        <Property name="text" type="java.lang.String" value="jButton1"/>
+        <Property name="text" type="java.lang.String" value="-"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
@@ -238,9 +229,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="startdateText">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
       <Properties>
@@ -248,9 +236,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="endnumbText">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField2"/>
-      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="endnumbTextActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="noteCheck">
       <Properties>
@@ -258,9 +246,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="noteText">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="regCheck">
       <Properties>
@@ -280,12 +265,7 @@
     <Component class="javax.swing.JComboBox" name="managerCombo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
     </Component>
@@ -300,12 +280,7 @@
     <Component class="javax.swing.JComboBox" name="skladCombo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
     </Component>
@@ -320,12 +295,7 @@
     <Component class="javax.swing.JComboBox" name="curCombo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
     </Component>
@@ -337,12 +307,7 @@
     <Component class="javax.swing.JComboBox" name="typeCombo">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-          <StringArray count="4">
-            <StringItem index="0" value="Item 1"/>
-            <StringItem index="1" value="Item 2"/>
-            <StringItem index="2" value="Item 3"/>
-            <StringItem index="3" value="Item 4"/>
-          </StringArray>
+          <StringArray count="0"/>
         </Property>
       </Properties>
     </Component>
@@ -360,9 +325,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="startsumText">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField1"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
       <Properties>
@@ -370,9 +332,6 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="endsumText">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="jTextField2"/>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

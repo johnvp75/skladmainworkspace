@@ -1,5 +1,6 @@
 
 import java.sql.ResultSet;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
@@ -83,8 +84,9 @@ public class EditDoc extends javax.swing.JDialog {
         jScrollPane1.setViewportView(naklTable);
         naklTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        clientCheck.setText("Клиент:");
+        clientCheck.setText("Контрагент");
 
+        dateCheck.setSelected(true);
         dateCheck.setText("По дате");
 
         numbCheck.setText("По номеру");
@@ -94,29 +96,25 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        clientCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        dateButton.setText("jButton1");
+        dateButton.setText("-");
 
         jLabel1.setText("с");
 
-        startdateText.setText("jTextField1");
-
         jLabel2.setText("по");
 
-        endnumbText.setText("jTextField2");
+        endnumbText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endnumbTextActionPerformed(evt);
+            }
+        });
 
         noteCheck.setText("По части примечания");
-
-        noteText.setText("jTextField1");
 
         regCheck.setText("Проведенные");
 
         nonregCheck.setText("Не проведенные");
 
         managerCheck.setText("Менеджер");
-
-        managerCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         skladCheck.setText("Склад");
         skladCheck.addActionListener(new java.awt.event.ActionListener() {
@@ -125,8 +123,6 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        skladCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         curCheck.setText("Валюта");
         curCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -134,11 +130,7 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        curCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         typeCheck.setText("Тип документа");
-
-        typeCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         sumCheck.setText("Сумма");
         sumCheck.addActionListener(new java.awt.event.ActionListener() {
@@ -149,11 +141,7 @@ public class EditDoc extends javax.swing.JDialog {
 
         jLabel3.setText("с");
 
-        startsumText.setText("jTextField1");
-
         jLabel4.setText("по");
-
-        endsumText.setText("jTextField2");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -277,6 +265,8 @@ public class EditDoc extends javax.swing.JDialog {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         setSQL(String.format("and d.id_type_doc in (select id_type_doc from type_doc where operacia=%s)", getType_doc()));
+        initelements();
+        SQL();
 
     }//GEN-LAST:event_formComponentShown
 
@@ -311,6 +301,10 @@ public class EditDoc extends javax.swing.JDialog {
     private void sumCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sumCheckActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_sumCheckActionPerformed
+
+    private void endnumbTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endnumbTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_endnumbTextActionPerformed
 
     /**
     * @param args the command line arguments
@@ -359,14 +353,228 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JCheckBox typeCheck;
     private javax.swing.JComboBox typeCombo;
     // End of variables declaration//GEN-END:variables
-    private String SQL=" and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.numb is null ";
+    private String SQL=" and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) ";
+    private GregorianCalendar startDate = new GregorianCalendar();
+    private GregorianCalendar endDate = new GregorianCalendar();
+    private String clientSQL = " ";
+    private String dateSQL = " ";
+    private String numbSQL = " ";
+    private String noteSQL = " ";
+    private String regSQL = " ";
+    private String managerSQL = " ";
+    private String skladSQL = " ";
+    private String currSQL = " ";
+    private String typeSQL = " ";
+    private String sumSQL = " ";
 
-    public String getSQL() {
+    public String getSumSQL() {
+        return sumSQL;
+    }
+
+    public void setSumSQL(String sumSQL) {
+        this.sumSQL = sumSQL;
+    }
+
+    public String getTypeSQL() {
+        return typeSQL;
+    }
+
+    public void setTypeSQL(String typeSQL) {
+        this.typeSQL = typeSQL;
+    }
+
+    public String getCurrSQL() {
+        return currSQL;
+    }
+
+    public void setCurrSQL(String currSQL) {
+        this.currSQL = currSQL;
+    }
+
+    public String getSkladSQL() {
+        return skladSQL;
+    }
+
+    public void setSkladSQL(String skladSQL) {
+        this.skladSQL = skladSQL;
+    }
+
+    public String getManagerSQL() {
+        return managerSQL;
+    }
+
+    public void setManagerSQL(String managerSQL) {
+        this.managerSQL = managerSQL;
+    }
+
+    public String getRegSQL() {
+        return regSQL;
+    }
+
+    public void setRegSQL(String regSQL) {
+        this.regSQL = regSQL;
+    }
+
+    public String getNoteSQL() {
+        return noteSQL;
+    }
+
+    public void setNoteSQL(String noteSQL) {
+        this.noteSQL = noteSQL;
+    }
+
+    public String getNumbSQL() {
+        return numbSQL;
+    }
+
+    public void setNumbSQL(String numbSQL) {
+        this.numbSQL = numbSQL;
+    }
+
+    /**
+     * Get the value of dateSQL
+     *
+     * @return the value of dateSQL
+     */
+    public String getDateSQL() {
+        return dateSQL;
+    }
+
+    /**
+     * Set the value of dateSQL
+     *
+     * @param dateSQL new value of dateSQL
+     */
+    public void setDateSQL(String dateSQL) {
+        this.dateSQL = dateSQL;
+    }
+
+    public String getClientSQL() {
+        return clientSQL;
+    }
+
+    public void setClientSQL(String clientSQL) {
+        this.clientSQL = clientSQL;
+    }
+
+    public GregorianCalendar getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(GregorianCalendar EndDate) {
+        this.endDate = EndDate;
+    }
+
+    private GregorianCalendar getStartDate() {
+        return startDate;
+    }
+
+    private void setStartDate(GregorianCalendar startDate) {
+        this.startDate = startDate;
+    }
+
+    private String getSQL() {
         return SQL;
     }
 
-    public void setSQL(String SQL) {
+    private void setSQL(String SQL) {
         this.SQL = SQL;
+    }
+    private void initelements(){
+        try{
+            ResultSet rs=DataSet.QueryExec("select trim(name) from client order by upper(trim(name))", false);
+            String item=null;
+            if (clientCombo.getItemCount()>0){
+                item=(String)clientCombo.getSelectedItem();
+            }
+            clientCombo.removeAllItems();
+            while (rs.next()){
+                clientCombo.addItem(rs.getString(1));
+            }
+            if (item!=null){
+                clientCombo.setSelectedItem(item);
+            }else{
+                clientCombo.setSelectedIndex(0);
+            }
+            if (dateButton.getText().equals("-")){
+                startDate.add(GregorianCalendar.DATE, -7);
+                dateButton.setText(String.format("%1$td.%1$tm.%1$tY - %2$td.%2$tm.%2$tY", getStartDate(),getEndDate()));
+/*
+                setDateSQL(String.format("and d.day between '%s.%s.%s' and '%s.%s.%s'",  getStartDate().get(GregorianCalendar.DAY_OF_MONTH),getStartDate().get(GregorianCalendar.MONTH)+1,
+                        getStartDate().get(GregorianCalendar.YEAR),getEndDate().get(GregorianCalendar.DAY_OF_MONTH),getEndDate().get(GregorianCalendar.MONTH)+1,
+                        getEndDate().get(GregorianCalendar.YEAR)));
+ *
+ */
+                GregorianCalendar end=getEndDate();
+                end.add(GregorianCalendar.DATE, 1);
+                setDateSQL(String.format("and d.day between to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY') and to_date('%2$td.%2$tm.%2$tY','DD.MM.YYYY')", getStartDate(),end));
+            }
+            rs=DataSet.QueryExec("select trim(name) from manager order by upper(trim(name))", false);
+            item=null;
+            if (managerCombo.getItemCount()>0){
+                item=(String)managerCombo.getSelectedItem();
+            }
+            managerCombo.removeAllItems();
+            while (rs.next()){
+                managerCombo.addItem(rs.getString(1));
+            }
+            if (item!=null){
+                managerCombo.setSelectedItem(item);
+            }else{
+                managerCombo.setSelectedIndex(0);
+            }
+            rs=DataSet.QueryExec("select trim(name) from type_doc order by upper(trim(name))", false);
+            item=null;
+            if (typeCombo.getItemCount()>0){
+                item=(String)typeCombo.getSelectedItem();
+            }
+            typeCombo.removeAllItems();
+            while (rs.next()){
+                typeCombo.addItem(rs.getString(1));
+            }
+            if (item!=null){
+                typeCombo.setSelectedItem(item);
+            }else{
+                typeCombo.setSelectedIndex(0);
+            }
+            rs=DataSet.QueryExec("select trim(name) from val order by upper(trim(name))", false);
+            item=null;
+            if (curCombo.getItemCount()>0){
+                item=(String)curCombo.getSelectedItem();
+            }
+            curCombo.removeAllItems();
+            while (rs.next()){
+                curCombo.addItem(rs.getString(1));
+            }
+            if (item!=null){
+                curCombo.setSelectedItem(item);
+            }else{
+                curCombo.setSelectedIndex(0);
+            }
+            rs=DataSet.QueryExec("select trim(name) from sklad order by upper(trim(name))", false);
+            item=null;
+            if (skladCombo.getItemCount()>0){
+                item=(String)skladCombo.getSelectedItem();
+            }
+            skladCombo.removeAllItems();
+            while (rs.next()){
+                skladCombo.addItem(rs.getString(1));
+            }
+            if (item!=null){
+                skladCombo.setSelectedItem(item);
+            }else{
+                skladCombo.setSelectedIndex(0);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    private void SQL(){
+        String sql=(String.format("%s %s %s %s %s %s %s %s %s %s %s", getSQL(),getClientSQL(),getDateSQL(),
+                getNoteSQL(),getNumbSQL(),getRegSQL(),getManagerSQL(),getSkladSQL(),getCurrSQL(),getTypeSQL(),getSumSQL()));
+        ((EditTableModel)naklTable.getModel()).update(sql);
     }
 
 }

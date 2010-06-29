@@ -614,6 +614,7 @@ public class InputPanel extends javax.swing.JPanel {
 //            groupTree.treeDidChange();
         }
         catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Ничего не нашел", "Неудача", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -1050,6 +1051,7 @@ public class InputPanel extends javax.swing.JPanel {
     private void naklTableMousePressed(MouseEvent evt) {//GEN-FIRST:event_naklTableMousePressed
 	if (evt.getButton()==MouseEvent.BUTTON1 && evt.getClickCount()==2){
 		if (!(((JTextField)naklTable.getEditorComponent())==null)){
+                        ((JTextField)naklTable.getEditorComponent()).selectAll();
 			((JTextField)naklTable.getEditorComponent()).addKeyListener(new KeyAdapter(){
 				public void keyTyped(KeyEvent event){
 					if (event.getKeyChar()==',')

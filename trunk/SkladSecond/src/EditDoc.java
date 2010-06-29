@@ -2,6 +2,8 @@
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 import java.util.Vector;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -45,7 +47,7 @@ public class EditDoc extends javax.swing.JDialog {
         clientCombo = new javax.swing.JComboBox();
         dateButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        startdateText = new javax.swing.JTextField();
+        startnumbText = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         endnumbText = new javax.swing.JTextField();
         noteCheck = new javax.swing.JCheckBox();
@@ -85,6 +87,11 @@ public class EditDoc extends javax.swing.JDialog {
         naklTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
         clientCheck.setText("Контрагент");
+        clientCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clientCheckActionPerformed(evt);
+            }
+        });
 
         dateCheck.setSelected(true);
         dateCheck.setText("По дате");
@@ -100,6 +107,20 @@ public class EditDoc extends javax.swing.JDialog {
 
         jLabel1.setText("с");
 
+        startnumbText.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusLost(evt);
+            }
+        });
+        startnumbText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                startnumbTextKeyPressed(evt);
+            }
+        });
+
         jLabel2.setText("по");
 
         endnumbText.addActionListener(new java.awt.event.ActionListener() {
@@ -107,12 +128,33 @@ public class EditDoc extends javax.swing.JDialog {
                 endnumbTextActionPerformed(evt);
             }
         });
+        endnumbText.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusLost(evt);
+            }
+        });
+        endnumbText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                startnumbTextKeyPressed(evt);
+            }
+        });
 
         noteCheck.setText("По части примечания");
+        noteCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                noteCheckActionPerformed(evt);
+            }
+        });
 
         regCheck.setText("Проведенные");
+        regCheck.setEnabled(false);
 
+        nonregCheck.setSelected(true);
         nonregCheck.setText("Не проведенные");
+        nonregCheck.setEnabled(false);
 
         managerCheck.setText("Менеджер");
 
@@ -141,7 +183,19 @@ public class EditDoc extends javax.swing.JDialog {
 
         jLabel3.setText("с");
 
+        startsumText.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusGained(evt);
+            }
+        });
+
         jLabel4.setText("по");
+
+        endsumText.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                startnumbTextFocusGained(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -158,7 +212,7 @@ public class EditDoc extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(startdateText, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(startnumbText, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -246,7 +300,7 @@ public class EditDoc extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(numbCheck)
                     .addComponent(jLabel1)
-                    .addComponent(startdateText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(startnumbText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(endnumbText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(managerCheck)
@@ -278,9 +332,29 @@ public class EditDoc extends javax.swing.JDialog {
     }//GEN-LAST:event_naklTableMouseClicked
 
     private void numbCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_numbCheckActionPerformed
-        // TODO add your handling code here:
+        numbChange();
     }//GEN-LAST:event_numbCheckActionPerformed
 
+    private void numbChange(){
+        if (numbCheck.isSelected()){
+            if (((new Integer(startnumbText.getText()))*(new Integer(endnumbText.getText())))>0&&((new Integer(startnumbText.getText()))>(new Integer(endnumbText.getText())))){
+                JOptionPane.showMessageDialog(null, "Неверный интервал номеров", "Ошибка номера!", JOptionPane.ERROR_MESSAGE);
+                numbCheck.setSelected(false);
+                return;
+            }
+            String partSQL="";
+            if ((new Integer(startnumbText.getText()))>0){
+                partSQL=String.format("and d.numb>%s ", startnumbText.getText());
+            }
+            if ((new Integer(endnumbText.getText()))>0){
+                partSQL=partSQL+String.format("and d.numb<%s", endnumbText.getText());
+            }
+            setNumbSQL(partSQL);
+        }else{
+            setNumbSQL("");
+        }
+        SQL();
+    }
     private void skladCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladCheckActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_skladCheckActionPerformed
@@ -305,6 +379,43 @@ public class EditDoc extends javax.swing.JDialog {
     private void endnumbTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endnumbTextActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_endnumbTextActionPerformed
+
+    private void clientCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientCheckActionPerformed
+        if (clientCheck.isSelected()){
+            setClientSQL(String.format("and c.name='%s'", clientCombo.getSelectedItem()));
+        }else{
+            setClientSQL("");
+        }
+        SQL();
+    }//GEN-LAST:event_clientCheckActionPerformed
+
+    private void startnumbTextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startnumbTextKeyPressed
+        if (evt.getKeyCode()<evt.VK_0 || evt.getKeyCode()>evt.VK_9){
+            evt.setKeyCode(evt.VK_UNDEFINED);
+        }
+    }//GEN-LAST:event_startnumbTextKeyPressed
+
+    private void startnumbTextFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startnumbTextFocusGained
+        ((JTextField)evt.getSource()).selectAll();
+    }//GEN-LAST:event_startnumbTextFocusGained
+
+    private void noteCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noteCheckActionPerformed
+        if (noteCheck.isSelected()){
+            if (noteText.getText().trim().equals("")){
+                JOptionPane.showMessageDialog(null, "Нельзя искать по пустой строке!", "Пустая строка", JOptionPane.ERROR_MESSAGE);
+                noteCheck.setSelected(false);
+                return;
+            }
+            setNoteSQL(String.format("and upper(d.note) like '%s%s%s'", "%",noteText.getText().trim().toUpperCase(),"%"));
+        }else{
+            setNoteSQL("");
+        }
+        SQL();
+    }//GEN-LAST:event_noteCheckActionPerformed
+
+    private void startnumbTextFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startnumbTextFocusLost
+        numbChange();
+    }//GEN-LAST:event_startnumbTextFocusLost
 
     /**
     * @param args the command line arguments
@@ -347,7 +458,7 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JCheckBox regCheck;
     private javax.swing.JCheckBox skladCheck;
     private javax.swing.JComboBox skladCombo;
-    private javax.swing.JTextField startdateText;
+    private javax.swing.JTextField startnumbText;
     private javax.swing.JTextField startsumText;
     private javax.swing.JCheckBox sumCheck;
     private javax.swing.JCheckBox typeCheck;
@@ -565,6 +676,7 @@ public class EditDoc extends javax.swing.JDialog {
             }else{
                 skladCombo.setSelectedIndex(0);
             }
+            setRegSQL("and d.numb is null");
 
         }catch(Exception e){
             e.printStackTrace();

@@ -1,5 +1,8 @@
 
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -124,6 +127,11 @@ public class NewTovarDialog extends javax.swing.JDialog {
 
         barcodeList.setModel(new DataListModel());
         barcodeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        barcodeList.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                barcodeListKeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(barcodeList);
 
         generateButton.setText("Генерировать");
@@ -471,6 +479,14 @@ public class NewTovarDialog extends javax.swing.JDialog {
         barcodeTextField.requestFocus();
     }//GEN-LAST:event_generateButtonActionPerformed
 
+    private void barcodeListKeyPressed(KeyEvent evt) {//GEN-FIRST:event_barcodeListKeyPressed
+//        if (evt.getKeyCode()==evt.VK_COPY){
+        if (evt.isControlDown()&&evt.getKeyCode()==evt.VK_C){
+            setClipboardContents(((BarCodeData)barcodeList.getSelectedValue()).Name.trim());
+            evt.setKeyCode(evt.VK_UNDEFINED);
+        }
+    }//GEN-LAST:event_barcodeListKeyPressed
+
     /**
     * @param args the command line arguments
     */
@@ -596,4 +612,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
     public String getTovar(){
         return nameTextField.getText();
     }
+    public void setClipboardContents( String aString ){
+        StringSelection stringSelection = new StringSelection( aString );
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents( stringSelection, null );
+  }
+
 }

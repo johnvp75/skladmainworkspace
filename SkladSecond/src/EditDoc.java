@@ -93,13 +93,23 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        dateCheck.setSelected(true);
         dateCheck.setText("По дате");
+        dateCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateCheckActionPerformed(evt);
+            }
+        });
 
         numbCheck.setText("По номеру");
         numbCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 numbCheckActionPerformed(evt);
+            }
+        });
+
+        clientCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clientComboActionPerformed(evt);
             }
         });
 
@@ -149,6 +159,12 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
+        noteText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                noteTextActionPerformed(evt);
+            }
+        });
+
         regCheck.setText("Проведенные");
         regCheck.setEnabled(false);
 
@@ -157,11 +173,28 @@ public class EditDoc extends javax.swing.JDialog {
         nonregCheck.setEnabled(false);
 
         managerCheck.setText("Менеджер");
+        managerCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                managerCheckActionPerformed(evt);
+            }
+        });
+
+        managerCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                managerComboActionPerformed(evt);
+            }
+        });
 
         skladCheck.setText("Склад");
         skladCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 skladCheckActionPerformed(evt);
+            }
+        });
+
+        skladCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                skladComboActionPerformed(evt);
             }
         });
 
@@ -172,7 +205,24 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
+        curCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                curComboActionPerformed(evt);
+            }
+        });
+
         typeCheck.setText("Тип документа");
+        typeCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeCheckActionPerformed(evt);
+            }
+        });
+
+        typeCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                typeComboActionPerformed(evt);
+            }
+        });
 
         sumCheck.setText("Сумма");
         sumCheck.addActionListener(new java.awt.event.ActionListener() {
@@ -183,14 +233,29 @@ public class EditDoc extends javax.swing.JDialog {
 
         jLabel3.setText("с");
 
+        startsumText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startsumTextActionPerformed(evt);
+            }
+        });
         startsumText.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 startnumbTextFocusGained(evt);
             }
         });
+        startsumText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                startsumTextKeyPressed(evt);
+            }
+        });
 
         jLabel4.setText("по");
 
+        endsumText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startsumTextActionPerformed(evt);
+            }
+        });
         endsumText.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 startnumbTextFocusGained(evt);
@@ -356,9 +421,17 @@ public class EditDoc extends javax.swing.JDialog {
         SQL();
     }
     private void skladCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladCheckActionPerformed
-        // TODO add your handling code here:
+        skladChange();
     }//GEN-LAST:event_skladCheckActionPerformed
-    public int type_doc;
+
+    private void skladChange(){
+        if (skladCheck.isSelected()){
+            setSkladSQL(String.format("and s.name='%s'", skladCombo.getSelectedItem()));
+        }else{
+            setSkladSQL("");
+        }
+        SQL();
+    }
 
     public int getType_doc() {
         return type_doc;
@@ -369,25 +442,59 @@ public class EditDoc extends javax.swing.JDialog {
     }
 
     private void curCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_curCheckActionPerformed
-        // TODO add your handling code here:
+        curChange();
     }//GEN-LAST:event_curCheckActionPerformed
 
+    private void curChange(){
+        if (curCheck.isSelected()){
+            setCurrSQL(String.format("and v.name='%s'", curCombo.getSelectedItem()));
+        }else{
+            setCurrSQL("");
+        }
+        SQL();
+    }
+
     private void sumCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sumCheckActionPerformed
-        // TODO add your handling code here:
+        sumChange();
     }//GEN-LAST:event_sumCheckActionPerformed
+
+    private void sumChange(){
+        if (sumCheck.isSelected()){
+            if (((new Double(startsumText.getText()))*(new Double(endsumText.getText())))>0&&((new Double(startsumText.getText()))>(new Double(endsumText.getText())))){
+                JOptionPane.showMessageDialog(null, "Неверный интервал сумм", "Ошибка суммы!", JOptionPane.ERROR_MESSAGE);
+                sumCheck.setSelected(false);
+                return;
+            }
+            String partSQL="";
+            if ((new Double(startsumText.getText()))>0){
+                partSQL=String.format("and d.sum>%s ", startsumText.getText());
+            }
+            if ((new Double(endsumText.getText()))>0){
+                partSQL=partSQL+String.format("and d.sum<%s", endsumText.getText());
+            }
+            setSumSQL(partSQL);
+        }else{
+            setSumSQL("");
+        }
+        SQL();
+    }
 
     private void endnumbTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_endnumbTextActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_endnumbTextActionPerformed
 
     private void clientCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientCheckActionPerformed
+        clientChange();
+    }//GEN-LAST:event_clientCheckActionPerformed
+
+    private void clientChange(){
         if (clientCheck.isSelected()){
             setClientSQL(String.format("and c.name='%s'", clientCombo.getSelectedItem()));
         }else{
             setClientSQL("");
         }
         SQL();
-    }//GEN-LAST:event_clientCheckActionPerformed
+    }
 
     private void startnumbTextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startnumbTextKeyPressed
         if (evt.getKeyCode()<evt.VK_0 || evt.getKeyCode()>evt.VK_9){
@@ -400,6 +507,10 @@ public class EditDoc extends javax.swing.JDialog {
     }//GEN-LAST:event_startnumbTextFocusGained
 
     private void noteCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noteCheckActionPerformed
+        noteChange();
+    }//GEN-LAST:event_noteCheckActionPerformed
+
+    private void noteChange(){
         if (noteCheck.isSelected()){
             if (noteText.getText().trim().equals("")){
                 JOptionPane.showMessageDialog(null, "Нельзя искать по пустой строке!", "Пустая строка", JOptionPane.ERROR_MESSAGE);
@@ -411,12 +522,91 @@ public class EditDoc extends javax.swing.JDialog {
             setNoteSQL("");
         }
         SQL();
-    }//GEN-LAST:event_noteCheckActionPerformed
+    }
 
     private void startnumbTextFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_startnumbTextFocusLost
         numbChange();
     }//GEN-LAST:event_startnumbTextFocusLost
 
+    private void managerCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_managerCheckActionPerformed
+        managerChange();
+    }//GEN-LAST:event_managerCheckActionPerformed
+
+    private void managerComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_managerComboActionPerformed
+        managerChange();
+    }//GEN-LAST:event_managerComboActionPerformed
+
+    private void skladComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladComboActionPerformed
+        skladChange();
+    }//GEN-LAST:event_skladComboActionPerformed
+
+    private void typeCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeCheckActionPerformed
+        typeChange();
+    }//GEN-LAST:event_typeCheckActionPerformed
+
+    private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
+        typeChange();
+    }//GEN-LAST:event_typeComboActionPerformed
+
+    private void curComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_curComboActionPerformed
+        curChange();
+    }//GEN-LAST:event_curComboActionPerformed
+
+    private void startsumTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startsumTextActionPerformed
+        sumChange();
+    }//GEN-LAST:event_startsumTextActionPerformed
+
+    private void startsumTextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_startsumTextKeyPressed
+        if ((evt.getKeyCode()<evt.VK_0 || evt.getKeyCode()>evt.VK_9 || evt.getKeyCode()!=evt.VK_COMMA || evt.getKeyCode()!=evt.VK_MINUS || evt.getKeyChar()!='.')){
+            evt.setKeyCode(evt.VK_UNDEFINED);
+        }
+
+    }//GEN-LAST:event_startsumTextKeyPressed
+
+    private void noteTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noteTextActionPerformed
+        noteChange();
+    }//GEN-LAST:event_noteTextActionPerformed
+
+    private void clientComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientComboActionPerformed
+        clientChange();
+    }//GEN-LAST:event_clientComboActionPerformed
+
+    private void dateCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateCheckActionPerformed
+        if (dateCheck.isSelected()&&nonregCheck.isSelected()){
+            JOptionPane.showMessageDialog(null, "Дату имеют только зарегистрированные документы!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            dateCheck.setSelected(false);
+        }
+        dateChange();
+    }//GEN-LAST:event_dateCheckActionPerformed
+
+    private void dateChange(){
+        if (dateCheck.isSelected()){
+            GregorianCalendar end=getEndDate();
+            end.add(GregorianCalendar.DATE, 1);
+            setDateSQL(String.format("and d.day between to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY') and to_date('%2$td.%2$tm.%2$tY','DD.MM.YYYY')", getStartDate(),end));
+        }else{
+            setDateSQL("");
+        }
+
+    }
+
+    private void typeChange(){
+        if (typeCheck.isSelected()){
+            setTypeSQL(String.format("and t.name='%s'", typeCombo.getSelectedItem()));
+        }else{
+            setTypeSQL("");
+        }
+        SQL();
+    }
+
+    private void managerChange(){
+        if (managerCheck.isSelected()){
+            setManagerSQL(String.format("and m.name='%s'", managerCombo.getSelectedItem()));
+        }else{
+            setManagerSQL("");
+        }
+        SQL();
+    }
     /**
     * @param args the command line arguments
     */
@@ -477,6 +667,7 @@ public class EditDoc extends javax.swing.JDialog {
     private String currSQL = " ";
     private String typeSQL = " ";
     private String sumSQL = " ";
+    public int type_doc;
 
     public String getSumSQL() {
         return sumSQL;
@@ -615,11 +806,11 @@ public class EditDoc extends javax.swing.JDialog {
                         getStartDate().get(GregorianCalendar.YEAR),getEndDate().get(GregorianCalendar.DAY_OF_MONTH),getEndDate().get(GregorianCalendar.MONTH)+1,
                         getEndDate().get(GregorianCalendar.YEAR)));
  *
- */
+ 
                 GregorianCalendar end=getEndDate();
                 end.add(GregorianCalendar.DATE, 1);
                 setDateSQL(String.format("and d.day between to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY') and to_date('%2$td.%2$tm.%2$tY','DD.MM.YYYY')", getStartDate(),end));
-            }
+ */           }
             rs=DataSet.QueryExec("select trim(name) from manager order by upper(trim(name))", false);
             item=null;
             if (managerCombo.getItemCount()>0){

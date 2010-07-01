@@ -207,9 +207,11 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="dateCheck">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="&#x41f;&#x43e; &#x434;&#x430;&#x442;&#x435;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="dateCheckActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="numbCheck">
       <Properties>
@@ -220,6 +222,9 @@
       </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="clientCombo">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clientComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="dateButton">
       <Properties>
@@ -260,6 +265,9 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="noteText">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="noteTextActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="regCheck">
       <Properties>
@@ -278,6 +286,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x41c;&#x435;&#x43d;&#x435;&#x434;&#x436;&#x435;&#x440;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="managerCheckActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="managerCombo">
       <Properties>
@@ -285,6 +296,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="managerComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="skladCheck">
       <Properties>
@@ -300,6 +314,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="skladComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="curCheck">
       <Properties>
@@ -315,11 +332,17 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="curComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="typeCheck">
       <Properties>
         <Property name="text" type="java.lang.String" value="&#x422;&#x438;&#x43f; &#x434;&#x43e;&#x43a;&#x443;&#x43c;&#x435;&#x43d;&#x442;&#x430;"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeCheckActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="typeCombo">
       <Properties>
@@ -327,6 +350,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="typeComboActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="sumCheck">
       <Properties>
@@ -343,7 +369,9 @@
     </Component>
     <Component class="javax.swing.JTextField" name="startsumText">
       <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startsumTextActionPerformed"/>
         <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="startnumbTextFocusGained"/>
+        <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="startsumTextKeyPressed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel4">
@@ -353,6 +381,7 @@
     </Component>
     <Component class="javax.swing.JTextField" name="endsumText">
       <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="startsumTextActionPerformed"/>
         <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="startnumbTextFocusGained"/>
       </Events>
     </Component>

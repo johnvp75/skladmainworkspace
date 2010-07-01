@@ -57,7 +57,7 @@ public class EditTableModel extends AbstractTableModel{
                     " d.day, trim(t.name), d.numb, trim(m.name) from document d, client c, sklad s, val v, type_doc t, manager m where " +
                     " d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_val=v.id_val and d.id_type_doc=t.id_type_doc and " +
                     "d.id_manager=m.id_manager "+Where+" order by d.day";
-            ResultSet rs=DataSet.QueryExec(SQL, false);
+            ResultSet rs=DataSet.QueryExec1(SQL, false);
             while (rs.next()){
                 Client.add(rs.getString(1));
                 Sklad.add(rs.getString(2));

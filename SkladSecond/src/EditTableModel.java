@@ -1,7 +1,6 @@
 
 import java.sql.Date;
 import java.sql.ResultSet;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 import javax.swing.table.AbstractTableModel;
 

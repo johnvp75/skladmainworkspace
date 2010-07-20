@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 
 /*

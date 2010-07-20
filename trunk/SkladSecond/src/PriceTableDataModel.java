@@ -1,6 +1,4 @@
 
-import java.lang.Class;
-import java.lang.Object;
 import java.util.Vector;
 //import javax.swing.Boolean;
 import javax.swing.table.AbstractTableModel;
@@ -154,6 +152,7 @@ public class PriceTableDataModel extends AbstractTableModel{
         Discount.removeAllElements();
         fireTableDataChanged();
     }
+    @Override
     public Object getValueAt(int row, int col){
         switch (col){
             case 0: return (Boolean)getCheckCol(row);
@@ -166,12 +165,15 @@ public class PriceTableDataModel extends AbstractTableModel{
             default: return null;
         }
     }
+    @Override
     public int getColumnCount(){
         return 7;
     }
+    @Override
     public int getRowCount(){
         return Nazv.size();
     }
+    @Override
     public String getColumnName(int col){
 	switch (col){
             case 0:
@@ -192,12 +194,14 @@ public class PriceTableDataModel extends AbstractTableModel{
 		return "";
 	}
     }
+    @Override
     public boolean isCellEditable(int row, int col){
         if (col==1 || col==2 || col==3)
             return false;
         else
             return true;
     }
+    @Override
     public void setValueAt(Object Value, int row, int col){
 	switch (col){
             case 0:
@@ -233,22 +237,8 @@ public class PriceTableDataModel extends AbstractTableModel{
     public int size(){
         return Nazv.size();
     }
+    @Override
     public Class getColumnClass(int col){
-/*        switch (col){
-            case 0:
-		return (Object)java.lang.Boolean ;
-            case 1:
-                return Class.forName("Object");
-            case 2:
-                return Class.forName("Object");
-            case 3:
-                return Class.forName("Object");
-            case 4:
-		return Class.forName("Boolean");
-            case 5:
-                return Class.forName("Object");
-        }
-*/
         return (col == 0 || col==5) ? Boolean.class : super.getColumnClass(col);
     }
 

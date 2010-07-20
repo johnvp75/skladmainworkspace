@@ -8,10 +8,6 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -514,7 +510,7 @@ public class PriceForm extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private String cen(int row){
-        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(1+(new Double(addTextField.getText())).doubleValue()/100) : 0);
+        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(new Double(addTextField.getText())) : 0);
         String str="0.";
         for (int i=0;i<okrCombo.getSelectedIndex();i++)
             str=str+"0";

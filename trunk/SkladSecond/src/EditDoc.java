@@ -1,7 +1,10 @@
 
+import java.awt.Frame;
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 import java.util.Vector;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -39,6 +42,7 @@ public class EditDoc extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
+        setSQL("and d.id_doc=1");
         EditTableModel model=new EditTableModel(getSQL());
         naklTable = new javax.swing.JTable();
         clientCheck = new javax.swing.JCheckBox();
@@ -114,6 +118,11 @@ public class EditDoc extends javax.swing.JDialog {
         });
 
         dateButton.setText("-");
+        dateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dateButtonActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("с");
 
@@ -579,6 +588,15 @@ public class EditDoc extends javax.swing.JDialog {
         dateChange();
     }//GEN-LAST:event_dateCheckActionPerformed
 
+    private void dateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateButtonActionPerformed
+        if (dateW==null){
+            dateW=new DateChoose(null,true);
+        }
+        dateW.setStartdate(getStartDate());
+        dateW.setEnddate(getEndDate());
+        dateW.setVisible(true);
+    }//GEN-LAST:event_dateButtonActionPerformed
+
     private void dateChange(){
         if (dateCheck.isSelected()){
             GregorianCalendar end=getEndDate();
@@ -668,6 +686,7 @@ public class EditDoc extends javax.swing.JDialog {
     private String typeSQL = " ";
     private String sumSQL = " ";
     public int type_doc;
+    private DateChoose dateW=null;
 
     public String getSumSQL() {
         return sumSQL;

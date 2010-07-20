@@ -123,6 +123,7 @@ public class InputPanel extends javax.swing.JPanel {
         editButton = new JButton();
         jLabel8 = new JLabel();
         type_docCombo = new JComboBox();
+        jButton1 = new JButton();
 
         AddGroup.setText("Добавить группу");
         AddGroup.addActionListener(new ActionListener() {
@@ -381,6 +382,13 @@ public class InputPanel extends javax.swing.JPanel {
 
         type_docCombo.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        jButton1.setText("Печать штрих-кода");
+        jButton1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -391,12 +399,13 @@ public class InputPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, GroupLayout.PREFERRED_SIZE, 824, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                            .addComponent(priceButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(printButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(regButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jButton1, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                            .addComponent(priceButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                            .addComponent(viewButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                            .addComponent(printButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                            .addComponent(regButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                            .addComponent(saveButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
                     .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
                         .addGroup(Alignment.LEADING, layout.createSequentialGroup()
                             .addComponent(jLabel6)
@@ -451,7 +460,7 @@ public class InputPanel extends javax.swing.JPanel {
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
                         .addComponent(koefTextField, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addGap(28, 28, 28))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(Alignment.LEADING)
@@ -489,14 +498,16 @@ public class InputPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(ComponentPlacement.RELATED, 13, GroupLayout.PREFERRED_SIZE)
                         .addComponent(saveButton)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(regButton)
-                        .addGap(11, 11, 11)
+                        .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(printButton)
-                        .addGap(18, 18, 18)
+                        .addGap(4, 4, 4)
                         .addComponent(viewButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(priceButton))
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(priceButton)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
                     .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
@@ -534,7 +545,7 @@ public class InputPanel extends javax.swing.JPanel {
             setId_doc(0);
         }else{
             try{
-                ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), trim(m.name), trim(v.name), d.note, d.disc, trim(t.name) " +
+                ResultSet rs=DataSet.QueryExec("select trim(c.name), trim(s.name), trim(m.name), trim(v.name), trim(d.note), d.disc, trim(t.name) " +
                         "from document d, client c, sklad s, manager m, val v, type_doc t where d.id_doc="+MainFrame.getEditDocId()+" and " +
                         "d.id_client=c.id_client and d.id_skl=s.id_skl and d.id_manager=m.id_manager and d.id_val=v.id_val and t.id_type_doc=d.id_type_doc", false);
                 rs.next();
@@ -1072,6 +1083,15 @@ public class InputPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_DelLineActionPerformed
 
+    private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (getId_doc()==0 || isChanged()){
+            JOptionPane.showMessageDialog(this, "Сначала надо сохранить! \n Сохраните документ и повторите операцию", "Ошибка печати штрих-кода", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        PrintBarCode form=new PrintBarCode(null,true,getId_doc());
+        form.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1090,6 +1110,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JTree groupTree;
     private JLabel itogo;
     private JLabel itogowo;
+    private JButton jButton1;
     private JFormattedTextField jFormattedTextField1;
     private JLabel jLabel1;
     private JLabel jLabel2;

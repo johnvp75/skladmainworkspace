@@ -510,7 +510,7 @@ public class PriceForm extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private String cen(int row){
-        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(new Double(addTextField.getText())) : 0);
+        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(new Double(addTextField.getText())).doubleValue(): 0);
         String str="0.";
         for (int i=0;i<okrCombo.getSelectedIndex();i++)
             str=str+"0";

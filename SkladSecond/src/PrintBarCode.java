@@ -105,7 +105,17 @@ class BarPrintModel extends AbstractTableModel{
             }
             rs=DataSet.QueryExec(String.format("select id_tovar, kol from lines where id_doc=%s", id_doc), false);
             while (rs.next()){
+                int rowcount=getRowCount();
                 add(rs.getInt(1),rs.getInt(2));
+                if (rowcount==getRowCount()){
+                    ResultSet rs1=DataSet.QueryExec1(String.format("select trim(name) from tovar where id_tovar=%s", rs.getInt(1)), false);
+                    if (rs1.next()){
+                        element.add(new BarCodePrintElement(rs1.getString(1),rs.getInt(2),new BarCodeData("",0)));
+                        print.add(Boolean.FALSE);
+                        price.add(0.00);
+                        StickCount.add(0);
+                    }
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

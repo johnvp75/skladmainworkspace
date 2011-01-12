@@ -130,8 +130,8 @@ class BarPrintModel extends AbstractTableModel{
             case 1:return element.get(row).name;
             case 2:return element.get(row).BarCode.Name;
             case 3:return element.get(row).BarCode.Count;
-            case 4:return formatter.format(price.get(row));
-            case 5:return formatter.format(price.get(row)/element.get(row).count);
+            case 4:return formatter.format(price.get(row)).replace('.', ',');
+            case 5:return formatter.format(price.get(row)/element.get(row).count).replace('.', ',');
             case 6:return StickCount.get(row);
             default: return null;
         }

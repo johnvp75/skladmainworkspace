@@ -48,21 +48,23 @@ public class PrepareInventForm extends javax.swing.JDialog {
         skladCombo = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         groupTree = new javax.swing.JTree();
-        jLabel2 = new javax.swing.JLabel();
-        priceCombo = new javax.swing.JComboBox();
         jScrollPane2 = new javax.swing.JScrollPane();
         String[] nameColumn = new String[4];
         nameColumn[0]="Наименование";
-        nameColumn[1]="Цена";
-        nameColumn[2]="Скидка %";
-        nameColumn[3]="";
+        nameColumn[1]="Кол-во по учету";
+        nameColumn[2]="Кол-во по факту";
+        nameColumn[3]="Разница";
         priceTable = new javax.swing.JTable(new DefaultTableModel(nameColumn,0));
         printButton = new javax.swing.JButton();
         addCheckBox = new javax.swing.JCheckBox();
-        realrestRadioButton = new javax.swing.JRadioButton();
-        dateRadioButton = new javax.swing.JRadioButton();
-        dateTextField = new javax.swing.JTextField();
-        allRadioButton = new javax.swing.JRadioButton();
+        forNow = new javax.swing.JRadioButton();
+        forDate = new javax.swing.JRadioButton();
+        forNumb = new javax.swing.JRadioButton();
+        dateTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -84,15 +86,13 @@ public class PrepareInventForm extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(groupTree);
 
-        jLabel2.setText("Прайс");
-
         priceTable.getColumnModel().getColumn(0).setMaxWidth(350);
         priceTable.getColumnModel().getColumn(1).setMaxWidth(60);
         priceTable.getColumnModel().getColumn(2).setMaxWidth(70);
         priceTable.getColumnModel().getColumn(3).setMaxWidth(60);
         jScrollPane2.setViewportView(priceTable);
 
-        printButton.setText("Печать");
+        printButton.setText("Печать инвентаризационной ведомости");
         printButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 printButtonActionPerformed(evt);
@@ -106,35 +106,44 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         });
 
-        realrestRadioButton.setSelected(true);
-        realrestRadioButton.setText("Текущие остатки");
-        realrestRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        forNow.setSelected(true);
+        forNow.setText("Текущие остатки");
+        forNow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                realrestRadioButtonActionPerformed(evt);
+                forNowActionPerformed(evt);
             }
         });
 
-        dateRadioButton.setText("Приход после");
-        dateRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        forDate.setText("Остатки на дату (начало дня)");
+        forDate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateRadioButtonActionPerformed(evt);
+                forDateActionPerformed(evt);
             }
         });
 
-        dateTextField.setText("01.01.2001");
-        dateTextField.setEnabled(false);
-        dateTextField.addActionListener(new java.awt.event.ActionListener() {
+        forNumb.setText("По накладную (включая)");
+        forNumb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateTextFieldActionPerformed(evt);
+                forNumbActionPerformed(evt);
             }
         });
 
-        allRadioButton.setText("Полный прайс");
-        allRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        dateTextField1.setEnabled(false);
+        dateTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allRadioButtonActionPerformed(evt);
+                dateTextField1ActionPerformed(evt);
             }
         });
+
+        jButton1.setText("Поиск по части названия");
+
+        jButton2.setText("Сохранить документ");
+
+        jButton3.setText("Зарегистрировать документ");
+
+        jDateChooser1.setDateFormatString("dd.mm.yyyy");
+        jDateChooser1.setMaxSelectableDate(new java.util.Date(253370761300000L));
+        jDateChooser1.setMinSelectableDate(new java.util.Date(1230764500000L));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -149,60 +158,64 @@ public class PrepareInventForm extends javax.swing.JDialog {
                         .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(10, 10, 10)
-                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(addCheckBox))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(62, 62, 62)
-                                .addComponent(printButton))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(dateRadioButton)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(realrestRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(allRadioButton))))))
-                .addGap(85, 85, 85))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(forDate)
+                            .addGap(18, 18, 18)
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
+                        .addComponent(forNow, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jButton1)
+                                .addComponent(addCheckBox)
+                                .addComponent(forNumb))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                            .addComponent(dateTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(printButton)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addGap(10, 10, 10))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel1)
-                        .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(priceCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(addCheckBox)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(22, 22, 22))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(realrestRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(5, 5, 5)
+                        .addComponent(forNow)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(forDate))
+                        .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dateRadioButton)
-                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(allRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 301, Short.MAX_VALUE)
+                            .addComponent(dateTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(forNumb))
+                        .addGap(20, 20, 20)
+                        .addComponent(addCheckBox)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(printButton)
-                        .addGap(139, 139, 139))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3)
+                        .addGap(307, 307, 307))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
+                        .addGap(22, 22, 22))))
         );
 
         pack();
@@ -255,32 +268,32 @@ public class PrepareInventForm extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_addCheckBoxActionPerformed
 
-    private void realrestRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_realrestRadioButtonActionPerformed
-        realrestRadioButton.setSelected(true);
-        dateRadioButton.setSelected(false);
-        allRadioButton.setSelected(false);
+    private void forNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forNowActionPerformed
+        forNow.setSelected(true);
+        forDate.setSelected(false);
+        forNumb.setSelected(false);
         dateTextField.setEnabled(false);
         change();
-    }//GEN-LAST:event_realrestRadioButtonActionPerformed
+    }//GEN-LAST:event_forNowActionPerformed
 
-    private void dateRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateRadioButtonActionPerformed
-        dateRadioButton.setSelected(true);
-        realrestRadioButton.setSelected(false);
-        allRadioButton.setSelected(false);
+    private void forDateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forDateActionPerformed
+        forDate.setSelected(true);
+        forNow.setSelected(false);
+        forNumb.setSelected(false);
         dateTextField.setEnabled(true);
-    }//GEN-LAST:event_dateRadioButtonActionPerformed
+    }//GEN-LAST:event_forDateActionPerformed
 
-    private void allRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allRadioButtonActionPerformed
-        realrestRadioButton.setSelected(false);
-        dateRadioButton.setSelected(false);
-        allRadioButton.setSelected(true);
+    private void forNumbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forNumbActionPerformed
+        forNow.setSelected(false);
+        forDate.setSelected(false);
+        forNumb.setSelected(true);
         dateTextField.setEnabled(false);
         change();
-    }//GEN-LAST:event_allRadioButtonActionPerformed
+    }//GEN-LAST:event_forNumbActionPerformed
 
-    private void dateTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateTextFieldActionPerformed
-        change();
-    }//GEN-LAST:event_dateTextFieldActionPerformed
+    private void dateTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateTextField1ActionPerformed
+        // TODO add your handling code here:
+}//GEN-LAST:event_dateTextField1ActionPerformed
 
     /**
     * @param args the command line arguments
@@ -301,18 +314,20 @@ public class PrepareInventForm extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox addCheckBox;
-    private javax.swing.JRadioButton allRadioButton;
-    private javax.swing.JRadioButton dateRadioButton;
-    private javax.swing.JTextField dateTextField;
+    private javax.swing.JTextField dateTextField1;
+    private javax.swing.JRadioButton forDate;
+    private javax.swing.JRadioButton forNow;
+    private javax.swing.JRadioButton forNumb;
     private javax.swing.JTree groupTree;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JComboBox priceCombo;
     private javax.swing.JTable priceTable;
     private javax.swing.JButton printButton;
-    private javax.swing.JRadioButton realrestRadioButton;
     private javax.swing.JComboBox skladCombo;
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
@@ -340,7 +355,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
                     ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
                     " order by upper(name)";
             else{
-                if (realrestRadioButton.isSelected())
+                if (forNow.isSelected())
                     SQL=String.format("select distinct trim(t.name), p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar in (select id from (select t1.pr, t2.real, t1.id from " +
                             "(select sum(l.kol) as pr, l.id_tovar as id from lines l, document d WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
                             "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and " +
@@ -351,12 +366,12 @@ public class PrepareInventForm extends javax.swing.JDialog {
                             "id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
                             "group by l.id_tovar) t2 on t1.id=t2.id) where pr-nvl(real,0)>0) AND p.id_price=(select id_price from type_price where name='%3$s') "+
                             "and p.id_tovar= t.id_tovar order by isakcia, trim(t.name)", getGroup(),skladCombo.getSelectedItem(), priceCombo.getSelectedItem());
-                if (dateRadioButton.isSelected())
+                if (forDate.isSelected())
                     SQL=String.format("select distinct trim(t.name) , p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
                         "(select l.id_tovar from lines l, document d where l.id_doc=d.id_doc and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.id_skl=(select id_skl from sklad where name='%s') "+
                         "and d.day>to_date('%s','DD.MM.YYYY')) and p.id_tovar in (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group)) order by isakcia, trim(t.name)",
                         priceCombo.getSelectedItem(), skladCombo.getSelectedItem(),dateTextField.getText(),getGroup());
-                if (allRadioButton.isSelected())
+                if (forNumb.isSelected())
                     SQL=String.format("select distinct trim(t.name) as name, p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
                         " (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl=(select id_skl from sklad where name='%s')) order by  isakcia, name", priceCombo.getSelectedItem(),getGroup(), skladCombo.getSelectedItem());
                 }

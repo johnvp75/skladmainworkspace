@@ -246,12 +246,6 @@
     </Component>
     <Component class="javax.swing.JComboBox" name="NumbYear">
       <Properties>
-        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="new javax.swing.DefaultComboBoxModel(new String[] { &quot;2009&quot;, &quot;2010&quot;, &quot;2011&quot;, &quot;2012&quot;, &quot;2013&quot;, &quot;2014&quot;, &quot;2015&quot;, &quot;2016&quot;, &quot;2017&quot;, &quot;2018&quot;, &quot;2019&quot;, &quot;2020&quot;, &quot;2021&quot; })" type="code"/>
-        </Property>
-        <Property name="selectedIndex" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-          <Connection code="0" type="code"/>
-        </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>

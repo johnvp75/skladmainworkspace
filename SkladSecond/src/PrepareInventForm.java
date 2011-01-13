@@ -145,8 +145,6 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         });
 
-        NumbYear.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
-        NumbYear.setSelectedIndex(0);
         NumbYear.setEnabled(false);
         NumbYear.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -257,7 +255,15 @@ public class PrepareInventForm extends javax.swing.JDialog {
             if (skladCombo.getItemCount()==0)
                 return;
             skladCombo.setSelectedIndex(0);
-            rs=DataSet.QueryExec("select trim(name) from type_price order by upper(trim(name))", false);
+            rs=DataSet.QueryExec1("select distinct to_char(day,'YYYY') from document where not(day is null) order by to_char(day,'YYYY')", false);
+            NumbYear.removeAllItems();
+            while (rs.next()){
+                NumbYear.addItem(rs.getString(1));
+            }
+            if (NumbYear.getItemCount()==0)
+                return;
+            NumbYear.setSelectedIndex(0);
+
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -56,15 +56,16 @@ public class PrepareInventForm extends javax.swing.JDialog {
         nameColumn[3]="Разница";
         priceTable = new javax.swing.JTable(new DefaultTableModel(nameColumn,0));
         printButton = new javax.swing.JButton();
-        addCheckBox = new javax.swing.JCheckBox();
         forNow = new javax.swing.JRadioButton();
         forDate = new javax.swing.JRadioButton();
         forNumb = new javax.swing.JRadioButton();
-        dateTextField1 = new javax.swing.JTextField();
+        Numbrest = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
+        DateRest = new com.toedter.calendar.JDateChooser();
+        NumbYear = new javax.swing.JComboBox();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -99,13 +100,6 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         });
 
-        addCheckBox.setText("Добавить к имеющемуся");
-        addCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addCheckBoxActionPerformed(evt);
-            }
-        });
-
         forNow.setSelected(true);
         forNow.setText("Текущие остатки");
         forNow.addActionListener(new java.awt.event.ActionListener() {
@@ -121,17 +115,17 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         });
 
-        forNumb.setText("По накладную (включая)");
+        forNumb.setText("По накладную (не включая)");
         forNumb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 forNumbActionPerformed(evt);
             }
         });
 
-        dateTextField1.setEnabled(false);
-        dateTextField1.addActionListener(new java.awt.event.ActionListener() {
+        Numbrest.setEnabled(false);
+        Numbrest.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                dateTextField1ActionPerformed(evt);
+                NumbrestActionPerformed(evt);
             }
         });
 
@@ -141,9 +135,31 @@ public class PrepareInventForm extends javax.swing.JDialog {
 
         jButton3.setText("Зарегистрировать документ");
 
-        jDateChooser1.setDateFormatString("dd.mm.yyyy");
-        jDateChooser1.setMaxSelectableDate(new java.util.Date(253370761300000L));
-        jDateChooser1.setMinSelectableDate(new java.util.Date(1230764500000L));
+        DateRest.setDateFormatString("dd.MM.yyyy");
+        DateRest.setEnabled(false);
+        DateRest.setMaxSelectableDate(new java.util.Date(253370761300000L));
+        DateRest.setMinSelectableDate(new java.util.Date(1230764500000L));
+        DateRest.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                DateRestPropertyChange(evt);
+            }
+        });
+
+        NumbYear.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021" }));
+        NumbYear.setSelectedIndex(0);
+        NumbYear.setEnabled(false);
+        NumbYear.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                NumbYearItemStateChanged(evt);
+            }
+        });
+        NumbYear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                NumbYearActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setText("года");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -162,22 +178,25 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(forDate)
-                            .addGap(18, 18, 18)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE))
                         .addComponent(forNow, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(forDate)
                                 .addComponent(jButton1)
-                                .addComponent(addCheckBox)
                                 .addComponent(forNumb))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                            .addComponent(dateTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(18, 18, 18)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(Numbrest, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(DateRest, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jLabel2)
+                            .addGap(15, 15, 15)))
                     .addComponent(printButton)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addGap(10, 10, 10))
+                .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,15 +212,17 @@ public class PrepareInventForm extends javax.swing.JDialog {
                         .addComponent(forNow)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(DateRest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(forDate))
                         .addGap(4, 4, 4)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(dateTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(forNumb))
-                        .addGap(20, 20, 20)
-                        .addComponent(addCheckBox)
-                        .addGap(18, 18, 18)
+                            .addComponent(forNumb)
+                            .addComponent(Numbrest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(37, 37, 37)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(printButton)
@@ -237,13 +258,6 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 return;
             skladCombo.setSelectedIndex(0);
             rs=DataSet.QueryExec("select trim(name) from type_price order by upper(trim(name))", false);
-            priceCombo.removeAllItems();
-            while (rs.next()){
-                priceCombo.addItem(rs.getString(1));
-            }
-            if (priceCombo.getItemCount()==0)
-                return;
-            priceCombo.setSelectedIndex(0);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -253,7 +267,6 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         };
         skladCombo.addActionListener(actionCombo);
-        priceCombo.addActionListener(actionCombo);
     }//GEN-LAST:event_formComponentShown
 
     private void printButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printButtonActionPerformed
@@ -264,15 +277,13 @@ public class PrepareInventForm extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_printButtonActionPerformed
 
-    private void addCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCheckBoxActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addCheckBoxActionPerformed
-
     private void forNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forNowActionPerformed
         forNow.setSelected(true);
         forDate.setSelected(false);
         forNumb.setSelected(false);
-        dateTextField.setEnabled(false);
+        DateRest.setEnabled(false);
+        Numbrest.setEnabled(false);
+        NumbYear.setEnabled(false);
         change();
     }//GEN-LAST:event_forNowActionPerformed
 
@@ -280,20 +291,38 @@ public class PrepareInventForm extends javax.swing.JDialog {
         forDate.setSelected(true);
         forNow.setSelected(false);
         forNumb.setSelected(false);
-        dateTextField.setEnabled(true);
+        DateRest.setEnabled(true);
+        Numbrest.setEnabled(false);
+        NumbYear.setEnabled(false);
+
     }//GEN-LAST:event_forDateActionPerformed
 
     private void forNumbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forNumbActionPerformed
         forNow.setSelected(false);
         forDate.setSelected(false);
         forNumb.setSelected(true);
-        dateTextField.setEnabled(false);
+        DateRest.setEnabled(false);
+        Numbrest.setEnabled(true);
+        NumbYear.setEnabled(true);
+
         change();
     }//GEN-LAST:event_forNumbActionPerformed
 
-    private void dateTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateTextField1ActionPerformed
-        // TODO add your handling code here:
-}//GEN-LAST:event_dateTextField1ActionPerformed
+    private void NumbrestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NumbrestActionPerformed
+        change();
+}//GEN-LAST:event_NumbrestActionPerformed
+
+    private void NumbYearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_NumbYearActionPerformed
+        change();
+    }//GEN-LAST:event_NumbYearActionPerformed
+
+    private void DateRestPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_DateRestPropertyChange
+        change();
+    }//GEN-LAST:event_DateRestPropertyChange
+
+    private void NumbYearItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_NumbYearItemStateChanged
+        change();
+    }//GEN-LAST:event_NumbYearItemStateChanged
 
     /**
     * @param args the command line arguments
@@ -313,8 +342,9 @@ public class PrepareInventForm extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JCheckBox addCheckBox;
-    private javax.swing.JTextField dateTextField1;
+    private com.toedter.calendar.JDateChooser DateRest;
+    private javax.swing.JComboBox NumbYear;
+    private javax.swing.JTextField Numbrest;
     private javax.swing.JRadioButton forDate;
     private javax.swing.JRadioButton forNow;
     private javax.swing.JRadioButton forNumb;
@@ -322,8 +352,8 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable priceTable;
@@ -343,46 +373,41 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private void change(){
         try{
 //            priceTable.removeAll();
-            if (!addCheckBox.isSelected())
-                ((DefaultTableModel)priceTable.getModel()).setRowCount(0);
+            ((DefaultTableModel)priceTable.getModel()).setRowCount(0);
             ResultSet rs;
             String SQL="";
             if (getGroup()==-2)
-                SQL="SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
-                    "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
-//                  "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +
-                    "id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') " +
-                    ") i) left join (select cost, id_tovar, akciya, isakcia from price where id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"' )) p1 on i.id_tovar=p1.id_tovar" +
-                    " order by upper(name)";
+                SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select trim(tv.name) as name, sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t  where " +
+                            "l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and tv.id_tovar=l.id_tovar and d.id_skl=(select id_skl from sklad where name = '%1$s')  group by trim(tv.name)) tab where t.id_tovar = k.id_tovar "+
+                            "and k.id_skl=(select id_skl from sklad where name = '%1$s') and t.name=tab.name(+) order by name", skladCombo.getSelectedItem());
             else{
                 if (forNow.isSelected())
-                    SQL=String.format("select distinct trim(t.name), p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar in (select id from (select t1.pr, t2.real, t1.id from " +
-                            "(select sum(l.kol) as pr, l.id_tovar as id from lines l, document d WHERE d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart "+
-                            "where kart.id_group in (select id_group from groupid start with id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and " +
-                            "kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) and d.id_type_doc in (select id_type_doc from type_doc where " +
-                            "type_doc.operacia=1) and not(d.numb is null) group BY l.id_tovar) t1 left join (select sum(l.kol) as real, l.id_tovar as id from " +
-                            "lines l, document d  WHERE d.id_type_doc in (select id_type_doc from type_doc where type_doc.operacia=2) and not(d.numb is null) and " +
-                            "d.id_doc= l.id_doc AND l.id_tovar in (select id_tovar from kart where kart.id_group in (select id_group from groupid start with " +
-                            "id_group=%1$s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl in (select id_skl from sklad where sklad.name='%2$s')) "+
-                            "group by l.id_tovar) t2 on t1.id=t2.id) where pr-nvl(real,0)>0) AND p.id_price=(select id_price from type_price where name='%3$s') "+
-                            "and p.id_tovar= t.id_tovar order by isakcia, trim(t.name)", getGroup(),skladCombo.getSelectedItem(), priceCombo.getSelectedItem());
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%1$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%1$s connect by prior "+
+                        "id_group=parent_group) g where k.id_group=g.id_group) g where l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
+                        "id_skl from sklad where name = '%2$s')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%2$s') order by name",
+                        getGroup(),skladCombo.getSelectedItem());
                 if (forDate.isSelected())
-                    SQL=String.format("select distinct trim(t.name) , p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
-                        "(select l.id_tovar from lines l, document d where l.id_doc=d.id_doc and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) and d.id_skl=(select id_skl from sklad where name='%s') "+
-                        "and d.day>to_date('%s','DD.MM.YYYY')) and p.id_tovar in (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group)) order by isakcia, trim(t.name)",
-                        priceCombo.getSelectedItem(), skladCombo.getSelectedItem(),dateTextField.getText(),getGroup());
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%2$s connect by prior "+
+                        "id_group=parent_group) g where k.id_group=g.id_group) g where l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
+                        "id_skl from sklad where name = '%1$s') and d.day<to_date('%3$td.%3$tm.%3$tY','dd.mm.yyyy')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select "+
+                        "id_skl from sklad where name = '%1$s') order by name",skladCombo.getSelectedItem(),getGroup(),DateRest.getDate());
                 if (forNumb.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, p.cost, p.isakcia, p.akciya from tovar t, price p where p.id_tovar= t.id_tovar and p.id_price=(select id_price from type_price where name='%s') and p.id_tovar in "+
-                        " (select kart.id_tovar from kart where kart.id_group in (select id_group from groupid start with id_group=%s CONNECT BY PRIOR id_group= groupid.parent_group) and kart.id_skl=(select id_skl from sklad where name='%s')) order by  isakcia, name", priceCombo.getSelectedItem(),getGroup(), skladCombo.getSelectedItem());
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%2$s connect by prior "+
+                        "id_group=parent_group) g where k.id_group=g.id_group) g where l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
+                        "id_skl from sklad where name = '%3$s') and (d.day<(select day from document where numb=%4$s and id_type_doc=2 and to_char(day,'YYYY')='%1$s'))  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group "+
+                        "and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%3$s') order by name", NumbYear.getSelectedItem(),getGroup(), skladCombo.getSelectedItem(),Numbrest.getText());
                 }
             rs=DataSet.QueryExec(SQL, false);
             while (rs.next()){
                 String[] rowData=new String[4];
                 rowData[0]=rs.getString(1);
 //              Number form =new Number();
-                rowData[1]=((new DecimalFormat("0.00")).format(rs.getDouble(2))).replace('.', ',') ;
-                rowData[2]=rs.getString(4);
-                rowData[3]=(rs.getInt(3)==1?"Акция":"");
+                rowData[1]=((new DecimalFormat("0.0")).format(rs.getDouble(2))).replace('.', ',') ;
+                rowData[2]="0";
+                rowData[3]="0";
                 int RowCount=((DefaultTableModel)priceTable.getModel()).getRowCount();
                 ((DefaultTableModel)priceTable.getModel()).insertRow(RowCount, rowData);
             }

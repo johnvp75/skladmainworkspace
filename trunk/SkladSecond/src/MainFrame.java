@@ -69,6 +69,8 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem10 = new javax.swing.JMenuItem();
+        jMenu11 = new javax.swing.JMenu();
+        jMenuItem14 = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenu9 = new javax.swing.JMenu();
         jMenuItem12 = new javax.swing.JMenuItem();
@@ -169,6 +171,18 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu7.add(jMenuItem10);
 
         jMenuBar1.add(jMenu7);
+
+        jMenu11.setText("Инвентаризация");
+
+        jMenuItem14.setText("Подгодовка документов");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
+        jMenu11.add(jMenuItem14);
+
+        jMenuBar1.add(jMenu11);
 
         jMenu8.setText("Документы");
 
@@ -411,6 +425,11 @@ public class MainFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
+    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+            PrepareInventForm invent=new PrepareInventForm(null,true);
+            invent.setVisible(true);
+    }//GEN-LAST:event_jMenuItem14ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -426,6 +445,7 @@ public class MainFrame extends javax.swing.JFrame {
     private InputPanel inputPanel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu10;
+    private javax.swing.JMenu jMenu11;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
@@ -440,6 +460,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem11;
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
+    private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

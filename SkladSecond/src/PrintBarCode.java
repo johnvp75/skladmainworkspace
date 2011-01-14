@@ -43,6 +43,12 @@ public class PrintBarCode extends javax.swing.JDialog {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        type1 = new javax.swing.JRadioButton();
+        type2 = new javax.swing.JRadioButton();
+        type3 = new javax.swing.JRadioButton();
+        type4 = new javax.swing.JRadioButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -50,13 +56,64 @@ public class PrintBarCode extends javax.swing.JDialog {
         jTable1.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(jTable1);
 
+        jLabel1.setText("Поля для печати:");
+
+        type1.setText("Цена");
+        type1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                type1ActionPerformed(evt);
+            }
+        });
+
+        type2.setText("Цена за упаковку + цена за штуку");
+        type2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                type2ActionPerformed(evt);
+            }
+        });
+
+        type3.setSelected(true);
+        type3.setText("Цена + кол-во в упаковке");
+        type3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                type3ActionPerformed(evt);
+            }
+        });
+
+        type4.setText("Без цены");
+        type4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                type4ActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Подготовить для печати");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1035, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1035, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(type1)
+                            .addComponent(type2))
+                        .addGap(5, 5, 5)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(type4)
+                            .addComponent(type3))
+                        .addGap(90, 90, 90)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -64,19 +121,122 @@ public class PrintBarCode extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(66, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(type1)
+                            .addComponent(type3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(type2)
+                            .addComponent(type4)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(jButton1)))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void type2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type2ActionPerformed
+        type1.setSelected(false);
+        type2.setSelected(true);
+        type3.setSelected(false);
+        type4.setSelected(false);
+    }//GEN-LAST:event_type2ActionPerformed
+
+    private void type1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type1ActionPerformed
+        type1.setSelected(true);
+        type2.setSelected(false);
+        type3.setSelected(false);
+        type4.setSelected(false);
+    }//GEN-LAST:event_type1ActionPerformed
+
+    private void type3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type3ActionPerformed
+        type1.setSelected(false);
+        type2.setSelected(false);
+        type3.setSelected(true);
+        type4.setSelected(false);
+    }//GEN-LAST:event_type3ActionPerformed
+
+    private void type4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type4ActionPerformed
+        type1.setSelected(false);
+        type2.setSelected(false);
+        type3.setSelected(false);
+        type4.setSelected(true);
+    }//GEN-LAST:event_type4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try{
+            DataSet.UpdateQuery("delete from barprint");
+            for(int i=0;i<((BarPrintModel)(jTable1.getModel())).getRowCount();i++){
+                if((Boolean)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 0)){
+                    String name;
+                    name=((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 1));
+                    name=name.substring(0, name.indexOf("("));
+                    String bar_code=((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 2));
+                    bar_code=bar_code.substring(0, bar_code.trim().length()-1);
+                    String field1=" ";
+                    String field2=" ";
+                    if (type1.isSelected()){
+                        field1="Цена за ";
+                        if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1 &&!(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4)).equals(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))))){
+                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                        }else{
+                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                        }
+                    }
+                    if (type2.isSelected()){
+                        field1="Цена за уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                        field2="Цена за шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))+" грн.";
+                    }
+                    if (type3.isSelected()){
+                        field1="Цена за ";
+                        if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1 &&!(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4)).equals(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))))){
+                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                        }else{
+                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                        }
+                        if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1){
+                            field2="Упаковка: "+((BarPrintModel)(jTable1.getModel())).getInbox(i)+" шт.";
+                        }else{
+                            field2="Упаковка: "+((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))+" шт.";
+                        }
+                    }
+                    int count=((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 6));
+                    DataSet.UpdateQuery(String.format("insert into barprint (name,bar_code,field1,field2,count) values ('%s','%s','%s','%s',%s)", name,bar_code,field1,field2,count));
+                }
+            }
+            DataSet.commit();
+
+        }
+        catch(Exception e){
+            try{
+                DataSet.rollback();
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+                }
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
     * @param args the command line arguments
     */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JRadioButton type1;
+    private javax.swing.JRadioButton type2;
+    private javax.swing.JRadioButton type3;
+    private javax.swing.JRadioButton type4;
     // End of variables declaration//GEN-END:variables
     private int id_doc;
 
@@ -136,6 +296,11 @@ class BarPrintModel extends AbstractTableModel{
             default: return null;
         }
     }
+
+    public int getInbox(int row){
+        return element.get(row).count;
+    }
+
     @Override
     public int getColumnCount(){
         return 7;
@@ -233,11 +398,13 @@ class BarPrintModel extends AbstractTableModel{
 class BarCodePrintElement{
     public String name;
     public int count;
+//    public int inbox;
     public BarCodeData BarCode;
 
     public BarCodePrintElement(String aname, int acount, BarCodeData aBarCode){
         name=aname;
         count=acount;
+  //      inbox=ainbox;
         BarCode= new BarCodeData(aBarCode.Name,aBarCode.Count);
     }
 

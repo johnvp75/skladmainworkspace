@@ -176,7 +176,8 @@ public class PrintBarCode extends javax.swing.JDialog {
                 if((Boolean)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 0)){
                     String name;
                     name=((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 1));
-                    name=name.substring(0, name.indexOf("("));
+                    if (name.indexOf("(")>-1)
+                        name=name.substring(0, name.indexOf("("));
                     String bar_code=((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 2));
                     bar_code=bar_code.substring(0, bar_code.trim().length()-1);
                     String field1=" ";

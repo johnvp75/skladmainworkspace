@@ -6,10 +6,14 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -66,6 +70,10 @@ public class PrepareInventForm extends javax.swing.JDialog {
         DateRest = new com.toedter.calendar.JDateChooser();
         NumbYear = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        ImpList = new javax.swing.JList();
+        jButton5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -130,6 +138,11 @@ public class PrepareInventForm extends javax.swing.JDialog {
         });
 
         jButton1.setText("Поиск по части названия");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Сохранить документ");
 
@@ -159,6 +172,22 @@ public class PrepareInventForm extends javax.swing.JDialog {
 
         jLabel2.setText("года");
 
+        jButton4.setText("Импорт из накладных");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jScrollPane3.setViewportView(ImpList);
+
+        jButton5.setText("Найти следующее");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -180,20 +209,27 @@ public class PrepareInventForm extends javax.swing.JDialog {
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(forDate)
-                                .addComponent(jButton1)
                                 .addComponent(forNumb))
                             .addGap(18, 18, 18)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(Numbrest, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(DateRest, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jLabel2)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
+                                    .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel2)))
                             .addGap(15, 15, 15)))
                     .addComponent(printButton)
                     .addComponent(jButton2)
-                    .addComponent(jButton3))
+                    .addComponent(jButton3)
+                    .addComponent(jButton4)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(22, 22, 22))
         );
         layout.setVerticalGroup(
@@ -203,7 +239,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(5, 5, 5)
@@ -220,17 +256,22 @@ public class PrepareInventForm extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(37, 37, 37)
+                        .addGap(7, 7, 7)
                         .addComponent(jButton1)
+                        .addGap(7, 7, 7)
+                        .addComponent(jButton5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(printButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton3)
-                        .addGap(307, 307, 307))
+                        .addGap(31, 31, 31)
+                        .addComponent(jButton4)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
@@ -263,7 +304,18 @@ public class PrepareInventForm extends javax.swing.JDialog {
             if (NumbYear.getItemCount()==0)
                 return;
             NumbYear.setSelectedIndex(0);
-
+            rs=DataSet.QueryExec("select d.id_doc, trim(d.note), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            AbstractListModel model;
+            final Vector<String> strings=new Vector<String>();
+            int i=0;
+            while (rs.next()){
+                strings.add(rs.getString(2).substring(1) +"; "+rs.getString(1)+"; "+rs.getString(3));
+            }
+            model=new AbstractListModel() {
+            public int getSize() { return strings.size(); }
+            public Object getElementAt(int i) { return strings.elementAt(i); }
+            };
+            ImpList.setModel(model);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -330,6 +382,91 @@ public class PrepareInventForm extends javax.swing.JDialog {
         change();
     }//GEN-LAST:event_NumbYearItemStateChanged
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        find(false,true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        find(true,true);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        Object[] chooseO=ImpList.getSelectedValues();
+        String[] choose=new String[chooseO.length];
+        for (int i=0; i<chooseO.length;i++){
+            choose[i]=(String)chooseO[i];
+        }
+
+        for (int i=0; i<choose.length; i++){
+            try{
+                int start=choose[i].indexOf(";")+1;
+                int finish=choose[i].indexOf(";", start);
+                String SQL=String.format("select trim(t.name), l.kol, l.rowid from tovar t, lines l where t.id_tovar=l.id_tovar and l.id_doc=%s", choose[i].substring(start,finish));
+                ResultSet rs=DataSet.QueryExec(SQL, false);
+                while (rs.next()){
+                    setFindStr(rs.getString(1));
+                    int row=find(true,false);
+                    if (row>-1){
+                        Integer count=(new Integer((String)((DefaultTableModel)priceTable.getModel()).getValueAt(row, 2)))+rs.getInt(2);
+                        ((DefaultTableModel)priceTable.getModel()).setValueAt(count.toString(), row, 2);
+//                        DataSet.UpdateQuery(String.format("delete from lines where rowid='%s'", rs.getString(3)));
+                    }
+
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private int find (boolean next, boolean select){
+        if (!next || getFindStr()==null)
+            setFindStr(JOptionPane.showInputDialog("Введите часть строки:"));
+        int rowcount=((DefaultTableModel)priceTable.getModel()).getRowCount();
+        int row=priceTable.getSelectedRow();
+        boolean present=false;
+        int i=-1;
+        for (i=row+1;i<rowcount;i++){
+            int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().indexOf(getFindStr());
+            if (index>-1){
+                present=true;
+//                priceTable.setEditingRow(index);
+//                priceTable.setEditingColumn(2);
+                if (select) {
+                    priceTable.requestFocus();
+                    priceTable.changeSelection(i, 2, false, false);
+                    priceTable.editCellAt(i, 2);
+                    ((JTextField)priceTable.getEditorComponent()).selectAll();
+                }
+                break;
+            }
+        }
+        if (!present){
+            for (i=0;i<row;i++){
+                int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().indexOf(getFindStr());
+                if (index>-1){
+                    present=true;
+//                    priceTable.setEditingRow(index);
+//                    priceTable.setEditingColumn(2);
+//                    priceTable.editCellAt(i, 2);
+                    if (select){
+                        priceTable.requestFocus();
+                        priceTable.changeSelection(i, 2, false, false);
+                        priceTable.editCellAt(i, 2);
+                        ((JTextField)priceTable.getEditorComponent()).selectAll();
+                    }
+                    break;
+                }
+            }
+        }
+        if(!present){
+            if (select)
+                JOptionPane.showMessageDialog(null, "Ничего нет!", "Ненайдено", JOptionPane.INFORMATION_MESSAGE);
+            i=-1;
+        }
+        return i;
+    }
     /**
     * @param args the command line arguments
     */
@@ -349,6 +486,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toedter.calendar.JDateChooser DateRest;
+    private javax.swing.JList ImpList;
     private javax.swing.JComboBox NumbYear;
     private javax.swing.JTextField Numbrest;
     private javax.swing.JRadioButton forDate;
@@ -358,15 +496,27 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable priceTable;
     private javax.swing.JButton printButton;
     private javax.swing.JComboBox skladCombo;
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
+    private String findStr;
+
+    public String getFindStr() {
+        return findStr;
+    }
+
+    public void setFindStr(String findStr) {
+        this.findStr = findStr;
+    }
 
     public int getGroup() {
         return Group;
@@ -411,7 +561,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 String[] rowData=new String[4];
                 rowData[0]=rs.getString(1);
 //              Number form =new Number();
-                rowData[1]=((new DecimalFormat("0.0")).format(rs.getDouble(2))).replace('.', ',') ;
+                rowData[1]=((new DecimalFormat("0.0")).format(rs.getDouble(2))).replace('.', ',');
                 rowData[2]="0";
                 rowData[3]="0";
                 int RowCount=((DefaultTableModel)priceTable.getModel()).getRowCount();

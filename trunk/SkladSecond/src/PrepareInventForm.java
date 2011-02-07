@@ -7,6 +7,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -78,6 +79,9 @@ public class PrepareInventForm extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
         addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                formComponentHidden(evt);
+            }
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
             }
@@ -145,8 +149,14 @@ public class PrepareInventForm extends javax.swing.JDialog {
         });
 
         jButton2.setText("Сохранить документ");
+        jButton2.setEnabled(false);
 
         jButton3.setText("Зарегистрировать документ");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         DateRest.setDateFormatString("dd.MM.yyyy");
         DateRest.setEnabled(false);
@@ -396,29 +406,131 @@ public class PrepareInventForm extends javax.swing.JDialog {
         for (int i=0; i<chooseO.length;i++){
             choose[i]=(String)chooseO[i];
         }
+        try{
 
-        for (int i=0; i<choose.length; i++){
-            try{
+            ResultSet rs;
+            String SQL;
+            for (int i=0; i<choose.length; i++){
                 int start=choose[i].indexOf(";")+1;
                 int finish=choose[i].indexOf(";", start);
-                String SQL=String.format("select trim(t.name), l.kol, l.rowid from tovar t, lines l where t.id_tovar=l.id_tovar and l.id_doc=%s", choose[i].substring(start,finish));
-                ResultSet rs=DataSet.QueryExec(SQL, false);
+                SQL=String.format("select trim(t.name), l.kol, l.rowid from tovar t, lines l where t.id_tovar=l.id_tovar and l.id_doc=%s", choose[i].substring(start,finish));
+                rs=DataSet.QueryExec(SQL, false);
                 while (rs.next()){
                     setFindStr(rs.getString(1));
                     int row=find(true,false);
                     if (row>-1){
                         Integer count=(new Integer((String)((DefaultTableModel)priceTable.getModel()).getValueAt(row, 2)))+rs.getInt(2);
                         ((DefaultTableModel)priceTable.getModel()).setValueAt(count.toString(), row, 2);
-//                        DataSet.UpdateQuery(String.format("delete from lines where rowid='%s'", rs.getString(3)));
+                        DataSet.UpdateQuery1(String.format("delete from lines where rowid='%s'", rs.getString(3)));
                     }
-
                 }
-            }catch(Exception e){
-                e.printStackTrace();
             }
+            SQL="select d.id_doc from document d, lines l where id_client=(select id_client from client where name='Инвентаризация') and l.id_doc(+)=d.id_doc and l.rowid is null";
+            rs=DataSet.QueryExec(SQL, false);
+            while (rs.next()){
+                SQL=String.format("Delete from document where id_doc=%s", rs.getString(1));
+                DataSet.UpdateQuery1(SQL);
+            }
+            rs=DataSet.QueryExec1("select d.id_doc, trim(d.note), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            AbstractListModel model;
+            final Vector<String> strings=new Vector<String>();
+            int i=0;
+            while (rs.next()){
+                strings.add(rs.getString(2).substring(1) +"; "+rs.getString(1)+"; "+rs.getString(3));
+            }
+            model=new AbstractListModel() {
+            public int getSize() { return strings.size(); }
+            public Object getElementAt(int i) { return strings.elementAt(i); }
+            };
+            ImpList.setModel(model);
+            
+            JOptionPane.showMessageDialog(null, "Импорт завершен!");
+
+        }catch(Exception e){
+            try{
+                JOptionPane.showMessageDialog(null, "Ошибка работы с базой данных.\n Данные в таблице не действительны!!!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                DataSet.rollback1();
+            }catch(Exception e1){
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int rowcount=((DefaultTableModel)priceTable.getModel()).getRowCount();
+        try{
+            String day="";
+            if (forNow.isSelected())
+                day="sysdate";
+            if (forDate.isSelected())
+                day=String.format("to_date('%1$td.%1$tm.%1$tY','dd.mm.yyyy')", DateRest.getDate());
+            if (forNumb.isSelected())
+                day=String.format("(select day from document where numb=%2$s and id_type_doc=2 and to_char(day,'YYYY')='%1$s')",NumbYear.getSelectedItem(),Numbrest.getText());
+            int numb=1;
+            int id=1;
+            String SQL="Select max(id_doc)+1 from document";
+            ResultSet rs=DataSet.QueryExec(SQL, false);
+            if (rs.next())
+                id=rs.getInt(1);
+            SQL="Select max(numb)+1 from document where id_type_doc=5";
+            if (rs.next())
+                numb=rs.getInt(1);
+            rs=DataSet.QueryExec("select id_client from client where name='Корректировка остатков' and type=3", false);
+            int id_client=0;
+            if (rs.next())
+                id_client = rs.getInt(1);
+            else{
+                DataSet.UpdateQuery1("insert into client (name, type) values ('Корректировка остатков', 3)");
+                rs=DataSet.QueryExec("select id_client from client where name='Корректировка остатков' and type=3", false);
+                rs.next();
+                id_client = rs.getInt(1);
+            }
+            rs=DataSet.QueryExec("select id_val from curs_now where curs=1", false);
+            rs.next();
+            int id_val=rs.getInt(1);
+            GregorianCalendar now=new GregorianCalendar();
+            SQL=String.format("Insert into document (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc) select " +
+                    "%1$s, 5, %2$s, id_skl, (select id_manager from manager where name = '%3$s'), %4$s, %5$s, %6$s, 0.00, 'Обнуление остатков %7$s', " +
+                    "0 as disc from sklad where name='%8$s'", id, id_client, getManager(), id_val, numb, day, now.getTime().toString(),skladCombo.getSelectedItem());
+            DataSet.UpdateQuery1(SQL);
+            for (int i=0;i<rowcount;i++){
+                Double in=(new Double((String)((DefaultTableModel)priceTable.getModel()).getValueAt(i, 1)));
+                Double out=(new Double((String)((DefaultTableModel)priceTable.getModel()).getValueAt(i, 2)));
+                Double result=in-out;
+                
+                String name=((String)((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0));
+                ((DefaultTableModel)priceTable.getModel()).setValueAt(result.toString(), i, 3);
+                SQL=String.format("insert into lines (id_doc, kol, cost, disc, id_tovar) select %1$s, %2$s, 0, 0, id_tovar " +
+                        "from tovar where name='%3$s'", id, result,name);
+                DataSet.UpdateQuery1(SQL);
+
+            }
+            DataSet.commit1();
+//            DataSet.rollback1();
+            JOptionPane.showMessageDialog(null, "Данные записаны");
+
+        }catch(Exception e){
+           try{
+                JOptionPane.showMessageDialog(null, "Ошибка работы с базой данных.\n Данные в таблице не действительны!!!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                DataSet.rollback1();
+            }catch(Exception e1){
+                e1.printStackTrace();
+            }
+            e.printStackTrace();
 
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void formComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
+        try{
+            DataSet.rollback1();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_formComponentHidden
 
     private int find (boolean next, boolean select){
         if (!next || getFindStr()==null)
@@ -428,7 +540,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
         boolean present=false;
         int i=-1;
         for (i=row+1;i<rowcount;i++){
-            int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().indexOf(getFindStr());
+            int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().toUpperCase().indexOf(getFindStr().toUpperCase());
             if (index>-1){
                 present=true;
 //                priceTable.setEditingRow(index);
@@ -444,7 +556,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
         }
         if (!present){
             for (i=0;i<row;i++){
-                int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().indexOf(getFindStr());
+                int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().toUpperCase().indexOf(getFindStr().toUpperCase());
                 if (index>-1){
                     present=true;
 //                    priceTable.setEditingRow(index);
@@ -509,6 +621,15 @@ public class PrepareInventForm extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
     private int Group = 0;
     private String findStr;
+    protected String Manager;
+
+    public String getManager() {
+        return Manager;
+    }
+
+    public void setManager(String Manager) {
+        this.Manager = Manager;
+    }
 
     public String getFindStr() {
         return findStr;
@@ -561,7 +682,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 String[] rowData=new String[4];
                 rowData[0]=rs.getString(1);
 //              Number form =new Number();
-                rowData[1]=((new DecimalFormat("0.0")).format(rs.getDouble(2))).replace('.', ',');
+                rowData[1]=((new DecimalFormat("0.0")).format(rs.getDouble(2)));
                 rowData[2]="0";
                 rowData[3]="0";
                 int RowCount=((DefaultTableModel)priceTable.getModel()).getRowCount();

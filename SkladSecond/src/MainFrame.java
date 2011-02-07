@@ -426,8 +426,15 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem13ActionPerformed
 
     private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";5;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
             PrepareInventForm invent=new PrepareInventForm(null,true);
+            invent.setManager(dialog.GetManager());
             invent.setVisible(true);
+        }
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
     /**

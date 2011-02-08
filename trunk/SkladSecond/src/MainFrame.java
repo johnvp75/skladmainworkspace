@@ -174,7 +174,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenu11.setText("Инвентаризация");
 
-        jMenuItem14.setText("Подгодовка документов");
+        jMenuItem14.setText("Подготовка документов");
         jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem14ActionPerformed(evt);

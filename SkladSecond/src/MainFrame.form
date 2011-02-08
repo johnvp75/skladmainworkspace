@@ -121,7 +121,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItem14">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&#x41f;&#x43e;&#x434;&#x433;&#x43e;&#x434;&#x43e;&#x432;&#x43a;&#x430; &#x434;&#x43e;&#x43a;&#x443;&#x43c;&#x435;&#x43d;&#x442;&#x43e;&#x432;"/>
+                <Property name="text" type="java.lang.String" value="&#x41f;&#x43e;&#x434;&#x433;&#x43e;&#x442;&#x43e;&#x432;&#x43a;&#x430; &#x434;&#x43e;&#x43a;&#x443;&#x43c;&#x435;&#x43d;&#x442;&#x43e;&#x432;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem14ActionPerformed"/>

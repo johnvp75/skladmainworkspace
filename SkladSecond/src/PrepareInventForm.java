@@ -327,7 +327,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
             if (NumbYear.getItemCount()==0)
                 return;
             NumbYear.setSelectedIndex(0);
-            rs=DataSet.QueryExec("select d.id_doc, trim(d.note), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            rs=DataSet.QueryExec("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
             AbstractListModel model;
             final Vector<String> strings=new Vector<String>();
             int i=0;
@@ -445,7 +445,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 SQL=String.format("Delete from document where id_doc=%s", rs.getString(1));
                 DataSet.UpdateQuery1(SQL);
             }
-            rs=DataSet.QueryExec1("select d.id_doc, trim(d.note), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            rs=DataSet.QueryExec1("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
             AbstractListModel model;
             final Vector<String> strings=new Vector<String>();
             int i=0;
@@ -550,7 +550,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         try{
             DataSet.rollback1();
-            ResultSet rs=DataSet.QueryExec1("select d.id_doc, trim(d.note), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            ResultSet rs=DataSet.QueryExec1("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
             AbstractListModel model;
             final Vector<String> strings=new Vector<String>();
             while (rs.next()){

@@ -71,6 +71,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem10 = new javax.swing.JMenuItem();
         jMenu11 = new javax.swing.JMenu();
         jMenuItem14 = new javax.swing.JMenuItem();
+        jMenuItem15 = new javax.swing.JMenuItem();
         jMenu8 = new javax.swing.JMenu();
         jMenu9 = new javax.swing.JMenu();
         jMenuItem12 = new javax.swing.JMenuItem();
@@ -181,6 +182,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         jMenu11.add(jMenuItem14);
+
+        jMenuItem15.setText("Отмена документов");
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem15ActionPerformed(evt);
+            }
+        });
+        jMenu11.add(jMenuItem15);
 
         jMenuBar1.add(jMenu11);
 
@@ -437,6 +446,18 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem14ActionPerformed
 
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";5;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
+            DeleteInventDoc invent=new DeleteInventDoc(null,true);
+            invent.setManager(dialog.GetManager());
+            invent.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -468,6 +489,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

@@ -108,6 +108,11 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 countTextFieldActionPerformed(evt);
             }
         });
+        countTextField.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent evt) {
+                countTextFieldFocusGained(evt);
+            }
+        });
         countTextField.addKeyListener(new KeyAdapter() {
             public void keyTyped(KeyEvent evt) {
                 countTextFieldKeyTyped(evt);
@@ -292,15 +297,13 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 colorComboBox.addItem(rs.getString(1));
             }
             
-        if (isNewTovar()){
-            nameTextField.setText("");
-            countTextField.setText("1");
-            barcodeTextField.setText("");
-            colorComboBox.setSelectedIndex(0);
-
-        }
-        else{
-            
+            if (isNewTovar() && nameTextField.getText().trim().equals("")){
+                nameTextField.setText("");
+                countTextField.setText("1");
+                barcodeTextField.setText("");
+                colorComboBox.setSelectedIndex(0);
+            }
+            if (!isNewTovar()){
                 rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
                 if (rs.next())
                     countTextField.setText(rs.getString(1));
@@ -313,12 +316,22 @@ public class NewTovarDialog extends javax.swing.JDialog {
                 }else{
                     colorComboBox.setSelectedIndex(0);
                 }
-            
-        }
+            }
+            if (isNewTovar() && !nameTextField.getText().trim().equals("")){
+                rs=DataSet.QueryExec("select kol from tovar where id_tovar="+getId(), false);
+                if (rs.next())
+                    countTextField.setText(rs.getString(1));
+                rs=DataSet.QueryExec(String.format("select trim(name) from color where id_color=(select id_color from tovar where id_tovar=%s)",getId()),false);
+                if (rs.next()){
+                    colorComboBox.setSelectedItem(rs.getString(1));
+                }else{
+                    colorComboBox.setSelectedIndex(0);
+                }
+            }
         }
         catch(Exception e){
                 e.printStackTrace();
-            }
+        }
         setOk(false);
         nameTextField.requestFocus();
     }//GEN-LAST:event_formComponentShown
@@ -487,6 +500,10 @@ public class NewTovarDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_barcodeListKeyPressed
 
+    private void countTextFieldFocusGained(FocusEvent evt) {//GEN-FIRST:event_countTextFieldFocusGained
+        countTextField.selectAll();
+    }//GEN-LAST:event_countTextFieldFocusGained
+
     /**
     * @param args the command line arguments
     */
@@ -567,6 +584,16 @@ public class NewTovarDialog extends javax.swing.JDialog {
         setNameTovar("");
         if (!NewTovar){
             setNameTovar(name);
+            try{
+                ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+name+"'", false);
+                if (rs.next())
+                    setId(rs.getInt(1));
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(NewTovar && !name.equals("")){
             try{
                 ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+name+"'", false);
                 if (rs.next())

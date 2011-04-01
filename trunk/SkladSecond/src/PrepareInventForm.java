@@ -595,7 +595,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         }
         if (!present){
-            for (i=0;i<row;i++){
+            for (i=0;i<=row;i++){
                 int index=((DefaultTableModel)priceTable.getModel()).getValueAt(i, 0).toString().toUpperCase().indexOf(getFindStr().toUpperCase());
                 if (index>-1){
                     present=true;
@@ -622,19 +622,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                PriceChange dialog = new PriceChange(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.toedter.calendar.JDateChooser DateRest;

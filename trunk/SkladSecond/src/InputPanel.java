@@ -46,6 +46,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.JViewport;
+import javax.swing.table.TableCellEditor;
 
 /*
  * To change this template, choose Tools | Templates
@@ -86,6 +87,7 @@ public class InputPanel extends javax.swing.JPanel {
         ListPopup = new JPopupMenu();
         MoveItem = new JMenuItem();
         AddCut = new JMenuItem();
+        Copy = new JMenuItem();
         tablePopup = new JPopupMenu();
         DelLine = new JMenuItem();
         jLabel1 = new JLabel();
@@ -172,6 +174,14 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
         ListPopup.add(AddCut);
+
+        Copy.setText("Создать копию");
+        Copy.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                CopyActionPerformed(evt);
+            }
+        });
+        ListPopup.add(Copy);
 
         DelLine.setText("Удалить строку");
         DelLine.addActionListener(new ActionListener() {
@@ -527,7 +537,9 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_groupTreeValueChanged
 
     private void skladComboActionPerformed(ActionEvent evt) {//GEN-FIRST:event_skladComboActionPerformed
-        setSklad((String)skladCombo.getSelectedItem());        // TODO add your handling code here:
+        setSklad((String)skladCombo.getSelectedItem());
+        if (!isRebuild() && !groupTree.isSelectionEmpty())
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
     }//GEN-LAST:event_skladComboActionPerformed
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -537,6 +549,8 @@ public class InputPanel extends javax.swing.JPanel {
         setChanged(false);
         InsertItem.setEnabled(false);
         AddCut.setEnabled(false);
+        if (!groupTree.isSelectionEmpty())
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
         if (MainFrame.getEditDocId()==0){
             discTextField.setText("0");
             model.setIndDiscount(0);
@@ -762,6 +776,18 @@ public class InputPanel extends javax.swing.JPanel {
         }
     }
     private void saveButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        TableCellEditor edit=naklTable.getCellEditor();
+            if (edit!=null){
+                edit.stopCellEditing();
+            }
+        if (noteTextField.getText().length()==0){
+            JOptionPane.showMessageDialog(this, "Примечание не может быть пустым","Пустое примечание",JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (!noteTextField.getText().matches(".*((0[1-9])|((1|2)[0-9])|(3(0|1)))\\.((0([1-9])|(1(1|2))))\\.((19)|(20)[0-9][0-9]).*")){
+            JOptionPane.showMessageDialog(this, "Примечание должно содержать дату в формате ДД.ММ.ГГГГ\nНапример 15.03.2009","Отсутствует дата",JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         for (int i=0; i<model.getRowCount(); i++){
 	if(((Integer)model.getValueAt(i, 2)).intValue()==0){
 		model.removeRow(i);
@@ -937,6 +963,10 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_koefTextFieldActionPerformed
 
     private void formComponentHidden(ComponentEvent evt) {//GEN-FIRST:event_formComponentHidden
+        TableCellEditor edit=naklTable.getCellEditor();
+            if (edit!=null){
+                edit.stopCellEditing();
+            }
         model.removeAll();
         setChanged(false);
         setId_doc(0);
@@ -1092,11 +1122,42 @@ public class InputPanel extends javax.swing.JPanel {
         form.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void CopyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_CopyActionPerformed
+        if (groupTree.getLeadSelectionPath().getLastPathComponent()==null || nameList.getSelectedValue()==null)
+            return;
+        if (dialog==null)
+            dialog = new NewTovarDialog(null,true);
+        dialog.setSklad((String)skladCombo.getSelectedItem());
+         dialog.setNewTovar(true, (String)nameList.getSelectedValue());
+        dialog.setGroup(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+        dialog.setVisible(true);
+        if (dialog.isOk()){
+            try {
+                DataSet.UpdateQuery("insert into kart (id_tovar, id_group, id_nom,id_skl) select (select id_tovar from tovar where name='" + dialog.getTovar() + "'), " + ((DataNode) groupTree.getLastSelectedPathComponent()).getIndex() + ", (select max(id_nom)+1 from kart), id_skl from sklad where name='" + skladCombo.getSelectedItem() + "'");
+            } catch (SQLException ex) {
+                try {
+                    DataSet.UpdateQuery("rollback to point1");
+                } catch (SQLException ex1) {
+                    ex.printStackTrace();
+                }
+                ex.printStackTrace();
+            }
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+            nameList.setSelectedValue(dialog.getTovar(), true);
+            int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
+            naklTable.requestFocus();
+            naklTable.editCellAt(row, 2);
+            naklTable.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
+            ((JTextField)naklTable.getEditorComponent()).selectAll();
+        }
+    }//GEN-LAST:event_CopyActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
     private JMenuItem AddGroup;
     private JMenuItem AddSubGroup;
+    private JMenuItem Copy;
     private JMenuItem DelLine;
     private JMenuItem InsertItem;
     private JPopupMenu ListPopup;
@@ -1147,6 +1208,15 @@ public class InputPanel extends javax.swing.JPanel {
     private PriceForm priceDialog=null;
     protected String nameMove;
     private Point MousePoint;
+    protected boolean rebuild = false;
+
+    public boolean isRebuild() {
+        return rebuild;
+    }
+
+    public void setRebuild(boolean rebuild) {
+        this.rebuild = rebuild;
+    }
 
     /**
      * Get the value of MousePoint
@@ -1229,6 +1299,7 @@ public class InputPanel extends javax.swing.JPanel {
 	}
     }
     private void initCombo(){
+        setRebuild(true);
         skladCombo.removeAllItems();
         ResultSet rs;
         try{
@@ -1270,7 +1341,7 @@ public class InputPanel extends javax.swing.JPanel {
             e.printStackTrace();
         }
         type_docCombo.setSelectedItem("Приход товара");
-
+        setRebuild(false);
 
     }
     private String Month(int aValue){

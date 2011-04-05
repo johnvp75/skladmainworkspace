@@ -2,8 +2,6 @@
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.TableModelEvent;
@@ -29,9 +27,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -45,7 +41,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import javax.swing.JViewport;
 import javax.swing.table.TableCellEditor;
 
 /*
@@ -1297,11 +1292,6 @@ public class InputPanel extends javax.swing.JPanel {
         return Manager;
     }
 
-    /**
-     * Set the value of Manager
-     *
-     * @param Manager new value of Manager
-     */
     public void setManager(String Manager) {
         this.Manager = Manager;
     }

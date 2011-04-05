@@ -90,6 +90,7 @@ public class InputPanel extends javax.swing.JPanel {
         Copy = new JMenuItem();
         tablePopup = new JPopupMenu();
         DelLine = new JMenuItem();
+        FindItem = new JMenuItem();
         jLabel1 = new JLabel();
         skladCombo = new JComboBox();
         jLabel2 = new JLabel();
@@ -190,6 +191,14 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
         tablePopup.add(DelLine);
+
+        FindItem.setText("Найти в базе");
+        FindItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                FindItemActionPerformed(evt);
+            }
+        });
+        tablePopup.add(FindItem);
 
         addComponentListener(new ComponentAdapter() {
             public void componentHidden(ComponentEvent evt) {
@@ -544,6 +553,7 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void formComponentShown(ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         initCombo();
+        setRebuild(true);
         koefTextField.setText("1");
         setKoef(1.0);
         setChanged(false);
@@ -582,6 +592,10 @@ public class InputPanel extends javax.swing.JPanel {
             }
 
         }
+        if (!groupTree.isSelectionEmpty())
+            initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
+        setRebuild(false);
+
     }//GEN-LAST:event_formComponentShown
 
     private void nameListMouseClicked(MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
@@ -597,11 +611,12 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_nameListMouseClicked
 
     private void findButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_findButtonActionPerformed
-        find();
+        find(null);
     }//GEN-LAST:event_findButtonActionPerformed
-    private void find(){
+    private void find(String nazv){
         try{
-            String nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
+            if (nazv==null)
+                nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
             ResultSet rs=DataSet.QueryExec("select id_group from kart where id_tovar=(select id_tovar from tovar where name ='"+nazv+"') and " +
                     "id_skl=(select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"')", false);
             rs.next();
@@ -709,7 +724,7 @@ public class InputPanel extends javax.swing.JPanel {
         if(evt.getKeyCode()==evt.VK_F5)
             newTovar();
         if(evt.getKeyCode()==evt.VK_F3)
-            find();
+            find(null);
     }//GEN-LAST:event_nameListKeyPressed
     private int id_doc;
 
@@ -1107,7 +1122,9 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_naklTableMousePressed
 
     private void DelLineActionPerformed(ActionEvent evt) {//GEN-FIRST:event_DelLineActionPerformed
-
+        if (naklTable.getCellEditor()!=null){
+            naklTable.getCellEditor().stopCellEditing();
+        }
         int row=getMousePoint().y/naklTable.getRowHeight();
 	model.removeRow(row);
         // TODO add your handling code here:
@@ -1152,6 +1169,13 @@ public class InputPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_CopyActionPerformed
 
+    private void FindItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_FindItemActionPerformed
+        int row=getMousePoint().y/naklTable.getRowHeight();
+        if (row>=0 && row<model.getRowCount()){
+            find((String)model.getValueAt(row, 1));
+        }
+    }//GEN-LAST:event_FindItemActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1159,6 +1183,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JMenuItem AddSubGroup;
     private JMenuItem Copy;
     private JMenuItem DelLine;
+    private JMenuItem FindItem;
     private JMenuItem InsertItem;
     private JPopupMenu ListPopup;
     private JMenuItem MoveItem;

@@ -301,9 +301,11 @@ public class MainFrame extends javax.swing.JFrame {
         if (dialog.showDialog(null, "Вход в систему")){
             if (editDoc==null)
                 editDoc=new EditDoc(this, true);
+            setEditDocId(0);
             editDoc.setType_doc(1);
             editDoc.setVisible(true);
-            inputPanel1.setVisible(true);
+            if (getEditDocId()!=0)
+                inputPanel1.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 

@@ -1,5 +1,7 @@
 
 import java.awt.Frame;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 import java.util.Vector;
@@ -41,6 +43,8 @@ public class EditDoc extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        menuForDocumentList = new javax.swing.JPopupMenu();
+        deleteCurrentDocument = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         setSQL("and d.id_doc=1");
         EditTableModel model=new EditTableModel(getSQL());
@@ -72,6 +76,14 @@ public class EditDoc extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         endsumText = new javax.swing.JTextField();
 
+        deleteCurrentDocument.setText("Удалить");
+        deleteCurrentDocument.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteCurrentDocumentActionPerformed(evt);
+            }
+        });
+        menuForDocumentList.add(deleteCurrentDocument);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -81,10 +93,14 @@ public class EditDoc extends javax.swing.JDialog {
 
         naklTable.setModel(model);
         naklTable.setColumnSelectionAllowed(true);
+        naklTable.setComponentPopupMenu(menuForDocumentList);
         naklTable.getTableHeader().setReorderingAllowed(false);
         naklTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 naklTableMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                naklTableMousePressed(evt);
             }
         });
         jScrollPane1.setViewportView(naklTable);
@@ -597,6 +613,40 @@ public class EditDoc extends javax.swing.JDialog {
         dateW.setVisible(true);
     }//GEN-LAST:event_dateButtonActionPerformed
 
+    private void deleteCurrentDocumentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteCurrentDocumentActionPerformed
+        if (naklTable.getCellEditor()!=null){
+            naklTable.getCellEditor().stopCellEditing();
+        }
+        int row=getMousePoint().y/naklTable.getRowHeight();
+        if (row>0 && row<=naklTable.getModel().getRowCount() && JOptionPane.showConfirmDialog(null, String.format("Вы уверены что хотите удалить документ: %s\nКонтрагент: %s \nСклад: %s \nНа сумму: %s\nОформленный: %s\n%s  ", naklTable.getValueAt(row, 0), naklTable.getValueAt(row, 2), naklTable.getValueAt(row, 3), naklTable.getValueAt(row, 4), naklTable.getValueAt(row, 7), naklTable.getValueAt(row, 8)), "Удалить?", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION&& JOptionPane.showConfirmDialog(null, "Вы уверенны?", "Удалить?", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+            try {
+
+                String SQL=String.format("delete from lines where id_doc=%s", ((EditTableModel)naklTable.getModel()).getId(row));
+                DataSet.UpdateQuery(SQL);
+                SQL=String.format("delete from document where id_doc=%s", ((EditTableModel)naklTable.getModel()).getId(row));
+                DataSet.UpdateQuery(SQL);
+                DataSet.commit();
+                ((EditTableModel)naklTable.getModel()).deleteRowFromModel(row);
+
+            }
+            catch(Exception e){
+                try{
+                    DataSet.rollback();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, String.format("Ошибка удаления строки %s, id документа %s.\n Ошибка SQL", row,((EditTableModel)naklTable.getModel()).getId(row)), "Error!", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_deleteCurrentDocumentActionPerformed
+
+    private void naklTableMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_naklTableMousePressed
+        if (evt.getButton()==MouseEvent.BUTTON3){
+            setMousePoint(evt.getPoint());
+        }
+    }//GEN-LAST:event_naklTableMousePressed
+
     private void dateChange(){
         if (dateCheck.isSelected()){
             GregorianCalendar end=getEndDate();
@@ -649,6 +699,7 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JComboBox curCombo;
     private javax.swing.JButton dateButton;
     private javax.swing.JCheckBox dateCheck;
+    private javax.swing.JMenuItem deleteCurrentDocument;
     private javax.swing.JTextField endnumbText;
     private javax.swing.JTextField endsumText;
     private javax.swing.JLabel jLabel1;
@@ -658,6 +709,7 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox managerCheck;
     private javax.swing.JComboBox managerCombo;
+    private javax.swing.JPopupMenu menuForDocumentList;
     private javax.swing.JTable naklTable;
     private javax.swing.JCheckBox nonregCheck;
     private javax.swing.JCheckBox noteCheck;
@@ -687,6 +739,15 @@ public class EditDoc extends javax.swing.JDialog {
     private String sumSQL = " ";
     public int type_doc;
     private DateChoose dateW=null;
+    private Point MousePoint;
+
+    public void setMousePoint(Point MousePoint) {
+        this.MousePoint = MousePoint;
+    }
+
+    public Point getMousePoint() {
+        return MousePoint;
+    }
 
     public String getSumSQL() {
         return sumSQL;

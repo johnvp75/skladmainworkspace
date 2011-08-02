@@ -129,5 +129,19 @@ public class EditTableModel extends AbstractTableModel{
         return id_Doc.elementAt(row);
     }
 
+    public void deleteRowFromModel(int row){
+        type_doc.removeElementAt(row);
+        numb.removeElementAt(row);
+        Client.removeElementAt(row);
+        Sklad.removeElementAt(row);
+        Sum.removeElementAt(row);
+        val.removeElementAt(row);
+        date.removeElementAt(row);
+        manager.removeElementAt(row);
+        note.removeElementAt(row);
+        id_Doc.removeElementAt(row);
+        fireTableStructureChanged();
+    }
+
 
 }

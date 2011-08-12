@@ -242,4 +242,27 @@ public class PriceTableDataModel extends AbstractTableModel{
         return (col == 0 || col==5) ? Boolean.class : super.getColumnClass(col);
     }
 
+    public String getCommaSeparatedNames(){
+        String CommaSeparatedNames="";
+        if (getRowCount()>0)
+            CommaSeparatedNames=String.format("'%s'", getNazv(0));
+        for (int i=1; i<getRowCount(); i++)
+            if (CommaSeparatedNames.indexOf(String.format("'%s'", getNazv(i)))==-1)
+                CommaSeparatedNames=CommaSeparatedNames+String.format(", '%s'", getNazv(i));
+        return CommaSeparatedNames;
+    }
+
+    public void setPriceCostAndAkciaByName(String name,double priceCost, boolean akcia, int discount){
+        int pos=Nazv.indexOf(name);
+        int startPos=pos+1;
+        while (pos>-1){
+            setPriceCost(priceCost, pos);
+            setAkcia(akcia, pos);
+            setDiscount(discount, pos);
+            pos=Nazv.indexOf(name,startPos);
+            startPos=pos+1;
+        }
+        fireTableDataChanged();
+    }
+
 }

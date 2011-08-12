@@ -274,7 +274,7 @@ public class InputPanel extends javax.swing.JPanel {
         });
         model.addTableModelListener(new TableModelListener(){
             public void tableChanged(TableModelEvent event){
-                itogo.setText("Итого (учитывая скидку): "+model.summ());
+                itogo.setText("Итого (учитывая скидку): "+model.summ()*koef);
                 itogowo.setText("Итого (без скидку): "+model.summvo());
                 setChanged(true);
                 if (model.getRowCount()==0){
@@ -288,6 +288,7 @@ public class InputPanel extends javax.swing.JPanel {
         jScrollPane3.setViewportView(naklTable);
 
         findButton.setText("Поиск по коду");
+        findButton.setFocusable(false);
         findButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 findButtonActionPerformed(evt);
@@ -330,6 +331,7 @@ public class InputPanel extends javax.swing.JPanel {
         });
 
         NewTovarButton.setText("Добавить новый");
+        NewTovarButton.setFocusable(false);
         NewTovarButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 NewTovarButtonActionPerformed(evt);
@@ -379,13 +381,22 @@ public class InputPanel extends javax.swing.JPanel {
                 koefTextFieldActionPerformed(evt);
             }
         });
+        koefTextField.addFocusListener(new FocusAdapter() {
+            public void focusLost(FocusEvent evt) {
+                koefTextFieldFocusLost(evt);
+            }
+        });
         koefTextField.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent evt) {
+                koefTextFieldKeyPressed(evt);
+            }
             public void keyTyped(KeyEvent evt) {
                 koefTextFieldKeyTyped(evt);
             }
         });
 
         editButton.setText("Редактировать");
+        editButton.setFocusable(false);
         editButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -677,6 +688,7 @@ public class InputPanel extends javax.swing.JPanel {
             cost.addElement((Double)model.getValueAt(i, 3)*(1-(new Integer(model.getIndDiscount())).doubleValue()/100)*(1-((Integer)model.getValueAt(i, 5)).doubleValue()/100)*getKoef()*curs);
         }
         priceDialog.setSklad((String)skladCombo.getSelectedItem());
+        priceDialog.setCurs(curs);
         priceDialog.dialogShown(nazv, cost);
     }//GEN-LAST:event_priceButtonActionPerformed
 
@@ -790,6 +802,14 @@ public class InputPanel extends javax.swing.JPanel {
             if (edit!=null){
                 edit.stopCellEditing();
             }
+        if (clientCombo.getSelectedIndex()==0) {
+            JOptionPane.showMessageDialog(this, "Выберите поставщика","Нет поставщика",JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (valCombo.getSelectedIndex()==0) {
+            JOptionPane.showMessageDialog(this, "Выберите валюту","Нет валюты",JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
         if (noteTextField.getText().length()==0){
             JOptionPane.showMessageDialog(this, "Примечание не может быть пустым","Пустое примечание",JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -965,10 +985,13 @@ public class InputPanel extends javax.swing.JPanel {
 
     private void discTextFieldFocusLost(FocusEvent evt) {//GEN-FIRST:event_discTextFieldFocusLost
         model.setIndDiscount(new Integer(discTextField.getText()));
+        model.fireTableDataChanged();
+
     }//GEN-LAST:event_discTextFieldFocusLost
 
     private void koefTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_koefTextFieldActionPerformed
         setKoef(new Double(koefTextField.getText()));
+        model.fireTableDataChanged();
         nameList.requestFocus();
     }//GEN-LAST:event_koefTextFieldActionPerformed
 
@@ -1171,6 +1194,17 @@ public class InputPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_FindItemActionPerformed
 
+    private void koefTextFieldFocusLost(FocusEvent evt) {//GEN-FIRST:event_koefTextFieldFocusLost
+        setKoef(new Double(koefTextField.getText()));
+        model.fireTableDataChanged();
+        nameList.requestFocus();
+    }//GEN-LAST:event_koefTextFieldFocusLost
+
+    private void koefTextFieldKeyPressed(KeyEvent evt) {//GEN-FIRST:event_koefTextFieldKeyPressed
+        if (evt.getKeyChar()==',')
+            evt.setKeyChar('.');
+    }//GEN-LAST:event_koefTextFieldKeyPressed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1328,6 +1362,7 @@ public class InputPanel extends javax.swing.JPanel {
         setSklad((String)skladCombo.getSelectedItem());
         
         clientCombo.removeAllItems();
+        clientCombo.addItem("--Выберите поставщика--");
         try{
             rs = DataSet.QueryExec("select trim(name) from client where type=0 order by trim(name)", false);
             while (rs.next())
@@ -1338,6 +1373,7 @@ public class InputPanel extends javax.swing.JPanel {
         clientCombo.setSelectedIndex(0);
         
         valCombo.removeAllItems();
+        valCombo.addItem("--Выберите валюту--");
         try{
             rs = DataSet.QueryExec("select trim(name) from val", false);
             while (rs.next())

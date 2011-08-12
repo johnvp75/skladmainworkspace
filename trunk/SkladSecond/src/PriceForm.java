@@ -64,6 +64,8 @@ public class PriceForm extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         addCheckBox = new javax.swing.JCheckBox();
         addTextField = new javax.swing.JTextField();
+        isUseCurs = new javax.swing.JCheckBox();
+        currentCurs = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -187,6 +189,27 @@ public class PriceForm extends javax.swing.JDialog {
             }
         });
 
+        isUseCurs.setSelected(true);
+        isUseCurs.setText("Учитывать курс");
+        isUseCurs.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                isUseCursStateChanged(evt);
+            }
+        });
+        isUseCurs.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                isUseCursItemStateChanged(evt);
+            }
+        });
+        isUseCurs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                isUseCursActionPerformed(evt);
+            }
+        });
+
+        currentCurs.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        currentCurs.setText("1.00");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -226,17 +249,23 @@ public class PriceForm extends javax.swing.JDialog {
                                     .addComponent(koefTextField)
                                     .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(addCheckBox)
+                                        .addGap(47, 47, 47)
+                                        .addComponent(addTextField)))
                                 .addGap(18, 18, 18)
-                                .addComponent(okrCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(inkCheckBox))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(addCheckBox)
-                                .addGap(47, 47, 47)
-                                .addComponent(addTextField)))
-                        .addGap(18, 18, 18)
-                        .addComponent(inkCheckBox)))
+                                .addComponent(isUseCurs)
+                                .addGap(18, 18, 18)
+                                .addComponent(currentCurs)))))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -252,7 +281,9 @@ public class PriceForm extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nacTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(nacCheckBox))
+                    .addComponent(nacCheckBox)
+                    .addComponent(isUseCurs)
+                    .addComponent(currentCurs))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(koefTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -295,7 +326,7 @@ public class PriceForm extends javax.swing.JDialog {
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         ActionListener listener = new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                try{
+/*                try{
                     for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
                         ResultSet rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+getSklad()+"'))", false);
                         if (rs.next()){
@@ -310,8 +341,8 @@ public class PriceForm extends javax.swing.JDialog {
 
                 }catch(Exception e){
                     e.printStackTrace();
-                }
-                
+                }*/
+                refreshPriceCost();
             }
         };
         priceCombo.removeActionListener(listener);
@@ -324,6 +355,8 @@ public class PriceForm extends javax.swing.JDialog {
             rs=DataSet.QueryExec("select trim(name) from type_price where id_price=(select id_price from sklad where name='"+getSklad()+"')", false);
             rs.next();
             priceCombo.setSelectedItem(rs.getString(1));
+            refreshPriceCost();
+            /*
             for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
                 rs=DataSet.QueryExec("select cost, akciya, isakcia from price where (id_tovar=(select id_tovar from tovar where name='"+((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 1)+"')) and (id_price=(select id_price from type_price where name='"+priceCombo.getSelectedItem()+"')) and (id_skl=(select id_skl from sklad where name='"+getSklad()+"'))", false);
                 if (rs.next()){
@@ -334,19 +367,31 @@ public class PriceForm extends javax.swing.JDialog {
                     ((PriceTableDataModel)priceTable.getModel()).setValueAt(b, i, 5);
                     ((PriceTableDataModel)priceTable.getModel()).setValueAt(rs.getString(2), i, 6);
                 }
-            }
+            }*/
             inkCheckBox.setSelected(false);
             koefCheckBox.setSelected(false);
             koefTextField.setText("1");
             nacCheckBox.setSelected(false);
             nacTextField.setText("0");
             okrCombo.setSelectedIndex(1);
+            currentCurs.setText(getCurs().toString());
+            isUseCurs.setSelected(true);
         }catch(Exception e){
             e.printStackTrace();
         }
         priceCombo.addActionListener(listener);
     }//GEN-LAST:event_formComponentShown
 
+    private void refreshPriceCost(){
+        try{
+            String SQL=String.format("Select  p.cost, p.akciya, p.isakcia, trim(t.name) from price p, tovar t where trim(t.name) in (%s) and p.id_tovar=t.id_tovar and (id_price=(select id_price from type_price where name='%s'))and (id_skl=(select id_skl from sklad where name='%s'))", ((PriceTableDataModel)priceTable.getModel()).getCommaSeparatedNames(),priceCombo.getSelectedItem(),getSklad());
+            ResultSet rs=DataSet.QueryExec(SQL,false);
+            while (rs.next())
+                ((PriceTableDataModel)priceTable.getModel()).setPriceCostAndAkciaByName(rs.getString(4), rs.getDouble(1), rs.getInt(3)==1, rs.getInt(2));
+        }catch(Exception e){
+                e.printStackTrace();
+        }
+    }
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         setVisible(false);
@@ -454,6 +499,20 @@ public class PriceForm extends javax.swing.JDialog {
             evt.setKeyChar('.');
         // TODO add your handling code here:
     }//GEN-LAST:event_addTextFieldKeyTyped
+
+    private void isUseCursActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isUseCursActionPerformed
+
+    }//GEN-LAST:event_isUseCursActionPerformed
+
+    private void isUseCursItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_isUseCursItemStateChanged
+        for (int i=0; i<priceTable.getRowCount(); i++){
+            ((PriceTableDataModel)priceTable.getModel()).setValueAt((Double)((PriceTableDataModel)priceTable.getModel()).getValueAt(i, 2)*(isUseCurs.isSelected()?getCurs():1/getCurs()), i, 2);
+        }
+    }//GEN-LAST:event_isUseCursItemStateChanged
+
+    private void isUseCursStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_isUseCursStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_isUseCursStateChanged
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
@@ -481,8 +540,10 @@ public class PriceForm extends javax.swing.JDialog {
     private javax.swing.JCheckBox addCheckBox;
     private javax.swing.JTextField addTextField;
     private javax.swing.JButton closeButton;
+    private javax.swing.JLabel currentCurs;
     private javax.swing.JCheckBox inkCheckBox;
     private javax.swing.JButton invertButton;
+    private javax.swing.JCheckBox isUseCurs;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -501,6 +562,16 @@ public class PriceForm extends javax.swing.JDialog {
     private javax.swing.JButton unselectButton;
     // End of variables declaration//GEN-END:variables
     private String Sklad;
+    protected Double curs;
+
+    public Double getCurs() {
+        return curs;
+    }
+
+    public void setCurs(double curs) {
+        this.curs = new Double(curs);
+    }
+
 
     public String getSklad() {
         return Sklad;

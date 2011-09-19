@@ -78,6 +78,7 @@ public class InputPanel extends javax.swing.JPanel {
         AddGroup = new JMenuItem();
         AddSubGroup = new JMenuItem();
         RenameGroup = new JMenuItem();
+        MoveGroup = new JMenuItem();
         InsertItem = new JMenuItem();
         ListPopup = new JPopupMenu();
         MoveItem = new JMenuItem();
@@ -146,6 +147,14 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
         treePopup.add(RenameGroup);
+
+        MoveGroup.setText("Вырезать группу");
+        MoveGroup.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                MoveGroupActionPerformed(evt);
+            }
+        });
+        treePopup.add(MoveGroup);
 
         InsertItem.setText("Вставить");
         InsertItem.addActionListener(new ActionListener() {
@@ -1079,13 +1088,21 @@ public class InputPanel extends javax.swing.JPanel {
     private void InsertItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_InsertItemActionPerformed
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
             return;
+        String SQL;
         int gr=((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex();
         try{
-            DataSet.UpdateQuery("update kart set id_group="+gr+" where id_tovar = (select id_tovar from tovar where name='"+getNameMove()+"') and id_group="+getGroumMove()+
-                    " and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')");
+            if (getNameMove()!=null){
+                SQL=String.format("update kart set id_group=%s where id_tovar = (select id_tovar from tovar where name='%s') and id_group=%s"+
+                    " and id_skl=(select id_skl from sklad where name='%s')", gr, getNameMove(),getGroumMove(),skladCombo.getSelectedItem());}
+            else{
+                SQL=String.format("update groupid set parent_group=%s where id_group=%s", gr,getGroumMove());
+            }
+            DataSet.UpdateQuery(SQL);
             DataSet.commit();
+            setNameMove(null);
             InsertItem.setEnabled(false);
             AddCut.setEnabled(false);
+            ((GroupTreeModel)groupTree.getModel()).setRoot();
             initList(gr);
         }catch(Exception e){
             e.printStackTrace();
@@ -1103,14 +1120,16 @@ public class InputPanel extends javax.swing.JPanel {
             rs=DataSet.QueryExec("select id_tovar from tovar where name='"+(String)nameList.getSelectedValue()+"'", false);
             rs.next();
             int add=rs.getInt(1);
+            int gr=((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex();
             DataSet.UpdateQuery("update lines set id_tovar="+add+" where id_tovar = "+move);
-            DataSet.UpdateQuery("update kart set id_tovar="+add+", id_group="+((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex()+" where id_tovar = "+move);
+            DataSet.UpdateQuery("update kart set id_tovar="+add+", id_group="+gr+" where id_tovar = "+move);
             DataSet.UpdateQuery("update bar_code set id_tovar="+add+" where id_tovar = "+move);
             DataSet.UpdateQuery("delete from price where id_tovar = "+move);
             DataSet.UpdateQuery("delete from tovar where id_tovar = "+move);
             DataSet.commit();
             InsertItem.setEnabled(false);
             AddCut.setEnabled(false);
+            initList(gr);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -1163,7 +1182,7 @@ public class InputPanel extends javax.swing.JPanel {
         if (dialog==null)
             dialog = new NewTovarDialog(null,true);
         dialog.setSklad((String)skladCombo.getSelectedItem());
-         dialog.setNewTovar(true, (String)nameList.getSelectedValue());
+        dialog.setNewTovar(true, (String)nameList.getSelectedValue());
         dialog.setGroup(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
         dialog.setVisible(true);
         if (dialog.isOk()){
@@ -1205,6 +1224,14 @@ public class InputPanel extends javax.swing.JPanel {
             evt.setKeyChar('.');
     }//GEN-LAST:event_koefTextFieldKeyPressed
 
+    private void MoveGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_MoveGroupActionPerformed
+        if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
+            return;
+        setNameMove(null);
+        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
+        InsertItem.setEnabled(true);
+    }//GEN-LAST:event_MoveGroupActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1215,6 +1242,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JMenuItem FindItem;
     private JMenuItem InsertItem;
     private JPopupMenu ListPopup;
+    private JMenuItem MoveGroup;
     private JMenuItem MoveItem;
     private JButton NewTovarButton;
     private JMenuItem RenameGroup;
@@ -1263,7 +1291,17 @@ public class InputPanel extends javax.swing.JPanel {
     protected String nameMove;
     private Point MousePoint;
     protected boolean rebuild = false;
+    private boolean copyTovar;
 
+    public boolean isCopyTovar() {
+        return copyTovar;
+    }
+
+    public void setCopyTovar(boolean copyTovar) {
+        this.copyTovar = copyTovar;
+    }
+
+    
     public boolean isRebuild() {
         return rebuild;
     }

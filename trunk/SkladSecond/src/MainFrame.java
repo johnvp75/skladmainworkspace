@@ -69,6 +69,8 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
         jMenu7 = new javax.swing.JMenu();
         jMenuItem10 = new javax.swing.JMenuItem();
+        jMenu12 = new javax.swing.JMenu();
+        jMenuItem16 = new javax.swing.JMenuItem();
         jMenu11 = new javax.swing.JMenu();
         jMenuItem14 = new javax.swing.JMenuItem();
         jMenuItem15 = new javax.swing.JMenuItem();
@@ -172,6 +174,18 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu7.add(jMenuItem10);
 
         jMenuBar1.add(jMenu7);
+
+        jMenu12.setText("Работа с группами");
+
+        jMenuItem16.setText("Задать соответствие отделу");
+        jMenuItem16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem16ActionPerformed(evt);
+            }
+        });
+        jMenu12.add(jMenuItem16);
+
+        jMenuBar1.add(jMenu12);
 
         jMenu11.setText("Инвентаризация");
 
@@ -460,6 +474,17 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem15ActionPerformed
 
+    private void jMenuItem16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem16ActionPerformed
+         if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";6;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
+            GroupAndSectionWire wire=new GroupAndSectionWire(null,true);
+            wire.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem16ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -476,6 +501,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu10;
     private javax.swing.JMenu jMenu11;
+    private javax.swing.JMenu jMenu12;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
@@ -492,6 +518,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
+    private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

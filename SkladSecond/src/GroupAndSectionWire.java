@@ -1,6 +1,7 @@
 
 import com.sun.star.awt.Selection;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.tree.TreeSelectionModel;
@@ -48,6 +49,11 @@ public class GroupAndSectionWire extends javax.swing.JDialog {
         groupTree = new javax.swing.JTree(new GroupTreeModel());
 
         listTovar.setText("Содержимое группы");
+        listTovar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                listTovarActionPerformed(evt);
+            }
+        });
         treePopup.add(listTovar);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -100,6 +106,7 @@ public class GroupAndSectionWire extends javax.swing.JDialog {
         groupTree.setShowsRootHandles(true);
         groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         groupTree.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        groupTree.setComponentPopupMenu(treePopup);
         groupTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
             public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
                 groupTreeValueChanged(evt);
@@ -226,6 +233,23 @@ public class GroupAndSectionWire extends javax.swing.JDialog {
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosed
+
+    private void listTovarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listTovarActionPerformed
+        if (groupTree.getSelectionPath()!=null){
+            int index=((DataNode)groupTree.getSelectionPath().getLastPathComponent()).getIndex();
+            String SQL=String.format("select trim(t.name)||'; '||trim(s.name) from tovar t, sklad s, (select distinct id_tovar, id_skl from kart where id_group in (select id_group from groupid start with id_group=%s connect by parent_group=prior id_group)) t1 where t1.id_tovar=t.id_tovar and t1.id_skl=s.id_skl order by s.name, t.name", index);
+            ArrayList nameAndSklad=new ArrayList();
+            try{
+                ResultSet rs=DataSet.QueryExec(SQL, false);
+                while (rs.next())
+                    nameAndSklad.add(rs.getString(1));
+            }catch(Exception e){
+                JOptionPane.showMessageDialog(null, "Ошибка выборки наименований!");
+            }
+            DialogWithList dialog=new DialogWithList(null, true);
+            dialog.showDialog((String[])nameAndSklad.toArray(new String[nameAndSklad.size()]), "Содержимое группы");
+        }
+    }//GEN-LAST:event_listTovarActionPerformed
 
     private void initList(){
         try{

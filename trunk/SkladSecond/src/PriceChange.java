@@ -70,6 +70,8 @@ public class PriceChange extends javax.swing.JDialog {
         discAllField = new javax.swing.JTextField();
         addCheckBox = new javax.swing.JCheckBox();
         addTextField = new javax.swing.JTextField();
+        SelectAllAction = new javax.swing.JButton();
+        UnselectAllAction = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -189,6 +191,20 @@ public class PriceChange extends javax.swing.JDialog {
 
         addTextField.setText("0");
 
+        SelectAllAction.setText("Выделить все");
+        SelectAllAction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SelectAllActionActionPerformed(evt);
+            }
+        });
+
+        UnselectAllAction.setText("Убрать все");
+        UnselectAllAction.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UnselectAllActionActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -259,7 +275,9 @@ public class PriceChange extends javax.swing.JDialog {
                         .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(discAllField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(DiscButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE))))
+                            .addComponent(DiscButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                            .addComponent(SelectAllAction, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(UnselectAllAction, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -315,7 +333,11 @@ public class PriceChange extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(discAllField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(25, 25, 25)
-                        .addComponent(DiscButton))
+                        .addComponent(DiscButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SelectAllAction)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(UnselectAllAction))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(jScrollPane2)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)))
@@ -455,6 +477,19 @@ public class PriceChange extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_DiscButtonActionPerformed
 
+    private void SelectAllActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SelectAllActionActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(true, i, 5);
+        }        
+    }//GEN-LAST:event_SelectAllActionActionPerformed
+
+    private void UnselectAllActionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UnselectAllActionActionPerformed
+        for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
+            priceTable.setValueAt(false, i, 5);
+        }        
+
+    }//GEN-LAST:event_UnselectAllActionActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -475,6 +510,8 @@ public class PriceChange extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton DiscButton;
     private javax.swing.JComboBox MainCombo;
+    private javax.swing.JButton SelectAllAction;
+    private javax.swing.JButton UnselectAllAction;
     private javax.swing.JCheckBox addCheckBox;
     private javax.swing.JTextField addTextField;
     private javax.swing.JButton closeButton;

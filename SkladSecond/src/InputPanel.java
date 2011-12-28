@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Vector;
+import java.util.Stack;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.GroupLayout;
@@ -229,7 +230,7 @@ public class InputPanel extends javax.swing.JPanel {
 
         groupTree.setRootVisible(false);
         groupTree.setShowsRootHandles(true);
-        groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
         groupTree.setComponentPopupMenu(treePopup);
         groupTree.addTreeSelectionListener(new TreeSelectionListener() {
             public void valueChanged(TreeSelectionEvent evt) {
@@ -823,7 +824,7 @@ public class InputPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Примечание не может быть пустым","Пустое примечание",JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        if (!noteTextField.getText().matches(".*((0[1-9])|((1|2)[0-9])|(3(0|1)))\\.((0([1-9])|(1(1|2))))\\.((19)|(20)[0-9][0-9]).*")){
+        if (!noteTextField.getText().matches(".*((0[1-9])|((1|2)[0-9])|(3(0|1)))\\.((0([1-9])|(1(0|1|2))))\\.((19)|(20)[0-9][0-9]).*")){
             JOptionPane.showMessageDialog(this, "Примечание должно содержать дату в формате ДД.ММ.ГГГГ\nНапример 15.03.2009","Отсутствует дата",JOptionPane.INFORMATION_MESSAGE);
             return;
         }
@@ -925,6 +926,7 @@ public class InputPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Несохраненный документ зарегистрировать нельзя! \n Сохраните документ и повторите операцию", "Ошибка проведения", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        String SQL="";
         try{
             ResultSet rs=DataSet.QueryExec("select max(numb) from document where (to_number(to_char(day, 'YYYY'))=to_number(to_char(sysdate, 'YYYY'))) and (id_type_doc=(select id_type_doc from type_doc where name='"+type_docCombo.getSelectedItem()+"')) ", false);
             rs.next();
@@ -941,14 +943,15 @@ public class InputPanel extends javax.swing.JPanel {
                     rs=DataSet.QueryExec("select count(*) from kart where (cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+") and (val=(select id_val from val where name='"+valCombo.getSelectedItem()+"')) and (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'))",false);
                     rs.next();
                     if (rs.getInt(1)==0){
-                        DataSet.UpdateQuery("insert into kart (id_tovar, id_skl, id_group, id_nom, cost, day, val) select " +
+                        SQL="insert into kart (id_tovar, id_skl, id_group, id_nom, cost, day, val) select " +
                                 "(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"') as id_tovar," +
                                 "(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') as id_skl," +
                                 "(select distinct id_group from kart where id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"') and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem() + "')) as id_group," +
                                 "(select max(id_nom)+1 from kart) as id_nom," +
                                 ""+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+" as cost," +
                                 "sysdate as day," +
-                                "id_val from val where name='"+valCombo.getSelectedItem()+"'");
+                                "id_val from val where name='"+valCombo.getSelectedItem()+"'";
+                        DataSet.UpdateQuery(SQL);
                     }
                 }
             }
@@ -959,7 +962,7 @@ public class InputPanel extends javax.swing.JPanel {
             setId_doc(0);
             setVisible(false);
         }catch(Exception e){
-            JOptionPane.showMessageDialog(this, "Зарегистрировать не удалась. Повторите попытку.", "Ошибка записи", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Зарегистрировать не удалась. Повторите попытку.\n"+SQL, "Ошибка записи", JOptionPane.ERROR_MESSAGE);
             try {
                 DataSet.rollback();
             } catch (SQLException ex) {
@@ -1080,7 +1083,8 @@ public class InputPanel extends javax.swing.JPanel {
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null || nameList.getSelectedValue()==null)
             return;
         setNameMove((String)nameList.getSelectedValue());
-        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
+        groupeMove.push(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
+//        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
         InsertItem.setEnabled(true);
         AddCut.setEnabled(true);
     }//GEN-LAST:event_MoveItemActionPerformed
@@ -1093,16 +1097,18 @@ public class InputPanel extends javax.swing.JPanel {
         try{
             if (getNameMove()!=null){
                 SQL=String.format("update kart set id_group=%s where id_tovar = (select id_tovar from tovar where name='%s') and id_group=%s"+
-                    " and id_skl=(select id_skl from sklad where name='%s')", gr, getNameMove(),getGroumMove(),skladCombo.getSelectedItem());}
+                    " and id_skl=(select id_skl from sklad where name='%s')", gr, getNameMove(),groupeMove.pop(),skladCombo.getSelectedItem());}
             else{
-                SQL=String.format("update groupid set parent_group=%s where id_group=%s", gr,getGroumMove());
+                SQL=String.format("update groupid set parent_group=%s where id_group in (%s)", gr,CommaSeparatedStack(groupeMove));
             }
             DataSet.UpdateQuery(SQL);
-            DataSet.commit();
-            setNameMove(null);
+//            DataSet.commit();
+            
             InsertItem.setEnabled(false);
             AddCut.setEnabled(false);
-            ((GroupTreeModel)groupTree.getModel()).setRoot();
+            if (getNameMove()==null)
+                ((GroupTreeModel)groupTree.getModel()).setRoot();
+            setNameMove(null);
             initList(gr);
         }catch(Exception e){
             e.printStackTrace();
@@ -1110,6 +1116,14 @@ public class InputPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_InsertItemActionPerformed
 
+    private String CommaSeparatedStack(Stack stack){
+        String result=stack.empty()?" ":stack.pop().toString();
+        while (!stack.empty()){
+            result=result+", "+stack.pop();
+        }
+        return result;
+        
+    }
     private void AddCutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddCutActionPerformed
         if (nameList.getSelectedValue()==null || JOptionPane.showConfirmDialog(this, "Вы уверены что следует объеденить "+getNameMove()+" c "+(String)nameList.getSelectedValue()+"\n при этом пропадет "+getNameMove(), "Объединение", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
             return;
@@ -1117,7 +1131,8 @@ public class InputPanel extends javax.swing.JPanel {
             ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+getNameMove()+"'", false);
             rs.next();
             int move=rs.getInt(1);
-            rs=DataSet.QueryExec("select id_tovar from tovar where name='"+(String)nameList.getSelectedValue()+"'", false);
+            String SQL=String.format("select id_tovar from tovar where name='%s'",(String)nameList.getSelectedValue());
+            rs=DataSet.QueryExec(SQL, false);
             rs.next();
             int add=rs.getInt(1);
             int gr=((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex();
@@ -1126,7 +1141,7 @@ public class InputPanel extends javax.swing.JPanel {
             DataSet.UpdateQuery("update bar_code set id_tovar="+add+" where id_tovar = "+move);
             DataSet.UpdateQuery("delete from price where id_tovar = "+move);
             DataSet.UpdateQuery("delete from tovar where id_tovar = "+move);
-            DataSet.commit();
+//            DataSet.commit();
             InsertItem.setEnabled(false);
             AddCut.setEnabled(false);
             initList(gr);
@@ -1228,7 +1243,11 @@ public class InputPanel extends javax.swing.JPanel {
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
             return;
         setNameMove(null);
-        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
+        TreePath[] selectedItems=groupTree.getSelectionPaths();
+        for (TreePath element : selectedItems ){
+            groupeMove.push(((DataNode)element.getLastPathComponent()).getIndex());
+        }
+//        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
         InsertItem.setEnabled(true);
     }//GEN-LAST:event_MoveGroupActionPerformed
 
@@ -1292,6 +1311,9 @@ public class InputPanel extends javax.swing.JPanel {
     private Point MousePoint;
     protected boolean rebuild = false;
     private boolean copyTovar;
+    protected Stack<Integer> groupeMove = new Stack<Integer>();
+
+
 
     public boolean isCopyTovar() {
         return copyTovar;
@@ -1336,7 +1358,7 @@ public class InputPanel extends javax.swing.JPanel {
         this.nameMove = nameMove;
     }
 
-    protected int groumMove;
+/*    protected int groumMove;
 
     public int getGroumMove() {
         return groumMove;
@@ -1345,7 +1367,7 @@ public class InputPanel extends javax.swing.JPanel {
     public void setGroumMove(int groumMove) {
         this.groumMove = groumMove;
     }
-
+*/
 
     public double getKoef() {
         return koef;

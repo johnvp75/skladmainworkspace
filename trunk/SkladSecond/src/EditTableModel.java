@@ -143,5 +143,18 @@ public class EditTableModel extends AbstractTableModel{
         fireTableStructureChanged();
     }
 
+    public void removeAll(){
+        Client.clear();
+        Sklad.clear();
+        Sum.clear();
+        id_Doc.clear();
+        note.clear();
+        val.clear();
+        date.clear();
+        type_doc.clear();
+        numb.clear();
+        manager.clear();
+        fireTableDataChanged();
 
+    }
 }

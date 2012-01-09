@@ -57,6 +57,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem17 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
@@ -110,6 +111,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         jMenu5.add(jMenuItem2);
+
+        jMenuItem17.setText("Просмотр проведенных");
+        jMenuItem17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem17ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem17);
 
         jMenu1.add(jMenu5);
 
@@ -283,6 +292,7 @@ public class MainFrame extends javax.swing.JFrame {
             setTitle("Программа автоматизации склада. Пользователь: "+dialog.GetManager());
             MainFrame.setEditDocId(0);
             inputPanel1.setManager(dialog.GetManager());
+            inputPanel1.setEditable(true);
             inputPanel1.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
@@ -317,9 +327,14 @@ public class MainFrame extends javax.swing.JFrame {
                 editDoc=new EditDoc(this, true);
             setEditDocId(0);
             editDoc.setType_doc(1);
+            editDoc.setRegistredDoc(false);
             editDoc.setVisible(true);
-            if (getEditDocId()!=0)
+            if (getEditDocId()!=0){
+                inputPanel1.setEditable(true);
                 inputPanel1.setVisible(true);
+            }
+                
+               
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -485,6 +500,27 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
+    private void jMenuItem17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem17ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";1;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            if (editDoc==null)
+                editDoc=new EditDoc(this, true);
+            setEditDocId(0);
+            editDoc.setType_doc(1);
+            editDoc.setRegistredDoc(true);
+            editDoc.setVisible(true);
+            if (getEditDocId()!=0){
+                inputPanel1.setEditable(false);
+                inputPanel1.setVisible(true);
+            }
+                
+               
+        }
+
+    }//GEN-LAST:event_jMenuItem17ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -519,6 +555,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem14;
     private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem16;
+    private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

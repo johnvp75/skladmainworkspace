@@ -49,6 +49,7 @@ public class PriceForm extends javax.swing.JDialog {
         okrCombo = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         priceTable = new javax.swing.JTable();
+        priceTable.setDefaultRenderer(Object.class, new MyTableCellRenderer(3,4));
         nacTextField = new javax.swing.JTextField();
         koefTextField = new javax.swing.JTextField();
         runButton = new javax.swing.JButton();
@@ -207,7 +208,7 @@ public class PriceForm extends javax.swing.JDialog {
             }
         });
 
-        currentCurs.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        currentCurs.setFont(new java.awt.Font("Tahoma", 1, 11));
         currentCurs.setText("1.00");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -407,6 +408,12 @@ public class PriceForm extends javax.swing.JDialog {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try{
+            for (int i=0; i<priceTable.getModel().getRowCount();i++){
+                if (((Boolean)priceTable.getModel().getValueAt(i, 0)) && (Double.parseDouble(priceTable.getModel().getValueAt(i, 4).toString())<=0)){
+                    JOptionPane.showMessageDialog(null, "Цены должны быть больше нуля!", "Ошибка", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
             ResultSet rs=DataSet.QueryExec("Select id_skl from sklad where name='"+getSklad()+"'", false);
             rs.next();
             int skl=rs.getInt(1);

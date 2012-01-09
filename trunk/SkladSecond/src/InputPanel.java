@@ -572,7 +572,7 @@ public class InputPanel extends javax.swing.JPanel {
         setRebuild(true);
         koefTextField.setText("1");
         setKoef(1.0);
-        setChanged(false);
+
         InsertItem.setEnabled(false);
         AddCut.setEnabled(false);
         if (!groupTree.isSelectionEmpty())
@@ -611,11 +611,12 @@ public class InputPanel extends javax.swing.JPanel {
         if (!groupTree.isSelectionEmpty())
             initList(((DataNode)groupTree.getLastSelectedPathComponent()).getIndex());
         setRebuild(false);
+        setChanged(false);
 
     }//GEN-LAST:event_formComponentShown
 
     private void nameListMouseClicked(MouseEvent evt) {//GEN-FIRST:event_nameListMouseClicked
-        if (evt.getClickCount()==2){
+        if (evt.getClickCount()==2 && nameList.getSelectedValue()!=null){
             int row=model.add((String)nameList.getSelectedValue(), 1, 0.00, 0, 0);
             naklTable.requestFocus();
 //            naklTable.getColumnModel().getColumn(2).
@@ -1242,6 +1243,7 @@ public class InputPanel extends javax.swing.JPanel {
     private void MoveGroupActionPerformed(ActionEvent evt) {//GEN-FIRST:event_MoveGroupActionPerformed
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
             return;
+        groupeMove.removeAllElements();
         setNameMove(null);
         TreePath[] selectedItems=groupTree.getSelectionPaths();
         for (TreePath element : selectedItems ){
@@ -1524,5 +1526,22 @@ public class InputPanel extends javax.swing.JPanel {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+    public void setEditable(boolean flag){
+        skladCombo.setEnabled(flag);
+        clientCombo.setEnabled(flag);
+        valCombo.setEnabled(flag);
+        type_docCombo.setEnabled(flag);
+        groupTree.setEnabled(flag);
+        nameList.setEnabled(flag);
+        noteTextField.setEnabled(flag);
+        findButton.setEnabled(flag);
+        editButton.setEnabled(flag);
+        NewTovarButton.setEnabled(flag);
+        saveButton.setEnabled(flag);
+        regButton.setEnabled(flag);
+        naklTable.setEnabled(flag);
+        discTextField.setEnabled(flag);
+        koefTextField.setEnabled(flag);
     }
 }

@@ -44,13 +44,14 @@ public class DateChoose extends javax.swing.JDialog {
         yearRadio = new javax.swing.JRadioButton();
         beginCheck = new javax.swing.JCheckBox();
         freeRadio = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        oKButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setAlwaysOnTop(true);
         setModal(true);
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18));
         jLabel1.setText("Выбор интервала дат");
         jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
@@ -106,9 +107,19 @@ public class DateChoose extends javax.swing.JDialog {
             }
         });
 
-        jButton1.setText("Принять");
+        oKButton.setText("Принять");
+        oKButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oKButtonActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Отмена");
+        cancelButton.setText("Отмена");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,9 +129,9 @@ public class DateChoose extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(100, 100, 100)
-                        .addComponent(jButton1)
+                        .addComponent(oKButton)
                         .addGap(77, 77, 77)
-                        .addComponent(jButton2))
+                        .addComponent(cancelButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(294, 294, 294)
                         .addComponent(beginCheck))
@@ -185,8 +196,8 @@ public class DateChoose extends javax.swing.JDialog {
                 .addComponent(beginCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)))
+                    .addComponent(oKButton)
+                    .addComponent(cancelButton)))
         );
 
         pack();
@@ -252,6 +263,16 @@ public class DateChoose extends javax.swing.JDialog {
 
     }//GEN-LAST:event_yearRadioActionPerformed
 
+    private void oKButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oKButtonActionPerformed
+       setSuccess(true);
+       setVisible(false);
+    }//GEN-LAST:event_oKButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        setSuccess(false);
+        setVisible(false);
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -263,21 +284,37 @@ public class DateChoose extends javax.swing.JDialog {
         endDate.setDate(value.getTime());
     }
 
+    public GregorianCalendar getStartDate(){
+        return (GregorianCalendar) startDate.getCalendar();
+    }
+    
+    public GregorianCalendar getEndDate(){
+        return (GregorianCalendar) endDate.getCalendar();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox beginCheck;
+    private javax.swing.JButton cancelButton;
     private javax.swing.JRadioButton dayRadio;
     private com.toedter.calendar.JDateChooser endDate;
     private javax.swing.JRadioButton freeRadio;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JRadioButton monthRadio;
+    private javax.swing.JButton oKButton;
     private com.toedter.calendar.JDateChooser startDate;
     private javax.swing.JRadioButton weekRadio;
     private javax.swing.JRadioButton yearRadio;
     // End of variables declaration//GEN-END:variables
+    protected boolean success = false;
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
 
 }

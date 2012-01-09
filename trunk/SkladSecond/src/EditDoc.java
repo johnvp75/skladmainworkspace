@@ -1,10 +1,13 @@
 
 import java.awt.Frame;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
 import java.util.GregorianCalendar;
 import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -45,6 +48,7 @@ public class EditDoc extends javax.swing.JDialog {
 
         menuForDocumentList = new javax.swing.JPopupMenu();
         deleteCurrentDocument = new javax.swing.JMenuItem();
+        unRegDoc = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         setSQL("and d.id_doc=1");
         EditTableModel model=new EditTableModel(getSQL());
@@ -84,7 +88,20 @@ public class EditDoc extends javax.swing.JDialog {
         });
         menuForDocumentList.add(deleteCurrentDocument);
 
+        unRegDoc.setText("Отменить проведение");
+        unRegDoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                unRegDocActionPerformed(evt);
+            }
+        });
+        menuForDocumentList.add(unRegDoc);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
                 formComponentShown(evt);
@@ -124,12 +141,6 @@ public class EditDoc extends javax.swing.JDialog {
         numbCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 numbCheckActionPerformed(evt);
-            }
-        });
-
-        clientCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clientComboActionPerformed(evt);
             }
         });
 
@@ -204,22 +215,10 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        managerCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                managerComboActionPerformed(evt);
-            }
-        });
-
         skladCheck.setText("Склад");
         skladCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 skladCheckActionPerformed(evt);
-            }
-        });
-
-        skladCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                skladComboActionPerformed(evt);
             }
         });
 
@@ -230,22 +229,10 @@ public class EditDoc extends javax.swing.JDialog {
             }
         });
 
-        curCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                curComboActionPerformed(evt);
-            }
-        });
-
         typeCheck.setText("Тип документа");
         typeCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 typeCheckActionPerformed(evt);
-            }
-        });
-
-        typeCombo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                typeComboActionPerformed(evt);
             }
         });
 
@@ -408,6 +395,10 @@ public class EditDoc extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        regCheck.setSelected(isRegistredDoc());
+        nonregCheck.setSelected(!isRegistredDoc());
+        unRegDoc.setVisible(isRegistredDoc());
+        deleteCurrentDocument.setVisible(!isRegistredDoc());
         setSQL(String.format("and d.id_type_doc in (select id_type_doc from type_doc where operacia=%s)", getType_doc()));
         initelements();
         SQL();
@@ -417,6 +408,7 @@ public class EditDoc extends javax.swing.JDialog {
     private void naklTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_naklTableMouseClicked
         if (evt.getClickCount()==2){
             MainFrame.setEditDocId(((EditTableModel)naklTable.getModel()).getId(naklTable.getSelectedRow()));
+            ((EditTableModel)naklTable.getModel()).removeAll();
             setVisible(false);
         }
     }//GEN-LAST:event_naklTableMouseClicked
@@ -557,25 +549,9 @@ public class EditDoc extends javax.swing.JDialog {
         managerChange();
     }//GEN-LAST:event_managerCheckActionPerformed
 
-    private void managerComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_managerComboActionPerformed
-        managerChange();
-    }//GEN-LAST:event_managerComboActionPerformed
-
-    private void skladComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skladComboActionPerformed
-        skladChange();
-    }//GEN-LAST:event_skladComboActionPerformed
-
     private void typeCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeCheckActionPerformed
         typeChange();
     }//GEN-LAST:event_typeCheckActionPerformed
-
-    private void typeComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboActionPerformed
-        typeChange();
-    }//GEN-LAST:event_typeComboActionPerformed
-
-    private void curComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_curComboActionPerformed
-        curChange();
-    }//GEN-LAST:event_curComboActionPerformed
 
     private void startsumTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startsumTextActionPerformed
         sumChange();
@@ -591,11 +567,7 @@ public class EditDoc extends javax.swing.JDialog {
     private void noteTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_noteTextActionPerformed
         noteChange();
     }//GEN-LAST:event_noteTextActionPerformed
-
-    private void clientComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientComboActionPerformed
-        clientChange();
-    }//GEN-LAST:event_clientComboActionPerformed
-
+    
     private void dateCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dateCheckActionPerformed
         if (dateCheck.isSelected()&&nonregCheck.isSelected()){
             JOptionPane.showMessageDialog(null, "Дату имеют только зарегистрированные документы!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
@@ -611,6 +583,13 @@ public class EditDoc extends javax.swing.JDialog {
         dateW.setStartdate(getStartDate());
         dateW.setEnddate(getEndDate());
         dateW.setVisible(true);
+        if (dateW.isSuccess()){
+            setStartDate(dateW.getStartDate());
+            setEndDate(dateW.getEndDate());
+            dateButton.setText(String.format("%1$td.%1$tm.%1$tY - %2$td.%2$tm.%2$tY", getStartDate(),getEndDate()));
+            dateCheck.setSelected(true);
+            dateChange();
+        }
     }//GEN-LAST:event_dateButtonActionPerformed
 
     private void deleteCurrentDocumentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteCurrentDocumentActionPerformed
@@ -647,6 +626,36 @@ public class EditDoc extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_naklTableMousePressed
 
+    private void unRegDocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unRegDocActionPerformed
+        if (naklTable.getCellEditor()!=null){
+            naklTable.getCellEditor().stopCellEditing();
+        }
+        int row=getMousePoint().y/naklTable.getRowHeight();
+        if (row>0 && row<=naklTable.getModel().getRowCount() && JOptionPane.showConfirmDialog(null, String.format("Вы уверены что хотите отменить проведение документа: %s\nНомер: %s от: %s \nКонтрагент: %s \nСклад: %s \nНа сумму: %s\nОформленный: %s\n%s  ", naklTable.getValueAt(row, 0), naklTable.getValueAt(row, 1), naklTable.getValueAt(row, 6), naklTable.getValueAt(row, 2), naklTable.getValueAt(row, 3), naklTable.getValueAt(row, 4), naklTable.getValueAt(row, 7), naklTable.getValueAt(row, 8)), "Отменить проведение?", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION&& JOptionPane.showConfirmDialog(null, "Вы уверенны?", "Отменить проведение?", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION){
+            try {
+
+                SQL=String.format("update document set numb=null,day=null where id_doc=%s", ((EditTableModel)naklTable.getModel()).getId(row));
+                DataSet.UpdateQuery(SQL);
+                DataSet.commit();
+                ((EditTableModel)naklTable.getModel()).deleteRowFromModel(row);
+
+            }
+            catch(Exception e){
+                try{
+                    DataSet.rollback();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, String.format("Ошибка обработки строки %s, id документа %s.\n Ошибка SQL", row,((EditTableModel)naklTable.getModel()).getId(row)), "Error!", JOptionPane.ERROR_MESSAGE);
+            }
+        }         
+    }//GEN-LAST:event_unRegDocActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        ((EditTableModel)naklTable.getModel()).removeAll();
+    }//GEN-LAST:event_formWindowClosed
+
     private void dateChange(){
         if (dateCheck.isSelected()){
             GregorianCalendar end=getEndDate();
@@ -655,6 +664,7 @@ public class EditDoc extends javax.swing.JDialog {
         }else{
             setDateSQL("");
         }
+        SQL();
 
     }
 
@@ -723,6 +733,7 @@ public class EditDoc extends javax.swing.JDialog {
     private javax.swing.JCheckBox sumCheck;
     private javax.swing.JCheckBox typeCheck;
     private javax.swing.JComboBox typeCombo;
+    private javax.swing.JMenuItem unRegDoc;
     // End of variables declaration//GEN-END:variables
     private String SQL=" and d.id_type_doc in (select id_type_doc from type_doc where operacia=1) ";
     private GregorianCalendar startDate = new GregorianCalendar();
@@ -740,7 +751,68 @@ public class EditDoc extends javax.swing.JDialog {
     public int type_doc;
     private DateChoose dateW=null;
     private Point MousePoint;
+    protected boolean registredDoc;
+    private boolean noSQL=true;
 
+    public boolean isNoSQL() {
+        return noSQL;
+    }
+
+    public void setNoSQL(boolean noSQL) {
+        this.noSQL = noSQL;
+    }
+    private ActionListener clientComboActionListener=new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            clientChange();
+        }
+    };
+
+    private ActionListener managerComboActionListener=new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            managerChange();
+        }
+    };
+    
+    private ActionListener skladComboActionListener=new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            skladChange();
+        }
+    };
+    
+    private ActionListener typeComboActionListener=new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            typeChange();
+        }
+    };
+    
+    private ActionListener curComboActionListener=new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            curChange();
+        }
+    };
+
+    
+    public boolean isRegistredDoc() {
+        return registredDoc;
+    }
+
+    public void setRegistredDoc(boolean registredDoc) {
+        this.registredDoc = registredDoc;
+        setRegSQL(String.format("and %s (d.numb is null)",registredDoc?"not":""));
+    }
+
+
+    
     public void setMousePoint(Point MousePoint) {
         this.MousePoint = MousePoint;
     }
@@ -863,16 +935,20 @@ public class EditDoc extends javax.swing.JDialog {
         this.SQL = SQL;
     }
     private void initelements(){
+        setNoSQL(true);
         try{
+
             ResultSet rs=DataSet.QueryExec("select trim(name) from client order by upper(trim(name))", false);
             String item=null;
             if (clientCombo.getItemCount()>0){
                 item=(String)clientCombo.getSelectedItem();
             }
+            clientCombo.removeActionListener(clientComboActionListener);
             clientCombo.removeAllItems();
             while (rs.next()){
                 clientCombo.addItem(rs.getString(1));
             }
+           clientCombo.addActionListener(clientComboActionListener);
             if (item!=null){
                 clientCombo.setSelectedItem(item);
             }else{
@@ -880,26 +956,21 @@ public class EditDoc extends javax.swing.JDialog {
             }
             if (dateButton.getText().equals("-")){
                 startDate.add(GregorianCalendar.DATE, -7);
+                endDate.add(GregorianCalendar.DATE, 1);
                 dateButton.setText(String.format("%1$td.%1$tm.%1$tY - %2$td.%2$tm.%2$tY", getStartDate(),getEndDate()));
-/*
-                setDateSQL(String.format("and d.day between '%s.%s.%s' and '%s.%s.%s'",  getStartDate().get(GregorianCalendar.DAY_OF_MONTH),getStartDate().get(GregorianCalendar.MONTH)+1,
-                        getStartDate().get(GregorianCalendar.YEAR),getEndDate().get(GregorianCalendar.DAY_OF_MONTH),getEndDate().get(GregorianCalendar.MONTH)+1,
-                        getEndDate().get(GregorianCalendar.YEAR)));
- *
- 
-                GregorianCalendar end=getEndDate();
-                end.add(GregorianCalendar.DATE, 1);
-                setDateSQL(String.format("and d.day between to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY') and to_date('%2$td.%2$tm.%2$tY','DD.MM.YYYY')", getStartDate(),end));
- */           }
+            }
             rs=DataSet.QueryExec("select trim(name) from manager order by upper(trim(name))", false);
             item=null;
+            
             if (managerCombo.getItemCount()>0){
                 item=(String)managerCombo.getSelectedItem();
             }
+            managerCombo.removeActionListener(managerComboActionListener);
             managerCombo.removeAllItems();
             while (rs.next()){
                 managerCombo.addItem(rs.getString(1));
             }
+            managerCombo.addActionListener(managerComboActionListener);
             if (item!=null){
                 managerCombo.setSelectedItem(item);
             }else{
@@ -910,10 +981,12 @@ public class EditDoc extends javax.swing.JDialog {
             if (typeCombo.getItemCount()>0){
                 item=(String)typeCombo.getSelectedItem();
             }
+            typeCombo.removeActionListener(typeComboActionListener);
             typeCombo.removeAllItems();
             while (rs.next()){
                 typeCombo.addItem(rs.getString(1));
             }
+            typeCombo.addActionListener(typeComboActionListener);
             if (item!=null){
                 typeCombo.setSelectedItem(item);
             }else{
@@ -924,10 +997,12 @@ public class EditDoc extends javax.swing.JDialog {
             if (curCombo.getItemCount()>0){
                 item=(String)curCombo.getSelectedItem();
             }
+            curCombo.removeActionListener(curComboActionListener);
             curCombo.removeAllItems();
             while (rs.next()){
                 curCombo.addItem(rs.getString(1));
             }
+            curCombo.addActionListener(curComboActionListener);
             if (item!=null){
                 curCombo.setSelectedItem(item);
             }else{
@@ -938,26 +1013,30 @@ public class EditDoc extends javax.swing.JDialog {
             if (skladCombo.getItemCount()>0){
                 item=(String)skladCombo.getSelectedItem();
             }
+            skladCombo.removeActionListener(skladComboActionListener);
             skladCombo.removeAllItems();
             while (rs.next()){
                 skladCombo.addItem(rs.getString(1));
             }
+            skladCombo.addActionListener(skladComboActionListener);
             if (item!=null){
                 skladCombo.setSelectedItem(item);
             }else{
                 skladCombo.setSelectedIndex(0);
             }
-            setRegSQL("and d.numb is null");
+            
 
         }catch(Exception e){
             e.printStackTrace();
         }
-
+    setNoSQL(false);
     }
     private void SQL(){
+    if (!isNoSQL()){
         String sql=(String.format("%s %s %s %s %s %s %s %s %s %s %s", getSQL(),getClientSQL(),getDateSQL(),
-                getNoteSQL(),getNumbSQL(),getRegSQL(),getManagerSQL(),getSkladSQL(),getCurrSQL(),getTypeSQL(),getSumSQL()));
+            getNoteSQL(),getNumbSQL(),getRegSQL(),getManagerSQL(),getSkladSQL(),getCurrSQL(),getTypeSQL(),getSumSQL()));
         ((EditTableModel)naklTable.getModel()).update(sql);
+    }
     }
 
 }

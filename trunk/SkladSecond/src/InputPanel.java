@@ -721,9 +721,15 @@ public class InputPanel extends javax.swing.JPanel {
 
                 return;
             }
-            if(naklTable.getEditingColumn()==5)
+            if(naklTable.getEditingColumn()==5){
                 evt.setKeyCode(evt.VK_UNDEFINED);
+                TableCellEditor edit=naklTable.getCellEditor();
+                if (edit!=null){
+                    edit.stopCellEditing();
+                }
                 nameList.requestFocus();
+                return;
+            }
         }
 
 

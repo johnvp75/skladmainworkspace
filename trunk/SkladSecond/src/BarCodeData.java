@@ -14,6 +14,7 @@ public class BarCodeData {
         Name=name;
         Count=count;
     }
+    @Override
     public String toString(){
         return Name+" "+Count+" шт.";
     }

@@ -49,6 +49,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         type3 = new javax.swing.JRadioButton();
         type4 = new javax.swing.JRadioButton();
         jButton1 = new javax.swing.JButton();
+        type5 = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -94,6 +95,13 @@ public class PrintBarCode extends javax.swing.JDialog {
             }
         });
 
+        type5.setText("Цена в коде");
+        type5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                type5ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -107,7 +115,8 @@ public class PrintBarCode extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(type1)
-                            .addComponent(type2))
+                            .addComponent(type2)
+                            .addComponent(type5))
                         .addGap(5, 5, 5)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(type4)
@@ -135,7 +144,9 @@ public class PrintBarCode extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(jButton1)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(type5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -146,6 +157,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         type2.setSelected(true);
         type3.setSelected(false);
         type4.setSelected(false);
+        type5.setSelected(false);
     }//GEN-LAST:event_type2ActionPerformed
 
     private void type1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type1ActionPerformed
@@ -153,6 +165,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         type2.setSelected(false);
         type3.setSelected(false);
         type4.setSelected(false);
+        type5.setSelected(false);
     }//GEN-LAST:event_type1ActionPerformed
 
     private void type3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type3ActionPerformed
@@ -160,6 +173,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         type2.setSelected(false);
         type3.setSelected(true);
         type4.setSelected(false);
+        type5.setSelected(false);
     }//GEN-LAST:event_type3ActionPerformed
 
     private void type4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type4ActionPerformed
@@ -167,6 +181,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         type2.setSelected(false);
         type3.setSelected(false);
         type4.setSelected(true);
+        type5.setSelected(false);
     }//GEN-LAST:event_type4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -207,6 +222,9 @@ public class PrintBarCode extends javax.swing.JDialog {
                             field2="Упаковка: "+((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))+" шт.";
                         }
                     }
+                    if (type5.isSelected()){
+                        field2=bar_code.substring(bar_code.length()-4)+priceForCode(i);
+                    }
                     int count=((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 6));
                     DataSet.UpdateQuery(String.format("insert into barprint (name,bar_code,field1,field2,count) values ('%s','%s','%s','%s',%s)", name,bar_code,field1,field2,count));
                 }
@@ -224,6 +242,21 @@ public class PrintBarCode extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton1ActionPerformed
+    private String priceForCode(int row){
+        String priceString=new Integer(((Double)(((BarPrintModel)(jTable1.getModel())).getPrice(row)*10)).intValue()).toString();
+        while (priceString.length()<4){
+            priceString="0"+priceString;
+        }
+        return priceString;
+    }
+    
+    private void type5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type5ActionPerformed
+        type1.setSelected(false);
+        type2.setSelected(false);
+        type3.setSelected(false);
+        type4.setSelected(false);
+        type5.setSelected(true);
+    }//GEN-LAST:event_type5ActionPerformed
 
     /**
     * @param args the command line arguments
@@ -238,6 +271,7 @@ public class PrintBarCode extends javax.swing.JDialog {
     private javax.swing.JRadioButton type2;
     private javax.swing.JRadioButton type3;
     private javax.swing.JRadioButton type4;
+    private javax.swing.JRadioButton type5;
     // End of variables declaration//GEN-END:variables
     private int id_doc;
 
@@ -297,7 +331,11 @@ class BarPrintModel extends AbstractTableModel{
             default: return null;
         }
     }
-
+    
+    public Double getPrice(int row){
+        return price.get(row);
+    }
+    
     public int getInbox(int row){
         return element.get(row).count;
     }

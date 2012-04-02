@@ -16,6 +16,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.TreePath;
 
 /*
  * To change this template, choose Tools | Templates
@@ -305,7 +306,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void groupTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_groupTreeValueChanged
-        setGroup(((DataNode)evt.getPath().getLastPathComponent()).getIndex());
+//        setGroup(((DataNode)evt.getPath().getLastPathComponent()).getIndex());
         change();
     }//GEN-LAST:event_groupTreeValueChanged
 
@@ -439,24 +440,6 @@ public class PrepareInventForm extends javax.swing.JDialog {
                     }
                 }
             }
-            SQL="select d.id_doc from document d, lines l where id_client=(select id_client from client where name='Инвентаризация') and l.id_doc(+)=d.id_doc and l.rowid is null";
-            rs=DataSet.QueryExec(SQL, false);
-            while (rs.next()){
-                SQL=String.format("Delete from document where id_doc=%s", rs.getString(1));
-                DataSet.UpdateQuery1(SQL);
-            }
-            rs=DataSet.QueryExec1("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
-            AbstractListModel model;
-            final Vector<String> strings=new Vector<String>();
-            int i=0;
-            while (rs.next()){
-                strings.add(rs.getString(2).substring(1) +"; "+rs.getString(1)+"; "+rs.getString(3));
-            }
-            model=new AbstractListModel() {
-            public int getSize() { return strings.size(); }
-            public Object getElementAt(int i) { return strings.elementAt(i); }
-            };
-            ImpList.setModel(model);
             jButton4.setEnabled(false);
             JOptionPane.showMessageDialog(null, "Импорт завершен!");
 
@@ -507,7 +490,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
             GregorianCalendar now=new GregorianCalendar();
             SQL=String.format("Insert into document (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc) select " +
                     "%1$s, 5, %2$s, id_skl, (select id_manager from manager where name = '%3$s'), %4$s, %5$s, %6$s, 0.00, 'Обнуление остатков %7$s id_group: %9$s sklad: %8$s', " +
-                    "0 as disc from sklad where name='%8$s'", id, id_client, getManager(), id_val, numb, day, now.getTime().toString(),skladCombo.getSelectedItem(), getGroup());
+                    "0 as disc from sklad where name='%8$s'", id, id_client, getManager(), id_val, numb, day, now.getTime().toString(),skladCombo.getSelectedItem(), getGroupsStringForQuery().substring(3));
             DataSet.UpdateQuery1(SQL);
             for (int i=0;i<rowcount;i++){
                 Double in=(new Double((String)((DefaultTableModel)priceTable.getModel()).getValueAt(i, 1)));
@@ -521,6 +504,21 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 DataSet.UpdateQuery1(SQL);
 
             }
+            SQL="delete from document where id_doc in (select id_doc from (select d.id_doc, count(l.rowid) as coun from document d left join lines l on l.id_doc = d.id_doc where id_client=(select id_client from client where name='Инвентаризация') group by d.id_doc) where coun=0)";
+            DataSet.UpdateQuery1(SQL);
+            rs=DataSet.QueryExec1("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
+            AbstractListModel model;
+            final Vector<String> strings=new Vector<String>();
+            int i=0;
+            while (rs.next()){
+                strings.add(rs.getString(2).substring(1) +"; "+rs.getString(1)+"; "+rs.getString(3));
+            }
+            model=new AbstractListModel() {
+            public int getSize() { return strings.size(); }
+            public Object getElementAt(int i) { return strings.elementAt(i); }
+            };
+            ImpList.setModel(model);
+            
             DataSet.commit1();
             jButton4.setEnabled(true);
 //            DataSet.rollback1();
@@ -668,8 +666,14 @@ public class PrepareInventForm extends javax.swing.JDialog {
         this.findStr = findStr;
     }
 
-    public int getGroup() {
-        return Group;
+    public String getGroupsStringForQuery() {
+        String ret="";
+        TreePath[] selectedItems=groupTree.getSelectionPaths();
+        for (TreePath element : selectedItems ){
+            ret=ret+(((DataNode)element.getLastPathComponent()).getIndex())+", ";
+        }
+        ret=ret.substring(0, ret.lastIndexOf(',')).trim();
+        return ret.equals("-2")?" is null":" in ( "+ret+" )";
     }
 
     public void setGroup(int Group) {
@@ -684,30 +688,31 @@ public class PrepareInventForm extends javax.swing.JDialog {
             ((DefaultTableModel)priceTable.getModel()).setRowCount(0);
             ResultSet rs;
             String SQL="";
-            if (getGroup()==-2)
+/*            if (getGroup().equals("-2"))
                 SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select trim(tv.name) as name, sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t  where " +
                             "d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and tv.id_tovar=l.id_tovar and d.id_skl=(select id_skl from sklad where name = '%1$s')  group by trim(tv.name)) tab where t.id_tovar = k.id_tovar "+
                             "and k.id_skl=(select id_skl from sklad where name = '%1$s') and t.name=tab.name(+) order by name", skladCombo.getSelectedItem());
             else{
+*/
                 if (forNow.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%1$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
-                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%1$s connect by prior "+
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %1$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %1$s connect by prior "+
                         "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
                         "id_skl from sklad where name = '%2$s')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%2$s') order by name",
-                        getGroup(),skladCombo.getSelectedItem());
+                        getGroupsStringForQuery(),skladCombo.getSelectedItem());
                 if (forDate.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
-                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%2$s connect by prior "+
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %2$s connect by prior "+
                         "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
                         "id_skl from sklad where name = '%1$s') and d.day<to_date('%3$td.%3$tm.%3$tY','dd.mm.yyyy')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select "+
-                        "id_skl from sklad where name = '%1$s') order by name",skladCombo.getSelectedItem(),getGroup(),DateRest.getDate());
+                        "id_skl from sklad where name = '%1$s') order by name",skladCombo.getSelectedItem(),getGroupsStringForQuery(),DateRest.getDate());
                 if (forNumb.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group=%2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
-                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group=%2$s connect by prior "+
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %2$s connect by prior "+
                         "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
                         "id_skl from sklad where name = '%3$s') and (d.day<(select day from document where numb=%4$s and id_type_doc=2 and to_char(day,'YYYY')='%1$s'))  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group "+
-                        "and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%3$s') order by name", NumbYear.getSelectedItem(),getGroup(), skladCombo.getSelectedItem(),Numbrest.getText());
-                }
+                        "and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%3$s') order by name", NumbYear.getSelectedItem(),getGroupsStringForQuery(), skladCombo.getSelectedItem(),Numbrest.getText());
+//                }
             rs=DataSet.QueryExec(SQL, false);
             while (rs.next()){
                 String[] rowData=new String[4];
@@ -723,4 +728,5 @@ public class PrepareInventForm extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+    
 }

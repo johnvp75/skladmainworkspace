@@ -157,6 +157,7 @@ public class ArchiveDialog extends javax.swing.JDialog {
             pgDataSet.close();
             JOptionPane.showMessageDialog(null, "Архивирование завершено удачно", "Ok!", JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception e){
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Ошибка архивирования!", "Ошибка", JOptionPane.ERROR_MESSAGE);
             try{
                 DataSet.rollback();
@@ -216,7 +217,7 @@ public class ArchiveDialog extends javax.swing.JDialog {
         }
         int id_skl=0;
         int id_manager;
-        String SQL=String.format("select id_manager from manager where name = %s", getManager());
+        String SQL=String.format("select id_manager from manager where name = '%s'", getManager());
         rs=DataSet.QueryExec(SQL, false);
         if (rs.next()){
             id_manager=rs.getInt(1);
@@ -232,9 +233,9 @@ public class ArchiveDialog extends javax.swing.JDialog {
         }
         while (!allId_skl.empty()){
             id_skl=allId_skl.pop();
-            SQL=String.format("Insert into document (id_doc,id_type_doc,id_client,id_skl,id_manager,id_val,numb,day,disc) values (%s,11,%s,%s,%s,21,0,'%5$td.%5$tm.%5$tY',0)", id_doc,id_client,id_skl,id_manager,getDayArc());
+            SQL=String.format("Insert into document (id_doc,id_type_doc,id_client,id_skl,id_manager,id_val,numb,day,disc) values (%s,11,%s,%s,%s,21,0,to_date('%5$td.%5$tm.%5$tY','DD.MM.YYYY'),0)", id_doc,id_client,id_skl,id_manager,getDayArc());
             DataSet.UpdateQuery(SQL);
-            SQL=String.format("Insert into lines (id_tovar,id_doc,kol,cost,disc) select * from (select l.id_tovar, %s as id_doc, sum(l.kol*decode(t.operacia,1,1,2,-1)) as kol, 0 as cost,0 as disc  from lines l, document d, type_doc t where l.id_doc=d.id_doc and d.id_skl=%s and d.day<'%3$td.%3$tm.%3$tY' and d.id_type_doc=t.id_type_doc group by l.id_tovar, d.id_skl) where kol!=0", id_doc,id_skl,getDayArc());
+            SQL=String.format("Insert into lines (id_tovar,id_doc,kol,cost,disc) select * from (select l.id_tovar, %s as id_doc, sum(l.kol*decode(t.operacia,1,1,2,-1)) as kol, 0 as cost,0 as disc  from lines l, document d, type_doc t where l.id_doc=d.id_doc and d.id_skl=%s and d.day<to_date('%3$td.%3$tm.%3$tY','DD.MM.YYYY') and d.id_type_doc=t.id_type_doc group by l.id_tovar, d.id_skl) where kol!=0", id_doc,id_skl,getDayArc());
             DataSet.UpdateQuery(SQL);
             id_doc++;
         }
@@ -242,18 +243,18 @@ public class ArchiveDialog extends javax.swing.JDialog {
     }
     
     private void copyAndDeleteLines() throws Exception{
-        String SQL=String.format("select id_tovar, id_doc, kol, cost, disc from lines where id_doc in (select id_doc from document where day<'%1$td.%1$tm.%1$tY')", getDayArc());
+        String SQL=String.format("select id_tovar, id_doc, kol, cost, disc from lines where id_doc in (select id_doc from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY'))", getDayArc());
         ResultSet rsOracle=DataSet.QueryExec(SQL, false);
         while (rsOracle.next()){
             SQL=String.format("insert into lines_arc (id_tovar, id_doc, kol, cost, disc) values (%s, %s, %s, %s, %s)", rsOracle.getString(1), rsOracle.getString(2), rsOracle.getString(3), rsOracle.getString(4), rsOracle.getString(5));
             pgDataSet.UpdateQuery(SQL);
         }
-        SQL=String.format("delete from lines where id_doc in (select id_doc from document where day<'%1$td.%1$tm.%1$tY')", getDayArc());
+        SQL=String.format("delete from lines where id_doc in (select id_doc from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY'))", getDayArc());
         DataSet.UpdateQuery(SQL);
     }
     
     private void copyAndDeleteDocuments() throws Exception{
-        String SQL=String.format("select id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1 from document where day<'%1$td.%1$tm.%1$tY'", getDayArc());
+        String SQL=String.format("select id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1 from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY')", getDayArc());
         ResultSet rsOracle=DataSet.QueryExec(SQL, false);
         while (rsOracle.next()){
             SQL=String.format("insert into doc_arc (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
@@ -262,7 +263,7 @@ public class ArchiveDialog extends javax.swing.JDialog {
                     , rsOracle.getString(11), rsOracle.getString(12), rsOracle.getString(13));
             pgDataSet.UpdateQuery(SQL);
         }
-        SQL=String.format("delete from from document where day<'%1$td.%1$tm.%1$tY'", getDayArc());
+        SQL=String.format("delete from from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY')", getDayArc());
         DataSet.UpdateQuery(SQL);
     }
 

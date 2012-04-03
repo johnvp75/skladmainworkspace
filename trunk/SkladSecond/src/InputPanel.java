@@ -855,7 +855,7 @@ public class InputPanel extends javax.swing.JPanel {
             if (getId_doc()==0){
                 setId_doc(1);
                 DataSet.UpdateQuery(SQL);
-                rs1=DataSet.QueryExec("select id_doc from document where id_doc=(select max(id_doc) from document)", false);
+                rs1=DataSet.QueryExec("select max(id_doc) from document", false);
                 if (rs1.next())
                     setId_doc(rs1.getInt(1)+1);
                 SQL="insert into document (id_type_doc, id_doc, id_client, id_skl, id_val, sum, note, disc, id_manager) select (" +

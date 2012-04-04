@@ -257,7 +257,7 @@ public class ArchiveDialog extends javax.swing.JDialog {
         String SQL=String.format("select id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1 from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY')", getDayArc());
         ResultSet rsOracle=DataSet.QueryExec(SQL, false);
         while (rsOracle.next()){
-            SQL=String.format("insert into doc_arc (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1) values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            SQL=String.format("insert into doc_arc (id_doc, id_type_doc, id_client, id_skl, id_manager, id_val, numb, day, sum, note, disc, id_price, numb1) values (%s, %s, %s, %s, %s, %s, %s, '%s', %s, '%s', %s, %s, %s)"
                     , rsOracle.getString(1), rsOracle.getString(2), rsOracle.getString(3), rsOracle.getString(4), rsOracle.getString(5)
                     , rsOracle.getString(6), rsOracle.getString(7), rsOracle.getString(8), rsOracle.getString(9), rsOracle.getString(10)
                     , rsOracle.getString(11), rsOracle.getString(12), rsOracle.getString(13));
@@ -297,8 +297,8 @@ class pgDataSet{
 	private static Statement st = null;
 	private static int retstr=0;
         private static String driver = "org.postgresql.Driver";
-        private static String url = "jdbc:postgresql://192.168.1.2:5432";
-        private static String username = "SkladArc";
+        private static String url = "jdbc:postgresql://192.168.1.2:5432/SkladArc";
+        private static String username = "remote";
         private static String password = "lkjfsd1sadAS46sdaSAS65dldjdandsadcvh";
 
 	public static int UpdateQuery(String aValue) throws SQLException{

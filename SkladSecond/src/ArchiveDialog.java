@@ -136,15 +136,15 @@ public class ArchiveDialog extends javax.swing.JDialog {
             try{
                 pgDataSet.commit();
             }catch(Exception e){
-                JOptionPane.showMessageDialog(null, "Ошибка commit для архива!", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 sucssesCommit=false;
                 e.printStackTrace();
                 pgDataSet.rollback();
                 DataSet.rollback();
+                JOptionPane.showMessageDialog(null, "Ошибка commit для архива!", "Ошибка", JOptionPane.ERROR_MESSAGE);
             }
             if (sucssesCommit){
             try{
-                pgDataSet.commit();
+                DataSet.commit();
             }catch(Exception e){
                 JOptionPane.showMessageDialog(null, "Ошибка commit для основной базы!", "Ошибка", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
@@ -158,13 +158,13 @@ public class ArchiveDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(null, "Архивирование завершено удачно", "Ok!", JOptionPane.INFORMATION_MESSAGE);
         }catch(Exception e){
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Ошибка архивирования!", "Ошибка", JOptionPane.ERROR_MESSAGE);
             try{
                 DataSet.rollback();
                 pgDataSet.rollback();
             }catch(Exception e1){
                 e1.printStackTrace();
             }
+            JOptionPane.showMessageDialog(null, "Ошибка архивирования!", "Ошибка", JOptionPane.ERROR_MESSAGE);            
         }
     }//GEN-LAST:event_startArcActionPerformed
 
@@ -263,7 +263,7 @@ public class ArchiveDialog extends javax.swing.JDialog {
                     , rsOracle.getString(11), rsOracle.getString(12), rsOracle.getString(13));
             pgDataSet.UpdateQuery(SQL);
         }
-        SQL=String.format("delete from from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY')", getDayArc());
+        SQL=String.format("delete from document where day<to_date('%1$td.%1$tm.%1$tY','DD.MM.YYYY')", getDayArc());
         DataSet.UpdateQuery(SQL);
     }
 

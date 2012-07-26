@@ -360,6 +360,12 @@ public class PriceChange extends javax.swing.JDialog {
 }//GEN-LAST:event_runButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        for (int i=0; i<priceTable.getModel().getRowCount();i++){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0)&&(Double)priceTable.getModel().getValueAt(i, 4)<0.01){
+                    JOptionPane.showMessageDialog(this, "Нулевые цены недопустимы!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
         try{
             ResultSet rs=DataSet.QueryExec("Select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"'", false);
             rs.next();

@@ -29,19 +29,29 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="type1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="type2" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="type1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="type2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
+                          </Group>
                           <Component id="type5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="type4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="type3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="type4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="type3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
+                              <Component id="jButton1" min="-2" pref="225" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="type6" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" pref="225" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="selectAll" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -50,7 +60,8 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+              <Component id="selectAll" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
@@ -72,8 +83,11 @@
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="type5" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="type5" min="-2" max="-2" attributes="0"/>
+                  <Component id="type6" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="10" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -119,7 +133,6 @@
     </Component>
     <Component class="javax.swing.JRadioButton" name="type3">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" value="&#x426;&#x435;&#x43d;&#x430; + &#x43a;&#x43e;&#x43b;-&#x432;&#x43e; &#x432; &#x443;&#x43f;&#x430;&#x43a;&#x43e;&#x432;&#x43a;&#x435;"/>
       </Properties>
       <Events>
@@ -148,6 +161,22 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="type5ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="type6">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x426;&#x435;&#x43d;&#x430; &#x432; &#x43a;&#x43e;&#x434;&#x435; + &#x43a;&#x43e;&#x43b;-&#x432;&#x43e; &#x432; &#x443;&#x43f;&#x430;&#x43a;&#x43e;&#x432;&#x43a;&#x435;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="type6ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="selectAll">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x412;&#x44b;&#x434;&#x435;&#x43b;&#x438;&#x442;&#x44c; &#x432;&#x441;&#x435;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

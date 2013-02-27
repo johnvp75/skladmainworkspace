@@ -87,8 +87,9 @@
                               <Group type="103" groupAlignment="1" max="-2" attributes="0">
                                   <Component id="selectAllButton" alignment="0" pref="104" max="32767" attributes="1"/>
                                   <Component id="unselectButton" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="selectNullButton" alignment="0" max="32767" attributes="1"/>
-                                  <Component id="invertButton" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="unselectSale" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="selectNullButton" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="invertButton" alignment="1" max="32767" attributes="1"/>
                                   <Component id="jButton1" alignment="0" max="32767" attributes="1"/>
                               </Group>
                               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
@@ -165,19 +166,21 @@
                       <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="selectAllButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="unselectButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="unselectSale" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="selectNullButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="invertButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                       <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="discAllField" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="DiscButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="SelectAllAction" min="-2" max="-2" attributes="0"/>
@@ -418,6 +421,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="UnselectAllActionActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="unselectSale">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x423;&#x431;&#x440;&#x430;&#x442;&#x44c; &#x430;&#x43a;&#x446;&#x438;&#x43e;&#x43d;&#x43d;&#x44b;&#x435;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="unselectSaleActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

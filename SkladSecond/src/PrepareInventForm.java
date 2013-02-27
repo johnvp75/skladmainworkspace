@@ -6,15 +6,23 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
+import java.util.Stack;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.TreePath;
 
@@ -77,6 +85,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
         ImpList = new javax.swing.JList();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -207,6 +216,13 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
         });
 
+        jButton7.setText("Импорт из файла");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -223,36 +239,40 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(forNow, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(forDate)
-                                .addComponent(forNumb))
-                            .addGap(18, 18, 18)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(Numbrest, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(DateRest, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(forNow, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(layout.createSequentialGroup()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(forDate)
+                                        .addComponent(forNumb))
+                                    .addGap(18, 18, 18)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(Numbrest, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(DateRest, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 199, Short.MAX_VALUE)
                                     .addComponent(NumbYear, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jLabel2)))
-                            .addGap(15, 15, 15)))
-                    .addComponent(printButton)
+                                    .addComponent(jLabel2)
+                                    .addGap(15, 15, 15)))
+                            .addComponent(printButton)
+                            .addComponent(jButton2)
+                            .addComponent(jButton3)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jButton7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton6)))
+                        .addGap(22, 22, 22))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton6))
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jButton5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(22, 22, 22))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,14 +312,13 @@ public class PrepareInventForm extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton4)
                             .addComponent(jButton6))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
-                        .addGap(22, 22, 22))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButton7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
 
         pack();
@@ -431,14 +450,18 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 SQL=String.format("select trim(t.name), l.kol, l.rowid from tovar t, lines l where t.id_tovar=l.id_tovar and l.id_doc=%s", choose[i].substring(start,finish));
                 rs=DataSet.QueryExec(SQL, false);
                 while (rs.next()){
-                    setFindStr(rs.getString(1));
+/*                    setFindStr(rs.getString(1));
                     int row=find(true,false);
                     if (row>-1){
                         Integer count=(new Integer((String)((DefaultTableModel)priceTable.getModel()).getValueAt(row, 2)))+rs.getInt(2);
                         ((DefaultTableModel)priceTable.getModel()).setValueAt(count.toString(), row, 2);
                         DataSet.UpdateQuery1(String.format("delete from lines where rowid='%s'", rs.getString(3)));
                     }
-                }
+*/
+                    if (addValueInTable(rs.getString(1), rs.getInt(2))){
+                        DataSet.UpdateQuery1(String.format("delete from lines where rowid='%s'", rs.getString(3)));
+                    }
+                    }
             }
             jButton4.setEnabled(false);
             JOptionPane.showMessageDialog(null, "Импорт завершен!");
@@ -570,6 +593,22 @@ public class PrepareInventForm extends javax.swing.JDialog {
         
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(
+            "Файлы портативного сканера", "txt", "pwd");
+        chooser.setFileFilter(filter);
+        chooser.setMultiSelectionEnabled(true);
+        int returnVal = chooser.showOpenDialog(null);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            errorCodeFromFile=new Stack<String>();
+            for (File file:chooser.getSelectedFiles()){
+                Stack<String> tovarNames=getAllTovarNamesFromFile(file);
+            }
+        }
+ 
+    }//GEN-LAST:event_jButton7ActionPerformed
+
     private int find (boolean next, boolean select){
         if (!next || getFindStr()==null)
             setFindStr(JOptionPane.showInputDialog("Введите часть строки:"));
@@ -637,6 +676,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -649,6 +689,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
     private int Group = 0;
     private String findStr;
     protected String Manager;
+    private Stack<String> errorCodeFromFile;
 
     public String getManager() {
         return Manager;
@@ -728,5 +769,57 @@ public class PrepareInventForm extends javax.swing.JDialog {
             e.printStackTrace();
         }
     }
+
+    private Stack<String> getAllBarcodesFromFile(File file) {
+        Stack<String> allBarcodes=new Stack<String>();
+        try {
+            FileInputStream fstream = new FileInputStream(file);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String str;
+            while ((str = br.readLine()) != null) {
+                allBarcodes.add(str);
+            }
+            in.close();
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return allBarcodes;
+    }
+ 
+    private boolean addValueInTable(String tovarName, int addCount){
+        setFindStr(tovarName);
+        int row=find(true,false);
+        if (row>-1){
+            Integer count=(new Integer((String)((DefaultTableModel)priceTable.getModel()).getValueAt(row, 2)))+addCount;
+            ((DefaultTableModel)priceTable.getModel()).setValueAt(count.toString(), row, 2);
+            return true;
+        }
+        return false;
+    }
+
+    private Stack<String> getAllTovarNamesFromFile(File file) {
+        Stack<String> allBarcodes=getAllBarcodesFromFile(file);
+        Stack<String> allTovarNames=new Stack<String>();
+        
+        while (!allBarcodes.empty()){
+            String SQL = String.format("select distinct count(*) from bar_code where bar_code='5s'" , allBarcodes.peek());
+            try {
+                ResultSet rs=DataSet.QueryExec("SQL", false);
+                if (rs.getInt(1)==1){
+                    SQL=String.format("select distinct trim(t.name) from tovar t,bar_code b where t.id_tovar = b.id_tovar and b.bar_code='%s'", allBarcodes.pop());
+                    rs=DataSet.QueryExec(SQL, false);
+                    allTovarNames.add(rs.getString(1));
+                }else{
+                    errorCodeFromFile.add(allBarcodes.pop());
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            
+        }
+        return allTovarNames;
+    }
     
+    class 
 }

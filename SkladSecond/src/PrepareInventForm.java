@@ -812,10 +812,12 @@ public class PrepareInventForm extends javax.swing.JDialog {
         while (!allBarcodes.empty()){
             String SQL = String.format("select distinct count(*) from bar_code where bar_code='%s'" , allBarcodes.peek());
             try {
-                ResultSet rs=DataSet.QueryExec("SQL", false);
+                ResultSet rs=DataSet.QueryExec(SQL, false);
+                rs.next();
                 if (rs.getInt(1)==1){
                     SQL=String.format("select distinct trim(t.name) from tovar t,bar_code b where t.id_tovar = b.id_tovar and b.bar_code='%s'", allBarcodes.peek());
                     rs=DataSet.QueryExec(SQL, false);
+                    rs.next();
                     allTovarNames.add(new BarCodeData(rs.getString(1),allBarcodes.pop()));
                 }else{
                     errorCodeFromFile.add(allBarcodes.pop());

@@ -603,7 +603,14 @@ public class PrepareInventForm extends javax.swing.JDialog {
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             errorCodeFromFile=new Stack<String>();
             for (File file:chooser.getSelectedFiles()){
-                Stack<String> tovarNames=getAllTovarNamesFromFile(file);
+                Stack<BarCodeData> tovarNames=getAllTovarNamesFromFile(file);
+                while (!tovarNames.empty()){
+                    BarCodeData currentTovar=tovarNames.pop();
+                    if (!addValueInTable(currentTovar.getName(), 1)){
+                        errorCodeFromFile.add(currentTovar.getCode());
+                    }
+                }
+                
             }
         }
  
@@ -798,18 +805,18 @@ public class PrepareInventForm extends javax.swing.JDialog {
         return false;
     }
 
-    private Stack<String> getAllTovarNamesFromFile(File file) {
+    private Stack<BarCodeData> getAllTovarNamesFromFile(File file) {
         Stack<String> allBarcodes=getAllBarcodesFromFile(file);
-        Stack<String> allTovarNames=new Stack<String>();
+        Stack<BarCodeData> allTovarNames=new Stack<BarCodeData>();
         
         while (!allBarcodes.empty()){
-            String SQL = String.format("select distinct count(*) from bar_code where bar_code='5s'" , allBarcodes.peek());
+            String SQL = String.format("select distinct count(*) from bar_code where bar_code='%s'" , allBarcodes.peek());
             try {
                 ResultSet rs=DataSet.QueryExec("SQL", false);
                 if (rs.getInt(1)==1){
-                    SQL=String.format("select distinct trim(t.name) from tovar t,bar_code b where t.id_tovar = b.id_tovar and b.bar_code='%s'", allBarcodes.pop());
+                    SQL=String.format("select distinct trim(t.name) from tovar t,bar_code b where t.id_tovar = b.id_tovar and b.bar_code='%s'", allBarcodes.peek());
                     rs=DataSet.QueryExec(SQL, false);
-                    allTovarNames.add(rs.getString(1));
+                    allTovarNames.add(new BarCodeData(rs.getString(1),allBarcodes.pop()));
                 }else{
                     errorCodeFromFile.add(allBarcodes.pop());
                 }
@@ -821,5 +828,5 @@ public class PrepareInventForm extends javax.swing.JDialog {
         return allTovarNames;
     }
     
-    class 
+    
 }

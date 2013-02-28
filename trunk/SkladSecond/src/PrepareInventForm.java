@@ -612,6 +612,11 @@ public class PrepareInventForm extends javax.swing.JDialog {
                 }
                 
             }
+            if (errorCodeFromFile.empty()){
+                JOptionPane.showMessageDialog(null, "Импорт успешно завершен!", "", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, String.format("Импорт завершен с ошибками! (%s штук)", errorCodeFromFile.size()), "", JOptionPane.ERROR_MESSAGE);
+            }
         }
  
     }//GEN-LAST:event_jButton7ActionPerformed

@@ -1,6 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
   </Properties>
@@ -40,18 +40,21 @@
                           <Component id="type5" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="type4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="type3" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
-                              <Component id="jButton1" min="-2" pref="225" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="type6" min="-2" max="-2" attributes="0"/>
+                          <Component id="type4" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="type3" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="type6" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="addBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="jButton1" alignment="0" min="-2" pref="225" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Component id="selectAll" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="selectAll" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Component id="selectedRowCountText" min="-2" pref="125" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -60,12 +63,15 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="selectAll" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="selectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="selectedRowCountText" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="type1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -76,18 +82,19 @@
                           <Component id="type2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="type4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="type5" min="-2" max="-2" attributes="0"/>
+                          <Component id="type6" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="addBox" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="type5" min="-2" max="-2" attributes="0"/>
-                  <Component id="type6" alignment="0" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace pref="10" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -107,6 +114,9 @@
             </Property>
             <Property name="columnSelectionAllowed" type="boolean" value="true"/>
           </Properties>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jTable1.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent event){&#xa;        countSelectedRow();&#xa;    }&#xa;});&#xa;addBox.setSelected(false);"/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>
@@ -178,6 +188,16 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="selectedRowCountText">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x412;&#x44b;&#x434;&#x435;&#x43b;&#x435;&#x43d;&#x43e; 0 &#x441;&#x442;&#x440;&#x43e;&#x43a;"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="addBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x414;&#x43e;&#x431;&#x430;&#x432;&#x438;&#x442;&#x44c; &#x43a; &#x438;&#x43c;&#x435;&#x44e;&#x449;&#x438;&#x43c;&#x441;&#x44f;"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

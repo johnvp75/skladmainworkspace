@@ -124,6 +124,7 @@ public class InputPanel extends javax.swing.JPanel {
         jLabel8 = new JLabel();
         type_docCombo = new JComboBox();
         jButton1 = new JButton();
+        nowButton = new JButton();
 
         AddGroup.setText("Добавить группу");
         AddGroup.addActionListener(new ActionListener() {
@@ -225,8 +226,17 @@ public class InputPanel extends javax.swing.JPanel {
         jLabel2.setText("Поставщик");
 
         jLabel3.setText("Дата");
+        jLabel3.setEnabled(false);
+        jLabel3.setFocusable(false);
 
         jFormattedTextField1.setText("jFormattedTextField1");
+        jFormattedTextField1.setEnabled(false);
+        jFormattedTextField1.setFocusable(false);
+        jFormattedTextField1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jFormattedTextField1ActionPerformed(evt);
+            }
+        });
 
         groupTree.setRootVisible(false);
         groupTree.setShowsRootHandles(true);
@@ -424,6 +434,13 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
+        nowButton.setText("Сегодня");
+        nowButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                nowButtonActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -441,48 +458,49 @@ public class InputPanel extends javax.swing.JPanel {
                             .addComponent(printButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                             .addComponent(regButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                             .addComponent(saveButton, GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)))
-                    .addGroup(layout.createParallelGroup(Alignment.TRAILING, false)
-                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(ComponentPlacement.RELATED)
-                            .addComponent(noteTextField))
-                        .addGroup(Alignment.LEADING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 319, GroupLayout.PREFERRED_SIZE)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel1))
-                                    .addPreferredGap(ComponentPlacement.RELATED)
-                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                        .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))))
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(77, 77, 77)
-                                    .addComponent(jLabel3)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel8))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(14, 14, 14)
-                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                        .addGroup(layout.createSequentialGroup()
-                                            .addComponent(jLabel5)
-                                            .addPreferredGap(ComponentPlacement.RELATED)
-                                            .addComponent(valCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                        .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGap(50, 50, 50)
-                                    .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                                        .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                                    .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(ComponentPlacement.RELATED)
+                        .addComponent(noteTextField, GroupLayout.PREFERRED_SIZE, 745, GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(nowButton, GroupLayout.PREFERRED_SIZE, 96, GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 319, GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel1))
+                                .addPreferredGap(ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                    .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))))
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(77, 77, 77)
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel8))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(14, 14, 14)
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(ComponentPlacement.RELATED)
+                                        .addComponent(valCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
+                                    .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(itogowo, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -527,7 +545,8 @@ public class InputPanel extends javax.swing.JPanel {
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(noteTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                    .addComponent(noteTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nowButton))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -543,7 +562,7 @@ public class InputPanel extends javax.swing.JPanel {
                         .addComponent(priceButton)
                         .addPreferredGap(ComponentPlacement.RELATED)
                         .addComponent(jButton1))
-                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(itogowo)
@@ -998,6 +1017,10 @@ public class InputPanel extends javax.swing.JPanel {
     private void koefTextFieldKeyTyped(KeyEvent evt) {//GEN-FIRST:event_koefTextFieldKeyTyped
         char[] symb = new char[1];
         symb[0]=evt.getKeyChar();
+        if (symb[0]==','){
+            symb[0]='.';
+            evt.setKeyChar('.');
+        }
         if (!(new String(symb)).matches("[0-9.]"))
             evt.setKeyChar(evt.CHAR_UNDEFINED);
     }//GEN-LAST:event_koefTextFieldKeyTyped
@@ -1259,6 +1282,16 @@ public class InputPanel extends javax.swing.JPanel {
         InsertItem.setEnabled(true);
     }//GEN-LAST:event_MoveGroupActionPerformed
 
+    private void nowButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_nowButtonActionPerformed
+//        GregorianCalendar today=new GregorianCalendar();
+        String noteText=String.format("Приход %1$td.%1$tm.%1$tY", new GregorianCalendar());
+        noteTextField.setText(noteText);
+    }//GEN-LAST:event_nowButtonActionPerformed
+
+    private void jFormattedTextField1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jFormattedTextField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jFormattedTextField1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1297,6 +1330,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JTable naklTable;
     private JList nameList;
     private JTextField noteTextField;
+    private JButton nowButton;
     private JButton priceButton;
     private JButton printButton;
     private JButton regButton;

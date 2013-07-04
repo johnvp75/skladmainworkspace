@@ -1,16 +1,20 @@
 
 import java.awt.event.ActionListener;
 import java.awt.print.PrinterException;
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.Stack;
@@ -615,12 +619,38 @@ public class PrepareInventForm extends javax.swing.JDialog {
             if (errorCodeFromFile.empty()){
                 JOptionPane.showMessageDialog(null, "Импорт успешно завершен!", "", JOptionPane.INFORMATION_MESSAGE);
             }else{
-                JOptionPane.showMessageDialog(null, String.format("Импорт завершен с ошибками! (%s штук)", errorCodeFromFile.size()), "", JOptionPane.ERROR_MESSAGE);
+                int errorCount=errorCodeFromFile.size();
+                String saveReturn=saveErrorCodes();
+                String errorMessage="";
+                if (!saveReturn.equals("")){
+                    errorMessage=String.format("Импорт завершен с ошибками! (%s штук) \n Данные записвны в файл: %s", errorCount,saveReturn);
+                }else{
+                    errorMessage=String.format("Импорт завершен с ошибками! (%s штук)", errorCodeFromFile.size());
+                }
+                        
+                JOptionPane.showMessageDialog(null, errorMessage, "", JOptionPane.ERROR_MESSAGE);
+                
             }
         }
  
     }//GEN-LAST:event_jButton7ActionPerformed
 
+    private String saveErrorCodes() {
+        String fileName=String.format("error_group_%s.txt", ((DataNode)groupTree.getSelectionPath().getLastPathComponent()).getIndex());
+        File errorfile=new File(fileName);
+        try {
+            errorfile.createNewFile();
+            PrintWriter outInFile=new PrintWriter(new BufferedWriter(new FileWriter(errorfile)));
+            while (!errorCodeFromFile.empty())
+                outInFile.println(errorCodeFromFile.pop());
+            outInFile.flush();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Ошибка записи ошибок в файл!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+            return "";
+        }
+        return fileName;
+    }
     private int find (boolean next, boolean select){
         if (!next || getFindStr()==null)
             setFindStr(JOptionPane.showInputDialog("Введите часть строки:"));

@@ -4,6 +4,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
 /*
@@ -59,12 +61,20 @@ public class PrintBarCode extends javax.swing.JDialog {
         type5 = new javax.swing.JRadioButton();
         type6 = new javax.swing.JRadioButton();
         selectAll = new javax.swing.JButton();
+        selectedRowCountText = new javax.swing.JLabel();
+        addBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTable1.setModel(new BarPrintModel(getId_doc()));
         jTable1.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(jTable1);
+        jTable1.getModel().addTableModelListener(new TableModelListener() {
+            public void tableChanged(TableModelEvent event){
+                countSelectedRow();
+            }
+        });
+        addBox.setSelected(false);
 
         jLabel1.setText("Поля для печати:");
 
@@ -124,6 +134,10 @@ public class PrintBarCode extends javax.swing.JDialog {
             }
         });
 
+        selectedRowCountText.setText("Выделено 0 строк");
+
+        addBox.setText("Добавить к имеющимся");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -143,25 +157,30 @@ public class PrintBarCode extends javax.swing.JDialog {
                                 .addGap(5, 5, 5))
                             .addComponent(type5, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(type4)
-                                    .addComponent(type3))
-                                .addGap(90, 90, 90)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(type6)))
-                    .addComponent(selectAll))
+                            .addComponent(type4)
+                            .addComponent(type3)
+                            .addComponent(type6))
+                        .addGap(57, 57, 57)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addBox)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(selectAll)
+                        .addGap(27, 27, 27)
+                        .addComponent(selectedRowCountText, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(selectAll)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(selectAll)
+                    .addComponent(selectedRowCountText))
                 .addGap(6, 6, 6)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(type1)
@@ -169,15 +188,16 @@ public class PrintBarCode extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(type2)
-                            .addComponent(type4)))
+                            .addComponent(type4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(type5)
+                            .addComponent(type6)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(jButton1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(type5)
-                    .addComponent(type6))
-                .addContainerGap(10, Short.MAX_VALUE))
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addBox)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -220,12 +240,23 @@ public class PrintBarCode extends javax.swing.JDialog {
     }//GEN-LAST:event_type4ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (((BarPrintModel)jTable1.getModel()).getCountSelectedRow()==0){
+            JOptionPane.showMessageDialog(null, "Необходимо отметить хотя бы одну строку!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (((BarPrintModel)jTable1.getModel()).isNullCode()){
+            JOptionPane.showMessageDialog(null, "Среди отмеченных строк есть строки с неполной информацией!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (!type1.isSelected()&&!type2.isSelected()&&!type3.isSelected()&&!type4.isSelected()&&!type5.isSelected()&&!type6.isSelected()){
             JOptionPane.showMessageDialog(null,"Необходимо выбрать вид стикера", "Ошибка!", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        if (((BarPrintModel)jTable1.getModel()).isDublicat() && JOptionPane.showConfirmDialog(null, "Внимание! Отмеченно несколько строк с одинаковым наименованием.\nПродолжить? ", "Внимание!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
+            return;
         try{
-            DataSet.UpdateQuery("delete from barprint");
+            if (!addBox.isSelected())
+                DataSet.UpdateQuery("delete from barprint");
             for(int i=0;i<((BarPrintModel)(jTable1.getModel())).getRowCount();i++){
                 if((Boolean)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 0)){
                     String name;
@@ -324,17 +355,22 @@ public class PrintBarCode extends javax.swing.JDialog {
         }
         jTable1.repaint();
     }//GEN-LAST:event_selectAllActionPerformed
-
+    
+    private void countSelectedRow(){
+        selectedRowCountText.setText("Выделено "+((BarPrintModel)(jTable1.getModel())).getCountSelectedRow()+" строк");
+    }
     /**
     * @param args the command line arguments
     */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox addBox;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JButton selectAll;
+    private javax.swing.JLabel selectedRowCountText;
     private javax.swing.JRadioButton type1;
     private javax.swing.JRadioButton type2;
     private javax.swing.JRadioButton type3;
@@ -384,6 +420,7 @@ class BarPrintModel extends AbstractTableModel{
         }catch(Exception e){
             e.printStackTrace();
         }
+        
     }
 
     @Override
@@ -473,6 +510,7 @@ class BarPrintModel extends AbstractTableModel{
         switch(columnIndex){
             case 0:
                 setPrint((Boolean)aValue, rowIndex);
+                fireTableChanged(null);
                 return;
             case 6:
                 setStickCount(new Integer((String)aValue), rowIndex);
@@ -498,7 +536,38 @@ class BarPrintModel extends AbstractTableModel{
         }
         fireTableDataChanged();
     }
-
+    
+    public int getCountSelectedRow(){
+        int countSelectedRow=0;
+        for (int i=0;i<print.size();i++){
+            if (print.get(i))
+                countSelectedRow++;
+        }
+        return countSelectedRow;
+    }
+    
+    public boolean isDublicat(){
+        for (int i=0;i<element.size();i++){
+            while (i<element.size()&&!print.get(i))
+                i++;
+            for (int j=i+1;j<element.size();j++){
+                while (j<element.size()&&!print.get(j))
+                    j++;
+                if (j<element.size()&&element.get(i).name.equals(element.get(j).name))
+                    return true;
+                 
+            }
+        }
+        return false;
+    }
+    
+    public boolean isNullCode(){
+        for (int i=0;i<element.size();i++){
+            if (print.get(i)&&element.get(i).BarCode.Name.trim().equals(""))
+                return true;
+        }
+        return false;
+    }
 
 
 }

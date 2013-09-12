@@ -51,7 +51,7 @@ public class PrintBarCode extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTable1 = new MyTable();
         jLabel1 = new javax.swing.JLabel();
         type1 = new javax.swing.JRadioButton();
         type2 = new javax.swing.JRadioButton();
@@ -67,6 +67,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jTable1.setModel(new BarPrintModel(getId_doc()));
+        jTable1.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         jTable1.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(jTable1);
         jTable1.getModel().addTableModelListener(new TableModelListener() {
@@ -197,7 +198,7 @@ public class PrintBarCode extends javax.swing.JDialog {
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addBox)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         pack();
@@ -510,9 +511,9 @@ class BarPrintModel extends AbstractTableModel{
         switch(columnIndex){
             case 0:
                 setPrint((Boolean)aValue, rowIndex);
-                fireTableChanged(null);
+                fireTableChanged(null); 
                 return;
-            case 6:
+             case 6:
                 setStickCount(new Integer((String)aValue), rowIndex);
                 return;
         }

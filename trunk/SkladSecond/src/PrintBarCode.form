@@ -94,7 +94,7 @@
                       <Component id="addBox" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="24" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -112,10 +112,12 @@
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="new BarPrintModel(getId_doc())" type="code"/>
             </Property>
+            <Property name="autoResizeMode" type="int" value="4"/>
             <Property name="columnSelectionAllowed" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jTable1.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent event){&#xa;        countSelectedRow();&#xa;    }&#xa;});&#xa;addBox.setSelected(false);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new MyTable()"/>
           </AuxValues>
         </Component>
       </SubComponents>

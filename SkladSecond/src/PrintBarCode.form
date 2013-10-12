@@ -116,8 +116,8 @@
             <Property name="columnSelectionAllowed" type="boolean" value="true"/>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jTable1.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent event){&#xa;        countSelectedRow();&#xa;    }&#xa;});&#xa;addBox.setSelected(false);"/>
-            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new MyTable()"/>
+            <AuxValue name="JavaCodeGenerator_AddingCodePost" type="java.lang.String" value="jTable1.getModel().addTableModelListener(new TableModelListener() {&#xa;    public void tableChanged(TableModelEvent event){&#xa;        countSelectedRow();&#xa;    }&#xa;});&#xa;&#xa;addBox.setSelected(false);"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable()"/>
           </AuxValues>
         </Component>
       </SubComponents>

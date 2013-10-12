@@ -1,9 +1,12 @@
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.sql.ResultSet;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Vector;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
@@ -51,7 +54,7 @@ public class PrintBarCode extends javax.swing.JDialog {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new MyTable();
+        jTable1 = new JTable();
         jLabel1 = new javax.swing.JLabel();
         type1 = new javax.swing.JRadioButton();
         type2 = new javax.swing.JRadioButton();
@@ -75,6 +78,7 @@ public class PrintBarCode extends javax.swing.JDialog {
                 countSelectedRow();
             }
         });
+
         addBox.setSelected(false);
 
         jLabel1.setText("Поля для печати:");
@@ -511,7 +515,7 @@ class BarPrintModel extends AbstractTableModel{
         switch(columnIndex){
             case 0:
                 setPrint((Boolean)aValue, rowIndex);
-                fireTableChanged(null); 
+                fireTableChanged(new TableModelEvent(this)); 
                 return;
              case 6:
                 setStickCount(new Integer((String)aValue), rowIndex);

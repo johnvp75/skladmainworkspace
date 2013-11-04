@@ -249,11 +249,10 @@ public class InputPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(groupTree);
 
-        nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        //nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         nameList.setVisibleRowCount(22);
         nameList.setFixedCellWidth(300);
         nameList.setFixedCellHeight(16);
-        nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         nameList.setComponentPopupMenu(ListPopup);
         nameList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
@@ -1112,7 +1111,14 @@ public class InputPanel extends javax.swing.JPanel {
     private void MoveItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_MoveItemActionPerformed
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null || nameList.getSelectedValue()==null)
             return;
-        setNameMove((String)nameList.getSelectedValue());
+        
+        //setNameMove((String)nameList.getSelectedValue());
+        nameMove.removeAllElements();
+        groupeMove.removeAllElements();
+        Object[] namesMove=nameList.getSelectedValues();
+        for (Object element:namesMove){
+            nameMove.push((String)element);
+        }
         groupeMove.push(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
 //        setGroumMove(((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex());
         InsertItem.setEnabled(true);
@@ -1124,10 +1130,14 @@ public class InputPanel extends javax.swing.JPanel {
             return;
         String SQL;
         int gr=((DataNode)groupTree.getLeadSelectionPath().getLastPathComponent()).getIndex();
+        boolean nameMoved=false;
         try{
-            if (getNameMove()!=null){
-                SQL=String.format("update kart set id_group=%s where id_tovar = (select id_tovar from tovar where name='%s') and id_group=%s"+
-                    " and id_skl=(select id_skl from sklad where name='%s')", gr, getNameMove(),groupeMove.pop(),skladCombo.getSelectedItem());}
+            if (!nameMove.isEmpty()){
+                SQL=String.format("update kart set id_group=%s where id_tovar in (select id_tovar from tovar where name in (%s)) and id_group=%s"+
+                    " and id_skl=(select id_skl from sklad where name='%s')", gr, CommaSeparatedStringStack(nameMove),groupeMove.pop(),skladCombo.getSelectedItem());
+                nameMoved=true;
+            }
+            
             else{
                 SQL=String.format("update groupid set parent_group=%s where id_group in (%s)", gr,CommaSeparatedStack(groupeMove));
             }
@@ -1136,9 +1146,9 @@ public class InputPanel extends javax.swing.JPanel {
             
             InsertItem.setEnabled(false);
             AddCut.setEnabled(false);
-            if (getNameMove()==null)
+            if (nameMoved)
                 ((GroupTreeModel)groupTree.getModel()).setRoot();
-            setNameMove(null);
+//            setNameMove(null);
             initList(gr);
         }catch(Exception e){
             e.printStackTrace();
@@ -1154,11 +1164,25 @@ public class InputPanel extends javax.swing.JPanel {
         return result;
         
     }
+    private String CommaSeparatedStringStack(Stack stack){
+        String result=stack.empty()?" ":"'"+stack.pop().toString()+"'";
+        while (!stack.empty()){
+            result=result+", '"+stack.pop()+"'";
+        }
+        return result;
+        
+    }
+
     private void AddCutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddCutActionPerformed
-        if (nameList.getSelectedValue()==null || JOptionPane.showConfirmDialog(this, "Вы уверены что следует объеденить "+getNameMove()+" c "+(String)nameList.getSelectedValue()+"\n при этом пропадет "+getNameMove(), "Объединение", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
+        if (nameMove.capacity()>1) {
+            JOptionPane.showMessageDialog(null, "Нельзя объединять больше двух элементов одновременно!", "Ошибка объединения", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String addName=nameMove.pop();
+        if (nameList.getSelectedValue()==null || JOptionPane.showConfirmDialog(this, "Вы уверены что следует объеденить "+addName+" c "+(String)nameList.getSelectedValue()+"\n при этом пропадет "+addName, "Объединение", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.NO_OPTION)
             return;
         try{
-            ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+getNameMove()+"'", false);
+            ResultSet rs=DataSet.QueryExec("select id_tovar from tovar where name='"+addName+"'", false);
             rs.next();
             int move=rs.getInt(1);
             String SQL=String.format("select id_tovar from tovar where name='%s'",(String)nameList.getSelectedValue());
@@ -1273,7 +1297,7 @@ public class InputPanel extends javax.swing.JPanel {
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null)
             return;
         groupeMove.removeAllElements();
-        setNameMove(null);
+        nameMove.removeAllElements();
         TreePath[] selectedItems=groupTree.getSelectionPaths();
         for (TreePath element : selectedItems ){
             groupeMove.push(((DataNode)element.getLastPathComponent()).getIndex());
@@ -1349,11 +1373,12 @@ public class InputPanel extends javax.swing.JPanel {
     private String Manager;
     private double koef = 1.0;
     private PriceForm priceDialog=null;
-    protected String nameMove;
+//    protected String nameMove;
     private Point MousePoint;
     protected boolean rebuild = false;
     private boolean copyTovar;
     protected Stack<Integer> groupeMove = new Stack<Integer>();
+    protected Stack<String> nameMove = new Stack<String>();
 
 
 
@@ -1392,14 +1417,14 @@ public class InputPanel extends javax.swing.JPanel {
         this.MousePoint = MousePoint;
     }
 
-    public String getNameMove() {
+/*    public String getNameMove() {
         return nameMove;
     }
 
     public void setNameMove(String nameMove) {
         this.nameMove = nameMove;
     }
-
+*/
 /*    protected int groumMove;
 
     public int getGroumMove() {

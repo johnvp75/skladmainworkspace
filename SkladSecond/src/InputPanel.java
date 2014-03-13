@@ -2,6 +2,8 @@
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.TableModelEvent;
@@ -81,6 +83,7 @@ public class InputPanel extends javax.swing.JPanel {
         RenameGroup = new JMenuItem();
         MoveGroup = new JMenuItem();
         InsertItem = new JMenuItem();
+        RestInDoc = new JMenuItem();
         ListPopup = new JPopupMenu();
         MoveItem = new JMenuItem();
         AddCut = new JMenuItem();
@@ -92,8 +95,6 @@ public class InputPanel extends javax.swing.JPanel {
         skladCombo = new JComboBox();
         jLabel2 = new JLabel();
         clientCombo = new JComboBox();
-        jLabel3 = new JLabel();
-        jFormattedTextField1 = new JFormattedTextField();
         jScrollPane1 = new JScrollPane();
         groupTree = new JTree(new GroupTreeModel());
         jScrollPane2 = new JScrollPane();
@@ -166,6 +167,14 @@ public class InputPanel extends javax.swing.JPanel {
         });
         treePopup.add(InsertItem);
 
+        RestInDoc.setText("Текущие остатки в документ");
+        RestInDoc.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                RestInDocActionPerformed(evt);
+            }
+        });
+        treePopup.add(RestInDoc);
+
         MoveItem.setText("Вырезать");
         MoveItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -225,19 +234,6 @@ public class InputPanel extends javax.swing.JPanel {
 
         jLabel2.setText("Поставщик");
 
-        jLabel3.setText("Дата");
-        jLabel3.setEnabled(false);
-        jLabel3.setFocusable(false);
-
-        jFormattedTextField1.setText("jFormattedTextField1");
-        jFormattedTextField1.setEnabled(false);
-        jFormattedTextField1.setFocusable(false);
-        jFormattedTextField1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                jFormattedTextField1ActionPerformed(evt);
-            }
-        });
-
         groupTree.setRootVisible(false);
         groupTree.setShowsRootHandles(true);
         groupTree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
@@ -249,7 +245,6 @@ public class InputPanel extends javax.swing.JPanel {
         });
         jScrollPane1.setViewportView(groupTree);
 
-        //nameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         nameList.setVisibleRowCount(22);
         nameList.setFixedCellWidth(300);
         nameList.setFixedCellHeight(16);
@@ -474,14 +469,8 @@ public class InputPanel extends javax.swing.JPanel {
                                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                     .addComponent(clientCombo, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(skladCombo, 0, 254, Short.MAX_VALUE))))
-                        .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(77, 77, 77)
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel8))
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addComponent(jLabel8, Alignment.TRAILING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(14, 14, 14)
                                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
@@ -521,8 +510,6 @@ public class InputPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(skladCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jFormattedTextField1, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(ComponentPlacement.RELATED)
@@ -719,6 +706,17 @@ public class InputPanel extends javax.swing.JPanel {
         priceDialog.setSklad((String)skladCombo.getSelectedItem());
         priceDialog.setCurs(curs);
         priceDialog.dialogShown(nazv, cost);
+        ResultSet rs;
+        try {
+            rs = DataSet.QueryExec("select trim(t.name), l.kol, l.cost, l.disc from lines l, tovar t where l.id_doc="+getId_doc()+" and t.id_tovar=l.id_tovar", false);
+            model.removeAll();
+            while (rs.next()){
+                model.add(rs.getString(1), rs.getInt(2), rs.getDouble(3), rs.getInt(4), 0);
+        }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
     }//GEN-LAST:event_priceButtonActionPerformed
 
     @SuppressWarnings("static-access")
@@ -1174,7 +1172,7 @@ public class InputPanel extends javax.swing.JPanel {
     }
 
     private void AddCutActionPerformed(ActionEvent evt) {//GEN-FIRST:event_AddCutActionPerformed
-        if (nameMove.capacity()>1) {
+        if (nameMove.size()>1) {
             JOptionPane.showMessageDialog(null, "Нельзя объединять больше двух элементов одновременно!", "Ошибка объединения", JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -1312,9 +1310,18 @@ public class InputPanel extends javax.swing.JPanel {
         noteTextField.setText(noteText);
     }//GEN-LAST:event_nowButtonActionPerformed
 
-    private void jFormattedTextField1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jFormattedTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jFormattedTextField1ActionPerformed
+    private void RestInDocActionPerformed(ActionEvent evt) {//GEN-FIRST:event_RestInDocActionPerformed
+        int groupForRest=((DataNode)groupTree.getSelectionPath().getLastPathComponent()).getIndex();
+        String SQL=String.format("select trim(t.name),t1.ost from (select sum(l.kol*decode(t.operacia,1,1,2,-1)) as ost, l.id_tovar from lines l, type_doc t, document d where l.id_tovar in (select distinct id_tovar from kart where id_group in (select id_group from groupid start with id_group=%s connect by parent_group=prior id_group) and id_skl=(select id_skl from sklad where name='%s'))and l.id_doc = d.id_doc and not (d.day is null) and t.id_type_doc = d.id_type_doc group by l.id_tovar) t1, tovar t where t1.id_tovar=t.id_tovar and t1.ost>0 order by t.name", groupForRest,getSklad());
+        try{
+            ResultSet rs=DataSet.QueryExec(SQL, false);
+            while (rs.next()){
+                model.add(rs.getString(1), rs.getInt(2), 0.0, 0, 0);
+            }
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+    }//GEN-LAST:event_RestInDocActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1330,6 +1337,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JMenuItem MoveItem;
     private JButton NewTovarButton;
     private JMenuItem RenameGroup;
+    private JMenuItem RestInDoc;
     private JComboBox clientCombo;
     private JTextField discTextField;
     private JButton editButton;
@@ -1338,10 +1346,8 @@ public class InputPanel extends javax.swing.JPanel {
     private JLabel itogo;
     private JLabel itogowo;
     private JButton jButton1;
-    private JFormattedTextField jFormattedTextField1;
     private JLabel jLabel1;
     private JLabel jLabel2;
-    private JLabel jLabel3;
     private JLabel jLabel4;
     private JLabel jLabel5;
     private JLabel jLabel6;
@@ -1461,6 +1467,10 @@ public class InputPanel extends javax.swing.JPanel {
         this.Sklad = Sklad;
     }
 
+    public String getSklad(){
+        return this.Sklad;
+    }
+    
     private void initList(int aIndex){
 	modelList.clear();
 	String Query="select trim(name) from (Select distinct tovar.name from kart inner join tovar on kart.id_tovar=tovar.id_tovar where (kart.id_group="+aIndex+") and (kart.id_skl=(Select id_skl from sklad where name='"+Sklad+"')) order by tovar.name)";

@@ -67,6 +67,8 @@ public class PriceForm extends javax.swing.JDialog {
         addTextField = new javax.swing.JTextField();
         isUseCurs = new javax.swing.JCheckBox();
         currentCurs = new javax.swing.JLabel();
+        setCostInNameBox = new javax.swing.JCheckBox();
+        costFromPrice = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -211,6 +213,20 @@ public class PriceForm extends javax.swing.JDialog {
         currentCurs.setFont(new java.awt.Font("Tahoma", 1, 11));
         currentCurs.setText("1.00");
 
+        setCostInNameBox.setText("Изменить цену в название");
+        setCostInNameBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                setCostInNameBoxActionPerformed(evt);
+            }
+        });
+
+        costFromPrice.setText("Использовать цену прайса");
+        costFromPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                costFromPriceActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -244,13 +260,15 @@ public class PriceForm extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(nacCheckBox)
-                                    .addComponent(koefCheckBox))
+                                    .addComponent(koefCheckBox)
+                                    .addComponent(setCostInNameBox))
                                 .addGap(47, 47, 47)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(koefTextField)
                                     .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(costFromPrice)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(layout.createSequentialGroup()
@@ -291,7 +309,11 @@ public class PriceForm extends javax.swing.JDialog {
                     .addComponent(koefCheckBox)
                     .addComponent(addTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(setCostInNameBox)
+                    .addComponent(costFromPrice))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(runButton)
@@ -373,10 +395,12 @@ public class PriceForm extends javax.swing.JDialog {
             koefCheckBox.setSelected(false);
             koefTextField.setText("1");
             nacCheckBox.setSelected(false);
+            setCostInNameBox.setSelected(false);
             nacTextField.setText("0");
             okrCombo.setSelectedIndex(1);
             currentCurs.setText(getCurs().toString());
             isUseCurs.setSelected(true);
+            costFromPrice.setSelected(false);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -429,6 +453,13 @@ public class PriceForm extends javax.swing.JDialog {
                                 ", "+priceTable.getModel().getValueAt(i, 6)+", " +
                                 ""+((Boolean)priceTable.getModel().getValueAt(i, 5)?"1":"0")+", " +skl+", "+price+", "+
                                 "id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"'");
+                }}
+            for (int i=0; i<priceTable.getModel().getRowCount();i++){
+                if ((Boolean)priceTable.getModel().getValueAt(i, 0)&&(setCostInNameBox.isSelected())&(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("("+(((Double)priceTable.getModel().getValueAt(i, 3)).toString().replace(".", ""))+")")>-1)){
+                    String newName=((String)priceTable.getModel().getValueAt(i, 1)).replace("("+(((Double)(priceTable.getModel().getValueAt(i, 3))).toString().replace(".", ""))+")", "("+(((Double)(priceTable.getModel().getValueAt(i, 4))).toString().replace(".", ""))+")");
+                    String SQL=String.format("Update tovar set name='%s' where name='%s' ", newName,priceTable.getModel().getValueAt(i, 1));
+                    DataSet.UpdateQuery(SQL);
+                    priceTable.getModel().setValueAt(newName, i, 1);
                 }
             }
             DataSet.commit();
@@ -520,6 +551,14 @@ public class PriceForm extends javax.swing.JDialog {
     private void isUseCursStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_isUseCursStateChanged
         // TODO add your handling code here:
     }//GEN-LAST:event_isUseCursStateChanged
+
+    private void setCostInNameBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setCostInNameBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_setCostInNameBoxActionPerformed
+
+    private void costFromPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_costFromPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_costFromPriceActionPerformed
     public void dialogShown(Vector<String> nazv, Vector<Double> cost){
         ((PriceTableDataModel)priceTable.getModel()).removeAll();
         for (int i=0; i<nazv.size();i++)
@@ -547,6 +586,7 @@ public class PriceForm extends javax.swing.JDialog {
     private javax.swing.JCheckBox addCheckBox;
     private javax.swing.JTextField addTextField;
     private javax.swing.JButton closeButton;
+    private javax.swing.JCheckBox costFromPrice;
     private javax.swing.JLabel currentCurs;
     private javax.swing.JCheckBox inkCheckBox;
     private javax.swing.JButton invertButton;
@@ -566,6 +606,7 @@ public class PriceForm extends javax.swing.JDialog {
     private javax.swing.JButton saveButton;
     private javax.swing.JButton selectAllButton;
     private javax.swing.JButton selectNullButton;
+    private javax.swing.JCheckBox setCostInNameBox;
     private javax.swing.JButton unselectButton;
     // End of variables declaration//GEN-END:variables
     private String Sklad;
@@ -588,7 +629,8 @@ public class PriceForm extends javax.swing.JDialog {
         this.Sklad = Sklad;
     }
     private String cen(int row){
-        double ret=(Double)priceTable.getModel().getValueAt(row, 2)*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(new Double(addTextField.getText())).doubleValue(): 0);
+        Double beginCost=costFromPrice.isSelected()?(Double)priceTable.getModel().getValueAt(row, 3):(Double)priceTable.getModel().getValueAt(row, 2);
+        double ret=beginCost*(nacCheckBox.isSelected()?(1+(new Double(nacTextField.getText())).doubleValue()/100) : 1)*(koefCheckBox.isSelected()?(new Double(koefTextField.getText())).doubleValue():1)+(addCheckBox.isSelected()?(new Double(addTextField.getText())).doubleValue(): 0);
         String str="0.";
         for (int i=0;i<okrCombo.getSelectedIndex();i++)
             str=str+"0";

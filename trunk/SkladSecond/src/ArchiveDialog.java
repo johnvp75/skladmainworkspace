@@ -297,7 +297,7 @@ class pgDataSet{
 	private static Statement st = null;
 	private static int retstr=0;
         private static String driver = "org.postgresql.Driver";
-        private static String url = "jdbc:postgresql://192.168.1.2:5432/SkladArc";
+        private static String url = "jdbc:postgresql://localhost:5432/SkladArc";
         private static String username = "remote";
         private static String password = "lkjfsd1sadAS46sdaSAS65dldjdandsadcvh";
 

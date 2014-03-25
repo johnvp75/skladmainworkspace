@@ -16,6 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -24,27 +25,16 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Vector;
 import java.util.Stack;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.GroupLayout;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTree;
 import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.table.TableCellEditor;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /*
  * To change this template, choose Tools | Templates
@@ -126,6 +116,7 @@ public class InputPanel extends javax.swing.JPanel {
         type_docCombo = new JComboBox();
         jButton1 = new JButton();
         nowButton = new JButton();
+        ImportFromXLS = new JButton();
 
         AddGroup.setText("Добавить группу");
         AddGroup.addActionListener(new ActionListener() {
@@ -435,6 +426,13 @@ public class InputPanel extends javax.swing.JPanel {
             }
         });
 
+        ImportFromXLS.setText("Импорт xls");
+        ImportFromXLS.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                ImportFromXLSActionPerformed(evt);
+            }
+        });
+
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -481,14 +479,15 @@ public class InputPanel extends javax.swing.JPanel {
                                     .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 329, GroupLayout.PREFERRED_SIZE))))
                         .addGroup(layout.createParallelGroup(Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(ComponentPlacement.UNRELATED)
+                                .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addGap(50, 50, 50)
                                 .addGroup(layout.createParallelGroup(Alignment.LEADING, false)
                                     .addComponent(findButton, GroupLayout.PREFERRED_SIZE, 114, GroupLayout.PREFERRED_SIZE)
                                     .addComponent(NewTovarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(ComponentPlacement.UNRELATED)
-                                .addComponent(type_docCombo, GroupLayout.PREFERRED_SIZE, 198, GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(editButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(ImportFromXLS, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(itogowo, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -520,14 +519,19 @@ public class InputPanel extends javax.swing.JPanel {
                     .addComponent(valCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(jScrollPane2, GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(findButton)
-                        .addGap(29, 29, 29)
-                        .addComponent(NewTovarButton)
-                        .addGap(29, 29, 29)
-                        .addComponent(editButton))
-                    .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 279, GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(findButton)
+                                .addGap(29, 29, 29)
+                                .addComponent(NewTovarButton)
+                                .addGap(29, 29, 29)
+                                .addComponent(editButton)
+                                .addGap(32, 32, 32)
+                                .addComponent(ImportFromXLS))
+                            .addComponent(jScrollPane1, GroupLayout.PREFERRED_SIZE, 279, GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -638,7 +642,7 @@ public class InputPanel extends javax.swing.JPanel {
     private void find(String nazv){
         try{
             if (nazv==null)
-                nazv=InputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "").Name;
+                nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
             ResultSet rs=DataSet.QueryExec("select id_group from kart where id_tovar=(select id_tovar from tovar where name ='"+nazv+"') and " +
                     "id_skl=(select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"')", false);
             rs.next();
@@ -1323,6 +1327,27 @@ public class InputPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_RestInDocActionPerformed
 
+    private void ImportFromXLSActionPerformed(ActionEvent evt) {//GEN-FIRST:event_ImportFromXLSActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Microsoft Excel files", "xls");
+        chooser.setFileFilter(filter);
+        chooser.setMultiSelectionEnabled(false);
+        int returnVal=chooser.showOpenDialog(null);
+        if (returnVal==JFileChooser.APPROVE_OPTION){
+            File file=chooser.getSelectedFile();
+            try {
+                InputStream in=new FileInputStream(file);
+                HSSFWorkbook wb = new HSSFWorkbook(in);
+                ImportFromXLSToInvoice importDialog=new ImportFromXLSToInvoice(null, true, wb);
+                importDialog.setVisible(true);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            
+            
+        }
+    }//GEN-LAST:event_ImportFromXLSActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JMenuItem AddCut;
@@ -1331,6 +1356,7 @@ public class InputPanel extends javax.swing.JPanel {
     private JMenuItem Copy;
     private JMenuItem DelLine;
     private JMenuItem FindItem;
+    private JButton ImportFromXLS;
     private JMenuItem InsertItem;
     private JPopupMenu ListPopup;
     private JMenuItem MoveGroup;

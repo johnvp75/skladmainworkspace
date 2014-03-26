@@ -1,4 +1,5 @@
 
+import java.awt.GridLayout;
 import javax.swing.JCheckBox;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
@@ -42,47 +43,63 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        sheetsPane = new javax.swing.JScrollPane();
+        sheetsPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        final JCheckBox[] sheets= new JCheckBox[getXlsBook().getNumberOfSheets()];
-        for (int i=0;i<getXlsBook().getNumberOfSheets();i++){
-            sheets[i]=new JCheckBox(getXlsBook().getSheetName(i));
-        }
-        jList1.setModel(new javax.swing.AbstractListModel() {
-            public int getSize() { return sheets.length; }
-            public Object getElementAt(int i) { return sheets[i]; }
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
         });
-        jScrollPane1.setViewportView(jList1);
+
+        javax.swing.GroupLayout sheetsPanelLayout = new javax.swing.GroupLayout(sheetsPanel);
+        sheetsPanel.setLayout(sheetsPanelLayout);
+        sheetsPanelLayout.setHorizontalGroup(
+            sheetsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 211, Short.MAX_VALUE)
+        );
+        sheetsPanelLayout.setVerticalGroup(
+            sheetsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 261, Short.MAX_VALUE)
+        );
+
+        sheetsPane.setViewportView(sheetsPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(375, Short.MAX_VALUE))
+                .addGap(281, 281, 281)
+                .addComponent(sheetsPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(58, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sheetsPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+    for (int i=0;i<getXlsBook().getNumberOfSheets();i++){
+        sheetsPanel.add(new JCheckBox(getXlsBook().getSheetName(i)));
+    }
+    sheetsPanel.setLayout(new GridLayout(getXlsBook().getNumberOfSheets(), 1));
+    
+    }//GEN-LAST:event_formComponentShown
+
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList jList1;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane sheetsPane;
+    private javax.swing.JPanel sheetsPanel;
     // End of variables declaration//GEN-END:variables
 }

@@ -642,7 +642,7 @@ public class InputPanel extends javax.swing.JPanel {
     private void find(String nazv){
         try{
             if (nazv==null)
-                nazv=inputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "");
+                nazv=InputBarcode.newcod(JOptionPane.showInputDialog(this, "Введите код"), (String)skladCombo.getSelectedItem(), "").Name;
             ResultSet rs=DataSet.QueryExec("select id_group from kart where id_tovar=(select id_tovar from tovar where name ='"+nazv+"') and " +
                     "id_skl=(select id_skl from sklad where name='"+(String)skladCombo.getSelectedItem()+"')", false);
             rs.next();

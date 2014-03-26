@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
   </Properties>
@@ -54,7 +54,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="JCheckBox[] sheets= new JCheckBox[getXlsBook().getNumberOfSheets()];&#xa;for (int i=0;i&lt;getXlsBook().getNumberOfSheets();i++){&#xa;    sheets[i]=new JCheckBox(getXlsBook().getSheetName(i));&#xa;}"/>
+            <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="final JCheckBox[] sheets= new JCheckBox[getXlsBook().getNumberOfSheets()];&#xa;for (int i=0;i&lt;getXlsBook().getNumberOfSheets();i++){&#xa;    sheets[i]=new JCheckBox(getXlsBook().getSheetName(i));&#xa;}"/>
           </AuxValues>
         </Component>
       </SubComponents>

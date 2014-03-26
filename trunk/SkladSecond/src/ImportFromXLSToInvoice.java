@@ -47,7 +47,7 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        JCheckBox[] sheets= new JCheckBox[getXlsBook().getNumberOfSheets()];
+        final JCheckBox[] sheets= new JCheckBox[getXlsBook().getNumberOfSheets()];
         for (int i=0;i<getXlsBook().getNumberOfSheets();i++){
             sheets[i]=new JCheckBox(getXlsBook().getSheetName(i));
         }

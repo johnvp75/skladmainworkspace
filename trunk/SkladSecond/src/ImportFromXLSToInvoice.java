@@ -45,21 +45,21 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
 
         sheetsPane = new javax.swing.JScrollPane();
         sheetsPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox();
-        jComboBox2 = new javax.swing.JComboBox();
-        jLabel2 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox();
-        jLabel3 = new javax.swing.JLabel();
-        jComboBox4 = new javax.swing.JComboBox();
-        jLabel4 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jLabel5 = new javax.swing.JLabel();
-        jComboBox5 = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        nameL = new javax.swing.JLabel();
+        nameField = new javax.swing.JComboBox();
+        barcodeField = new javax.swing.JComboBox();
+        barcodeL = new javax.swing.JLabel();
+        countField = new javax.swing.JComboBox();
+        countL = new javax.swing.JLabel();
+        costField = new javax.swing.JComboBox();
+        costL = new javax.swing.JLabel();
+        createNew = new javax.swing.JCheckBox();
+        ignoreNew = new javax.swing.JCheckBox();
+        addBarcode = new javax.swing.JCheckBox();
+        packL = new javax.swing.JLabel();
+        packField = new javax.swing.JComboBox();
+        startImport = new javax.swing.JButton();
+        cancelImport = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -82,98 +82,99 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
 
         sheetsPane.setViewportView(sheetsPanel);
 
-        jLabel1.setText("Наименование (часть)");
+        nameL.setText("Наименование (часть)");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Не учитывать", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15", " ", " " }));
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        nameField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Не учитывать", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15", " ", " " }));
+        nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                nameFieldActionPerformed(evt);
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Не учитывать", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
+        barcodeField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Не учитывать", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
 
-        jLabel2.setText("Штрих-код");
+        barcodeL.setText("Штрих-код");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
+        countField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
 
-        jLabel3.setText("Кол-во упаковок");
+        countL.setText("Кол-во упаковок");
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0,00", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
+        costField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0,00", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
 
-        jLabel4.setText("Цена");
+        costL.setText("Цена");
 
-        jCheckBox1.setText("Создавать новые без запроса (группа: Новый товар)");
+        createNew.setText("Создавать новые без запроса (группа: Новый товар)");
 
-        jCheckBox2.setText("Игнорировать новые");
-        jCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+        ignoreNew.setText("Игнорировать новые");
+        ignoreNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jCheckBox2ActionPerformed(evt);
+                ignoreNewActionPerformed(evt);
             }
         });
 
-        jCheckBox3.setText("Добавлять штрих-коды");
+        addBarcode.setText("Добавлять штрих-коды");
 
-        jLabel5.setText("Кол-во шт. в уп.");
+        packL.setText("Кол-во шт. в уп.");
 
-        jComboBox5.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
-        jComboBox5.addActionListener(new java.awt.event.ActionListener() {
+        packField.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "Столбец 1", "Столбец 2", "Столбец 3", "Столбец 4", "Столбец 5", "Столбец 6", "Столбец 7", "Столбец 8", "Столбец 9", "Столбец 10", "Столбец 11", "Столбец 12", "Столбец 13", "Столбец 14", "Столбец 15" }));
+        packField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox5ActionPerformed(evt);
+                packFieldActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Начать импорт");
+        startImport.setText("Начать импорт");
 
-        jButton2.setText("Отмена");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        cancelImport.setText("Отмена");
+        cancelImport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                cancelImportActionPerformed(evt);
             }
         });
 
-        jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel6.setText("Выбирите данные для импорта");
+        jLabel6.setFont(new java.awt.Font("Times New Roman", 1, 18));
+        jLabel6.setText("Выберите данные для импорта");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(sheetsPane, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jCheckBox1)
-                                    .addComponent(jCheckBox2)
-                                    .addComponent(jCheckBox3)
+                                    .addComponent(createNew)
+                                    .addComponent(ignoreNew)
+                                    .addComponent(addBarcode)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel1)
-                                            .addComponent(jLabel2)
-                                            .addComponent(jLabel3)
-                                            .addComponent(jLabel5)
-                                            .addComponent(jLabel4))
+                                            .addComponent(nameL)
+                                            .addComponent(barcodeL)
+                                            .addComponent(countL)
+                                            .addComponent(packL)
+                                            .addComponent(costL))
                                         .addGap(18, 18, 18)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(192, 192, 192)
-                                .addComponent(jButton1)
-                                .addGap(56, 56, 56)
-                                .addComponent(jButton2)))
-                        .addGap(26, 26, 26))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(167, 167, 167))))
+                                            .addComponent(costField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(packField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(countField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(barcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(26, 26, 26))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(167, 167, 167))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(133, 133, 133)
+                        .addComponent(startImport)
+                        .addGap(56, 56, 56)
+                        .addComponent(cancelImport)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,35 +185,35 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(nameL)
+                            .addComponent(nameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(barcodeL)
+                            .addComponent(barcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(countL)
+                            .addComponent(countField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(packL)
+                            .addComponent(packField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(costL)
+                            .addComponent(costField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(26, 26, 26)
-                        .addComponent(jCheckBox1)
+                        .addComponent(createNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCheckBox2)
+                        .addComponent(ignoreNew)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jCheckBox3))
+                        .addComponent(addBarcode))
                     .addComponent(sheetsPane, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(startImport)
+                    .addComponent(cancelImport))
                 .addContainerGap())
         );
 
@@ -227,44 +228,44 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
     
     }//GEN-LAST:event_formComponentShown
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+    private void nameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_nameFieldActionPerformed
 
-    private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
+    private void ignoreNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ignoreNewActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jCheckBox2ActionPerformed
+    }//GEN-LAST:event_ignoreNewActionPerformed
 
-    private void jComboBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox5ActionPerformed
+    private void packFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox5ActionPerformed
+    }//GEN-LAST:event_packFieldActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void cancelImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelImportActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_cancelImportActionPerformed
 
     /**
      * @param args the command line arguments
      */
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
-    private javax.swing.JComboBox jComboBox4;
-    private javax.swing.JComboBox jComboBox5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JCheckBox addBarcode;
+    private javax.swing.JComboBox barcodeField;
+    private javax.swing.JLabel barcodeL;
+    private javax.swing.JButton cancelImport;
+    private javax.swing.JComboBox costField;
+    private javax.swing.JLabel costL;
+    private javax.swing.JComboBox countField;
+    private javax.swing.JLabel countL;
+    private javax.swing.JCheckBox createNew;
+    private javax.swing.JCheckBox ignoreNew;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JComboBox nameField;
+    private javax.swing.JLabel nameL;
+    private javax.swing.JComboBox packField;
+    private javax.swing.JLabel packL;
     private javax.swing.JScrollPane sheetsPane;
     private javax.swing.JPanel sheetsPanel;
+    private javax.swing.JButton startImport;
     // End of variables declaration//GEN-END:variables
 }

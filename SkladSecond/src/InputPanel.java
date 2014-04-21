@@ -720,6 +720,9 @@ public class InputPanel extends javax.swing.JPanel {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        koefTextField.setText("1");
+        setKoef(1);
+        model.fireTableDataChanged();
 
     }//GEN-LAST:event_priceButtonActionPerformed
 

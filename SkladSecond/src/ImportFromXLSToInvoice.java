@@ -124,6 +124,11 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
         });
 
         startImport.setText("Начать импорт");
+        startImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startImportActionPerformed(evt);
+            }
+        });
 
         cancelImport.setText("Отмена");
         cancelImport.addActionListener(new java.awt.event.ActionListener() {
@@ -243,6 +248,10 @@ public class ImportFromXLSToInvoice extends javax.swing.JDialog {
     private void cancelImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelImportActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cancelImportActionPerformed
+
+    private void startImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startImportActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_startImportActionPerformed
 
     /**
      * @param args the command line arguments

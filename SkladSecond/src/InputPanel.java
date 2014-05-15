@@ -496,7 +496,7 @@ public class InputPanel extends javax.swing.JPanel {
                         .addComponent(discTextField, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(itogo, GroupLayout.PREFERRED_SIZE, 183, GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(ComponentPlacement.UNRELATED)
+                        .addGap(33, 33, 33)
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
                         .addComponent(koefTextField, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)))

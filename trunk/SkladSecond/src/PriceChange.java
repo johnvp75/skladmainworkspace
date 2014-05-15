@@ -73,6 +73,7 @@ public class PriceChange extends javax.swing.JDialog {
         SelectAllAction = new javax.swing.JButton();
         UnselectAllAction = new javax.swing.JButton();
         unselectSale = new javax.swing.JButton();
+        nullInCost = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -213,6 +214,13 @@ public class PriceChange extends javax.swing.JDialog {
             }
         });
 
+        nullInCost.setText("вход. цена");
+        nullInCost.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nullInCostActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -270,8 +278,9 @@ public class PriceChange extends javax.swing.JDialog {
                                     .addComponent(unselectButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(unselectSale, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(selectNullButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(invertButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addComponent(invertButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(nullInCost, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addGap(11, 11, 11))
                             .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
@@ -336,10 +345,12 @@ public class PriceChange extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(selectNullButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(nullInCost)
+                        .addGap(7, 7, 7)
                         .addComponent(invertButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
-                        .addGap(37, 37, 37)
+                        .addGap(11, 11, 11)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(discAllField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -446,6 +457,7 @@ public class PriceChange extends javax.swing.JDialog {
         MainCombo.addActionListener(actionCombo);
         skladCombo.addActionListener(actionCombo);
         priceCombo.addActionListener(actionCombo);
+        nullInCost.setSelected(false);
     }//GEN-LAST:event_formComponentShown
 
     private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
@@ -462,8 +474,9 @@ public class PriceChange extends javax.swing.JDialog {
     }//GEN-LAST:event_unselectButtonActionPerformed
 
     private void selectNullButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectNullButtonActionPerformed
+        int col=nullInCost.isSelected()?2:3;
         for (int i=0;i<((PriceTableDataModel)priceTable.getModel()).size();i++){
-            if (((Double)priceTable.getValueAt(i, 3))==0)
+            if (((Double)priceTable.getValueAt(i, col))==0)
                 priceTable.setValueAt(true, i, 0);
         }
     }//GEN-LAST:event_selectNullButtonActionPerformed
@@ -514,6 +527,10 @@ public class PriceChange extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_unselectSaleActionPerformed
 
+    private void nullInCostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nullInCostActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nullInCostActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -556,6 +573,7 @@ public class PriceChange extends javax.swing.JDialog {
     private javax.swing.JTextField koefTextField;
     private javax.swing.JCheckBox nacCheckBox;
     private javax.swing.JTextField nacTextField;
+    private javax.swing.JCheckBox nullInCost;
     private javax.swing.JComboBox okrCombo;
     private javax.swing.JComboBox priceCombo;
     private javax.swing.JTable priceTable;

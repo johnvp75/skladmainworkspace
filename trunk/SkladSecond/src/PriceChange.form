@@ -89,8 +89,9 @@
                                   <Component id="unselectButton" alignment="0" max="32767" attributes="1"/>
                                   <Component id="unselectSale" alignment="0" max="32767" attributes="1"/>
                                   <Component id="selectNullButton" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="invertButton" alignment="1" max="32767" attributes="1"/>
+                                  <Component id="invertButton" alignment="0" max="32767" attributes="1"/>
                                   <Component id="jButton1" alignment="0" max="32767" attributes="1"/>
+                                  <Component id="nullInCost" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                           </Group>
@@ -173,10 +174,12 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="selectNullButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
+                      <Component id="nullInCost" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                       <Component id="invertButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                       <Component id="jSeparator2" min="-2" pref="10" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="discAllField" min="-2" max="-2" attributes="0"/>
@@ -429,6 +432,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="unselectSaleActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="nullInCost">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x432;&#x445;&#x43e;&#x434;. &#x446;&#x435;&#x43d;&#x430;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nullInCostActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

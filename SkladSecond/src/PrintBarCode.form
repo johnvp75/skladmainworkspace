@@ -53,7 +53,9 @@
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="selectAll" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="deselectAll" min="-2" pref="106" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                       <Component id="selectedRowCountText" min="-2" pref="125" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -67,6 +69,7 @@
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="selectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="selectedRowCountText" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="deselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" max="-2" attributes="0"/>
@@ -210,6 +213,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="type7ActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="deselectAll">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="&#x423;&#x431;&#x440;&#x430;&#x442;&#x44c; &#x432;&#x441;&#x435;"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deselectAllActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

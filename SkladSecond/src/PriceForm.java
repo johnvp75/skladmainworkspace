@@ -69,6 +69,7 @@ public class PriceForm extends javax.swing.JDialog {
         currentCurs = new javax.swing.JLabel();
         setCostInNameBox = new javax.swing.JCheckBox();
         costFromPrice = new javax.swing.JCheckBox();
+        anyName = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -227,6 +228,8 @@ public class PriceForm extends javax.swing.JDialog {
             }
         });
 
+        anyName.setText("Любую");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -262,10 +265,15 @@ public class PriceForm extends javax.swing.JDialog {
                                     .addComponent(nacCheckBox)
                                     .addComponent(koefCheckBox)
                                     .addComponent(setCostInNameBox))
-                                .addGap(47, 47, 47)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(koefTextField)
-                                    .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE))))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(47, 47, 47)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(koefTextField)
+                                            .addComponent(nacTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(anyName, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(costFromPrice)
@@ -312,7 +320,8 @@ public class PriceForm extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 4, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(setCostInNameBox)
-                    .addComponent(costFromPrice))
+                    .addComponent(costFromPrice)
+                    .addComponent(anyName))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -455,8 +464,10 @@ public class PriceForm extends javax.swing.JDialog {
                                 "id_tovar from tovar where name='"+priceTable.getModel().getValueAt(i, 1)+"'");
                 }}
             for (int i=0; i<priceTable.getModel().getRowCount();i++){
-                if ((Boolean)priceTable.getModel().getValueAt(i, 0)&&(setCostInNameBox.isSelected())&(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("("+(((Double)priceTable.getModel().getValueAt(i, 3)).toString().replace(".", ""))+")")>-1)){
-                    String newName=((String)priceTable.getModel().getValueAt(i, 1)).replace("("+(((Double)(priceTable.getModel().getValueAt(i, 3))).toString().replace(".", ""))+")", "("+(((Double)(priceTable.getModel().getValueAt(i, 4))).toString().replace(".", ""))+")");
+                if (((Boolean)priceTable.getModel().getValueAt(i, 0)&&(setCostInNameBox.isSelected())&(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("("+(((Double)priceTable.getModel().getValueAt(i, 3)).toString().replace(".", ""))+")")>-1))
+                ||(((Boolean)priceTable.getModel().getValueAt(i, 0)&&(setCostInNameBox.isSelected())&(anyName.isSelected())&(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("(")>-1)))){
+                    String replacementPart=anyName.isSelected()?((String)priceTable.getModel().getValueAt(i, 1)).substring(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("("), ((String)priceTable.getModel().getValueAt(i, 1)).indexOf(")")+1):"("+(((Double)(priceTable.getModel().getValueAt(i, 3))).toString().replace(".", ""))+")";
+                    String newName=((String)priceTable.getModel().getValueAt(i, 1)).replace(replacementPart, "("+(((Double)(priceTable.getModel().getValueAt(i, 4))).toString().replace(".", ""))+")");
                     String SQL=String.format("Update tovar set name='%s' where name='%s' ", newName,priceTable.getModel().getValueAt(i, 1));
                     DataSet.UpdateQuery(SQL);
                     priceTable.getModel().setValueAt(newName, i, 1);
@@ -585,6 +596,7 @@ public class PriceForm extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox addCheckBox;
     private javax.swing.JTextField addTextField;
+    private javax.swing.JCheckBox anyName;
     private javax.swing.JButton closeButton;
     private javax.swing.JCheckBox costFromPrice;
     private javax.swing.JLabel currentCurs;

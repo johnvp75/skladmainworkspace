@@ -68,6 +68,7 @@ public class PrintBarCode extends javax.swing.JDialog {
         selectedRowCountText = new javax.swing.JLabel();
         addBox = new javax.swing.JCheckBox();
         type7 = new javax.swing.JRadioButton();
+        deselectAll = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -152,6 +153,13 @@ public class PrintBarCode extends javax.swing.JDialog {
             }
         });
 
+        deselectAll.setText("Убрать все");
+        deselectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectAllActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -181,7 +189,9 @@ public class PrintBarCode extends javax.swing.JDialog {
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(selectAll)
-                        .addGap(27, 27, 27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(deselectAll, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(66, 66, 66)
                         .addComponent(selectedRowCountText, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -190,7 +200,8 @@ public class PrintBarCode extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectAll)
-                    .addComponent(selectedRowCountText))
+                    .addComponent(selectedRowCountText)
+                    .addComponent(deselectAll))
                 .addGap(6, 6, 6)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -292,21 +303,21 @@ public class PrintBarCode extends javax.swing.JDialog {
                     if (type1.isSelected()){
                         field1="Цена за ";
                         if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1 &&!(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4)).equals(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))))){
-                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" руб.";
                         }else{
-                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" руб.";
                         }
                     }
                     if (type2.isSelected()){
-                        field1="Цена за уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
-                        field2="Цена за шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))+" грн.";
+                        field1="Цена за уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" руб.";
+                        field2="Цена за шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))+" руб.";
                     }
                     if (type3.isSelected()){
                         field1="Цена за ";
                         if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1 &&!(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4)).equals(((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 5))))){
-                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                            field1=field1+"уп.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" руб.";
                         }else{
-                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" грн.";
+                            field1=field1+"шт.:"+((String)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 4))+" руб.";
                         }
                         if (((Integer)((BarPrintModel)(jTable1.getModel())).getValueAt(i, 3))==1){
                             field2="Упаковка: "+((BarPrintModel)(jTable1.getModel())).getInbox(i)+" шт.";
@@ -353,10 +364,10 @@ public class PrintBarCode extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
     private String priceForCode(int row){
         String priceString=new Integer(((Double)(((BarPrintModel)(jTable1.getModel())).getPrice(row)*10)).intValue()).toString();
-        while (priceString.length()<4){
+        while (priceString.length()<5){
             priceString="0"+priceString;
         }
-        return priceString;
+        return priceString+"р";
     }
     
     private void type5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_type5ActionPerformed
@@ -395,6 +406,13 @@ public class PrintBarCode extends javax.swing.JDialog {
         type6.setSelected(false);
         type7.setSelected(true);
     }//GEN-LAST:event_type7ActionPerformed
+
+    private void deselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllActionPerformed
+        for(int i=0;i<((BarPrintModel)(jTable1.getModel())).getRowCount();i++){
+            ((BarPrintModel)(jTable1.getModel())).setValueAt(false,i, 0);
+        }
+        jTable1.repaint();
+    }//GEN-LAST:event_deselectAllActionPerformed
     
     private void countSelectedRow(){
         selectedRowCountText.setText("Выделено "+((BarPrintModel)(jTable1.getModel())).getCountSelectedRow()+" строк");
@@ -405,6 +423,7 @@ public class PrintBarCode extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox addBox;
+    private javax.swing.JButton deselectAll;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;

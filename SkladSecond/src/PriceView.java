@@ -332,7 +332,7 @@ public class PriceView extends javax.swing.JDialog {
                 ((DefaultTableModel)priceTable.getModel()).setRowCount(0);
             ResultSet rs;
             String SQL="";
-            if (getGroup()==-2)
+            if (getGroup()==-1)
                 SQL="SELECT distinct i.name, i.cost, p1.cost, p1.akciya, p1.isakcia from " +
                     "((select distinct trim(name) as name, p.cost, t.id_tovar from (tovar t inner join kart k on t.id_tovar=k.id_tovar) " +
 //                  "left join (select cost, id_tovar from price where id_price=(select id_price from type_price where name='"+MainCombo.getSelectedItem()+"' )) p on t.id_tovar=p.id_tovar where " +

@@ -965,7 +965,8 @@ public class InputPanel extends javax.swing.JPanel {
             DataSet.QueryExec("select * from kart where cost is NULL for update ", false);
 //            double k=1.0;
             for (int i=0; i<model.getRowCount();i++){
-                rs=DataSet.QueryExec("Select id_nom from kart where (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')) and (cost is NULL)", false);
+                String SQL1="Select id_nom from kart where (id_tovar=(select id_tovar from tovar where name='"+model.getValueAt(i, 1)+"')) and (id_skl = (select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')) and (cost is NULL)";
+                rs=DataSet.QueryExec(SQL1, false);
                 if (rs.next()){
                     int id_nom=rs.getInt(1);
                     DataSet.UpdateQuery("update kart set cost="+model.getValueAt(i, 3)+"*(1-"+model.getValueAt(i, 5)+"/100)*"+getKoef()+", day=sysdate, val=(select id_val from val where name='"+valCombo.getSelectedItem()+"') where id_nom="+id_nom );

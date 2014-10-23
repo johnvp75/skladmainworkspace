@@ -468,9 +468,18 @@ public class PriceForm extends javax.swing.JDialog {
                 ||(((Boolean)priceTable.getModel().getValueAt(i, 0)&&(setCostInNameBox.isSelected())&(anyName.isSelected())&(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("(")>-1)))){
                     String replacementPart=anyName.isSelected()?((String)priceTable.getModel().getValueAt(i, 1)).substring(((String)priceTable.getModel().getValueAt(i, 1)).indexOf("("), ((String)priceTable.getModel().getValueAt(i, 1)).indexOf(")")+1):"("+(((Double)(priceTable.getModel().getValueAt(i, 3))).toString().replace(".", ""))+")";
                     String newName=((String)priceTable.getModel().getValueAt(i, 1)).replace(replacementPart, "("+(((Double)(priceTable.getModel().getValueAt(i, 4))).toString().replace(".", ""))+")");
-                    String SQL=String.format("Update tovar set name='%s' where name='%s' ", newName,priceTable.getModel().getValueAt(i, 1));
-                    DataSet.UpdateQuery(SQL);
-                    priceTable.getModel().setValueAt(newName, i, 1);
+                    if (!(newName.equals((String)priceTable.getModel().getValueAt(i, 1)))) {
+                        String SQL=String.format("Select count(*) from tovar where trim(name)='%s'",newName);
+                        rs=DataSet.QueryExec(SQL, false);
+                        rs.next();
+                        if (rs.getInt(1)>0){
+                            JOptionPane.showMessageDialog(null, String.format("Товар с названием %s, уже существует!\n Цены не сохранены. Исправте ошибку!",newName));
+                            throw (new Exception(String.format("Товар с названием %s, уже существует!",newName)));
+                        }
+                        SQL=String.format("Update tovar set name='%s' where name='%s' ", newName,priceTable.getModel().getValueAt(i, 1));
+                        DataSet.UpdateQuery(SQL);
+                        priceTable.getModel().setValueAt(newName, i, 1);
+                    }
                 }
             }
             DataSet.commit();

@@ -1552,7 +1552,7 @@ public class InputPanel extends javax.swing.JPanel {
 
         type_docCombo.removeAllItems();
         try{
-            rs=DataSet.QueryExec("select trim(name) from type_doc where operacia=1 order by trim(name)", false);
+            rs=DataSet.QueryExec("select trim(name) from type_doc where operacia in (0,1) order by trim(name)", false);
             while (rs.next())
                 type_docCombo.addItem(rs.getString(1));
         }catch(Exception e){

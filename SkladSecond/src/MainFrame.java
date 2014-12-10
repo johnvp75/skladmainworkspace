@@ -58,6 +58,7 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu5 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem17 = new javax.swing.JMenuItem();
+        jMenuItem20 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenuItem4 = new javax.swing.JMenuItem();
@@ -121,6 +122,14 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
         jMenu5.add(jMenuItem17);
+
+        jMenuItem20.setText("Служебные");
+        jMenuItem20.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem20ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jMenuItem20);
 
         jMenu1.add(jMenu5);
 
@@ -562,6 +571,24 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jMenuItem19ActionPerformed
 
+    private void jMenuItem20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem20ActionPerformed
+        if (dialog==null)
+            dialog= new ManagerChooser();
+        dialog.setRul(";6;");
+        if (dialog.showDialog(null, "Вход в систему")){
+            if (editDoc==null)
+                editDoc=new EditDoc(this, true);
+            setEditDocId(0);
+            editDoc.setType_doc(0);
+            editDoc.setRegistredDoc(false);
+            editDoc.setVisible(true);
+            if (getEditDocId()!=0){
+                inputPanel1.setEditable(true);
+                inputPanel1.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_jMenuItem20ActionPerformed
+
     /**
     * @param args the command line arguments
     */
@@ -600,6 +627,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem18;
     private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem20;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;

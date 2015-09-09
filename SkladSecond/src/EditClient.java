@@ -1,9 +1,12 @@
 
+import java.awt.Dialog;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /*
  * To change this template, choose Tools | Templates
@@ -58,6 +61,10 @@ public class EditClient extends javax.swing.JDialog {
         discTextField = new javax.swing.JTextField();
         saveButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
+        groupLabel = new javax.swing.JLabel();
+        groupButton = new javax.swing.JButton();
+        allDiscountButton = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
@@ -75,6 +82,11 @@ public class EditClient extends javax.swing.JDialog {
         nameCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jButton1.setText("Изменить");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Адрес:");
 
@@ -105,6 +117,11 @@ public class EditClient extends javax.swing.JDialog {
         jLabel7.setText("Скидка");
 
         discTextField.setText("jTextField1");
+        discTextField.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                discTextFieldFocusGained(evt);
+            }
+        });
         discTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 discTextFieldActionPerformed(evt);
@@ -125,6 +142,29 @@ public class EditClient extends javax.swing.JDialog {
             }
         });
 
+        groupLabel.setText("Группа:");
+
+        groupButton.setText("Все группы");
+        groupButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupButtonActionPerformed(evt);
+            }
+        });
+
+        allDiscountButton.setText("Все скидки");
+        allDiscountButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                allDiscountButtonActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Удалить скидку");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -137,38 +177,44 @@ public class EditClient extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(AdressTextField)
                         .addComponent(nameCombo, 0, 211, Short.MAX_VALUE)))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel5)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addGap(18, 18, 18)
+                            .addComponent(skladCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(18, 18, 18)
-                                .addComponent(skladCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(groupLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(groupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(48, 48, 48)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(139, 139, 139))
+                        .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton2)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(126, 126, 126)
                 .addComponent(saveButton)
                 .addGap(65, 65, 65)
                 .addComponent(cancelButton)
-                .addContainerGap(349, Short.MAX_VALUE))
+                .addGap(78, 78, 78)
+                .addComponent(allDiscountButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,28 +230,35 @@ public class EditClient extends javax.swing.JDialog {
                     .addComponent(AdressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(typeCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jLabel3)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel3)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE))
-                            .addComponent(jLabel5)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
+                            .addComponent(jLabel5)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(28, 28, 28)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel6)
+                                    .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(skladCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
+                            .addComponent(groupLabel)
+                            .addComponent(groupButton))
+                        .addGap(13, 13, 13)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7)
-                            .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(discTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton2))))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(saveButton)
-                    .addComponent(cancelButton))
-                .addContainerGap(49, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cancelButton)
+                        .addComponent(allDiscountButton)))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
         bindingGroup.bind();
@@ -242,14 +295,17 @@ public class EditClient extends javax.swing.JDialog {
         skladCombo.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt){
                 try{
-                    ResultSet rs=DataSet.QueryExec("select disc from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')", false);
+                    ResultSet rs=DataSet.QueryExec("select disc from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') and id_group is null", false);
                     if (rs.next())
                         discTextField.setText(rs.getString(1));
                     else
-                        discTextField.setText(new String("0"));
+                        discTextField.setText("0");
+                    setIdGroupForDiscount(-2);
+                    groupButton.setText("Все группы");
                 }catch(Exception e){
                     e.printStackTrace();
                 }
+                groupButton.setText("Все группы");
             }
         });
         skladCombo.setSelectedIndex(0);
@@ -261,8 +317,15 @@ public class EditClient extends javax.swing.JDialog {
 
     private void discTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_discTextFieldActionPerformed
         try{
-            DataSet.UpdateQuery("delete from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"')");
-            DataSet.UpdateQuery("insert into discount (id_client,  disc, id_skl) select "+getId()+" as id_client, "+discTextField.getText()+" as disc, id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'");
+            if (getIdGroupForDiscount()==-2){
+                DataSet.UpdateQuery("delete from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') and id_group is null");
+                DataSet.UpdateQuery("insert into discount (id_client,  disc, id_skl) select "+getId()+" as id_client, "+discTextField.getText()+" as disc, id_skl from sklad where name='"+skladCombo.getSelectedItem()+"'");
+
+            }else{
+                DataSet.UpdateQuery("delete from discount where id_client="+getId()+" and id_skl=(select id_skl from sklad where name='"+skladCombo.getSelectedItem()+"') and id_group="+getIdGroupForDiscount());
+                DataSet.UpdateQuery("insert into discount (id_client,  disc, id_skl, id_group) select "+getId()+" as id_client, "+discTextField.getText()+" as disc, id_skl, "+getIdGroupForDiscount()+" as id_group from sklad where name='"+skladCombo.getSelectedItem()+"'");
+
+            }
             DataSet.commit();
         }catch(Exception e){
             e.printStackTrace();
@@ -272,6 +335,86 @@ public class EditClient extends javax.swing.JDialog {
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         setVisible(false);
     }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void groupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupButtonActionPerformed
+        if (groupWindow!=null)
+            return;
+        groupWindow=new ChooseGroupForDiscount(this,true);
+
+        groupWindow.setVisible(true);
+        setIdGroupForDiscount(groupWindow.getIdSelected());
+        if (getIdGroupForDiscount()!=-2){
+            try{
+                Integer disc=0;
+                String SQL=String.format("select disc from discount where id_client=%s and id_skl=(select id_skl from sklad where name='%s') and id_group=%s", getId(),skladCombo.getSelectedItem(),getIdGroupForDiscount());
+                ResultSet rs=DataSet.QueryExec(SQL, false);
+                if (rs.next()){
+                    disc=rs.getInt(1);
+                }
+                discTextField.setText(disc.toString());
+                SQL=String.format("Select trim(name) from groupid where id_group=%s", getIdGroupForDiscount());
+                rs=DataSet.QueryExec(SQL, false);
+                rs.next();
+                groupButton.setText(rs.getString(1));
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+        }
+        }else{
+            try{
+                Integer disc=0;
+                String SQL=String.format("select disc from discount where id_client=%s and id_skl=(select id_skl from sklad where name='%s') and id_group is null", getId(),skladCombo.getSelectedItem());
+                ResultSet rs=DataSet.QueryExec(SQL, false);
+                if (rs.next()){
+                    disc=rs.getInt(1);
+                }
+                discTextField.setText(disc.toString());
+                groupButton.setText("Все группы");
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+         groupWindow.dispose();
+         groupWindow=null;
+        
+    }//GEN-LAST:event_groupButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void allDiscountButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allDiscountButtonActionPerformed
+        if (allDiscount!=null)
+            return;
+        allDiscount=new ListWithDiscount(this, true,getId());
+//        setModal(false);
+
+        allDiscount.setVisible(true);
+        allDiscount.dispose();
+        allDiscount=null;
+//        setModal(true);
+    }//GEN-LAST:event_allDiscountButtonActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+         if (JOptionPane.showConfirmDialog(this, "Удалить скидку?", "Удаление", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION){
+             String SQL;
+             if (getIdGroupForDiscount()==-2){
+                 SQL=String.format("delete from discount where id_client=%s and id_group is null and id_skl=(select id_skl from sklad where name='%s')", getId(),skladCombo.getSelectedItem());
+             }else{
+                 SQL=String.format("delete from discount where id_client=%s and id_group=%s and id_skl=(select id_skl from sklad where name='%s')", getId(),getIdGroupForDiscount(),skladCombo.getSelectedItem());
+             }
+             try{
+                 DataSet.QueryExec(SQL, true);
+             }catch(Exception ex){
+                 ex.printStackTrace();
+             }
+         }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void discTextFieldFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_discTextFieldFocusGained
+        discTextField.selectAll();
+    }//GEN-LAST:event_discTextFieldFocusGained
     class clientCheck implements ActionListener{
         public void actionPerformed(ActionEvent evt){
             String client=(String) ((JComboBox)evt.getSource()).getSelectedItem();
@@ -304,9 +447,13 @@ public class EditClient extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField AdressTextField;
+    private javax.swing.JButton allDiscountButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JTextField discTextField;
+    private javax.swing.JButton groupButton;
+    private javax.swing.JLabel groupLabel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -323,6 +470,19 @@ public class EditClient extends javax.swing.JDialog {
     private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
     protected int id;
+    
+    private int idGroupForDiscount;
+    private ListWithDiscount allDiscount;
+    private ChooseGroupForDiscount groupWindow;
+            
+    public int getIdGroupForDiscount() {
+        return idGroupForDiscount;
+    }
+
+    public void setIdGroupForDiscount(int idGroupForDiscount) {
+        this.idGroupForDiscount = idGroupForDiscount;
+    }
+
 
     public int getId() {
         return id;

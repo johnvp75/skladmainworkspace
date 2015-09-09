@@ -337,13 +337,19 @@ public class NewTovarDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_formComponentShown
 
     private void nameTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_nameTextFieldActionPerformed
+        nameTextField.setText(nameTextField.getText().trim());
         if (checkTovar())
             countTextField.requestFocus();
     }//GEN-LAST:event_nameTextFieldActionPerformed
 
     private void barcodeTextFieldActionPerformed(ActionEvent evt) {//GEN-FIRST:event_barcodeTextFieldActionPerformed
-        CodeCountTextField.selectAll();
-        CodeCountTextField.requestFocus();
+        if (barcodeTextField.getText().trim().length()==0){
+            generate();
+        }
+        else{
+            CodeCountTextField.selectAll();
+            CodeCountTextField.requestFocus();
+        }
 /*        try
         {
             ResultSet rs=DataSet.QueryExec("Select count(*) from bar_code where bar_code='"+barcodeTextField.getText().trim()+"' and id_skl=(select id_skl from sklad where name='"+getSklad()+"')", false);
@@ -468,7 +474,7 @@ public class NewTovarDialog extends javax.swing.JDialog {
         barcodeTextField.requestFocus();
     }//GEN-LAST:event_CodeCountTextFieldActionPerformed
 
-    private void generateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
+    private void generate(){
         try{
             String SQL=String.format("select max(substr(bar_code,%s,5)) from bar_code where bar_code like '%s%s'", (new Integer(getGroup())).toString().length()+1,getGroup(),"%");
             ResultSet rs=DataSet.QueryExec(SQL, false);
@@ -489,7 +495,11 @@ public class NewTovarDialog extends javax.swing.JDialog {
         }catch(Exception e){
             e.printStackTrace();
         }
-        barcodeTextField.requestFocus();
+        barcodeTextField.requestFocus();        
+    }
+    
+    private void generateButtonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_generateButtonActionPerformed
+        generate();
     }//GEN-LAST:event_generateButtonActionPerformed
 
     private void barcodeListKeyPressed(KeyEvent evt) {//GEN-FIRST:event_barcodeListKeyPressed

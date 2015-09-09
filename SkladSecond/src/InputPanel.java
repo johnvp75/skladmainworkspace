@@ -772,6 +772,9 @@ public class InputPanel extends javax.swing.JPanel {
             newTovar();
         if(evt.getKeyCode()==evt.VK_F3)
             find(null);
+        if(evt.getKeyCode()==evt.VK_F4)
+            copyTovar();
+
     }//GEN-LAST:event_nameListKeyPressed
     private int id_doc;
 
@@ -1252,6 +1255,10 @@ public class InputPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void CopyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_CopyActionPerformed
+        copyTovar();
+    }//GEN-LAST:event_CopyActionPerformed
+
+    private void copyTovar(){
         if (groupTree.getLeadSelectionPath().getLastPathComponent()==null || nameList.getSelectedValue()==null)
             return;
         if (dialog==null)
@@ -1279,8 +1286,8 @@ public class InputPanel extends javax.swing.JPanel {
             naklTable.scrollRectToVisible(naklTable.getCellRect(row, 0, false));
             ((JTextField)naklTable.getEditorComponent()).selectAll();
         }
-    }//GEN-LAST:event_CopyActionPerformed
-
+    }
+    
     private void FindItemActionPerformed(ActionEvent evt) {//GEN-FIRST:event_FindItemActionPerformed
         int row=getMousePoint().y/naklTable.getRowHeight();
         if (row>=0 && row<model.getRowCount()){

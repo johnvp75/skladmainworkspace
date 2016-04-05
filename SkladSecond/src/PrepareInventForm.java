@@ -350,7 +350,7 @@ public class PrepareInventForm extends javax.swing.JDialog {
             }
             if (NumbYear.getItemCount()==0)
                 return;
-            NumbYear.setSelectedIndex(0);
+            NumbYear.setSelectedIndex(NumbYear.getItemCount()-1);
             rs=DataSet.QueryExec("select d.id_doc, trim(nvl(d.note,'-')), trim(s.name) from document d, sklad s where id_client=(select id_client from client where name='Инвентаризация') and s.id_skl=d.id_skl", false);
             AbstractListModel model;
             final Vector<String> strings=new Vector<String>();
@@ -778,22 +778,35 @@ public class PrepareInventForm extends javax.swing.JDialog {
             else{
 */
                 if (forNow.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %1$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+/*                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %1$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
                         "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %1$s connect by prior "+
                         "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
                         "id_skl from sklad where name = '%2$s')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%2$s') order by name",
                         getGroupsStringForQuery(),skladCombo.getSelectedItem());
+*/                    
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %1$s connect by prior id_group=parent_group) g, (select tv.name as name, "
+                            + "sum(l.kol*decode(t.operacia,2,-1,1) ) as kol from tovar tv, lines l, DOCUMENT d, TYPE_DOC t where "
+                            + "l.ID_DOC=d.ID_DOC and t.id_type_doc=d.id_type_doc and tv.ID_TOVAR=l.ID_TOVAR and  l.ID_TOVAR in (select distinct id_tovar from kart where id_group in (select id_group from groupid start " 
+                            + "with id_group %1$s connect by parent_group=prior id_group)) and tv.ID_TOVAR=l.ID_TOVAR and t.operacia in (1,2)  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%2$s') order by name",
+                        getGroupsStringForQuery(),skladCombo.getSelectedItem());                    
                 if (forDate.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
+/*                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
                         "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %2$s connect by prior "+
                         "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
                         "id_skl from sklad where name = '%1$s') and d.day<to_date('%3$td.%3$tm.%3$tY','dd.mm.yyyy')  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select "+
                         "id_skl from sklad where name = '%1$s') order by name",skladCombo.getSelectedItem(),getGroupsStringForQuery(),DateRest.getDate());
+*/
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "
+                            + "sum(l.kol*decode(t.operacia,2,-1,1) ) as kol from tovar tv, lines l, DOCUMENT d, TYPE_DOC t where d.day<to_date('%3$td.%3$tm.%3$tY','dd.mm.yyyy') "
+                            + "and l.ID_DOC=d.ID_DOC and t.id_type_doc=d.id_type_doc and tv.ID_TOVAR=l.ID_TOVAR and  l.ID_TOVAR in (select distinct id_tovar from kart where id_group in (select id_group from groupid start " 
+                            + "with id_group %2$s connect by parent_group=prior id_group)) and tv.ID_TOVAR=l.ID_TOVAR and t.operacia in (1,2)  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group and t.name=tab.name(+) and k.id_skl=(select "+
+                        "id_skl from sklad where name = '%1$s') order by name",skladCombo.getSelectedItem(),getGroupsStringForQuery(),DateRest.getDate());
+
                 if (forNumb.isSelected())
-                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "+
-                        "sum(l.kol*nvl2(nullif(2,t.operacia),1,(-1)) ) as kol from tovar tv ,lines l, document d, type_doc t, (select distinct k.id_tovar from kart k, (select id_group from groupid start with id_group %2$s connect by prior "+
-                        "id_group=parent_group) g where k.id_group=g.id_group) g where d.numb is not null and l.id_doc = d.id_doc and d.id_type_doc=t.id_type_doc and t.operacia in (1,2) and l.id_tovar in g.id_tovar and tv.id_tovar=l.id_tovar and d.id_skl=(select "+
-                        "id_skl from sklad where name = '%3$s') and (d.day<(select day from document where numb=%4$s and id_type_doc=2 and to_char(day,'YYYY')='%1$s'))  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group "+
+                    SQL=String.format("select distinct trim(t.name) as name, nvl(tab.kol,0) from tovar t, kart k, (select id_group from groupid start with id_group %2$s connect by prior id_group=parent_group) g, (select tv.name as name, "
+                            + "sum(l.kol*decode(t.operacia,2,-1,1) ) as kol from tovar tv, lines l, DOCUMENT d, TYPE_DOC t where (d.day<(select day from document where numb=%4$s and id_type_doc=2 and to_char(day,'YYYY')='%1$s')) "
+                            + "and l.ID_DOC=d.ID_DOC and t.id_type_doc=d.id_type_doc and tv.ID_TOVAR=l.ID_TOVAR and  l.ID_TOVAR in (select distinct id_tovar from kart where id_group in (select id_group from groupid start " 
+                            + "with id_group %2$s connect by parent_group=prior id_group)) and tv.ID_TOVAR=l.ID_TOVAR and t.operacia in (1,2)  group by tv.name) tab where t.id_tovar = k.id_tovar and k.id_group=g.id_group "+
                         "and t.name=tab.name(+) and k.id_skl=(select id_skl from sklad where name = '%3$s') order by name", NumbYear.getSelectedItem(),getGroupsStringForQuery(), skladCombo.getSelectedItem(),Numbrest.getText());
 //                }
             rs=DataSet.QueryExec(SQL, false);
